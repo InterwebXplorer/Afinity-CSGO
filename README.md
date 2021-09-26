@@ -1,0 +1,1 @@
+# Afinity_CSGO_PUBLIC_VERSION
