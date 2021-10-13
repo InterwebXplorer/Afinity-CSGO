@@ -12,3 +12,6 @@ Link: https://discord.gg/RPKGaVnvhz
 Features
 Features of the cheat are as follows
 TODO
+
+Usage Instructions
+TODO

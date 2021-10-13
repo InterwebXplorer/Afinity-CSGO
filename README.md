@@ -17,3 +17,6 @@ Link: https://discord.gg/RPKGaVnvhz
 <br>
 TODO
 </details>
+
+### Usage Instuctions
+TODO
