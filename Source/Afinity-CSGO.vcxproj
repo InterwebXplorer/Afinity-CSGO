@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{5dbcd7d4-6651-450c-be56-a25221ca2d0c}</ProjectGuid>
+    <ProjectGuid>{a2947fed-89b0-4599-a0b6-7b1930fd703a}</ProjectGuid>
     <RootNamespace>AfinityCSGO</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
