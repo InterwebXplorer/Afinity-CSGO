@@ -1,31 +1,48 @@
 //Afinity Main
 #define     NOMINMAX
 #include    <windows.h>
-#include    <clocale>
 #include    "pch.h"
 
-//Add SDK/UTILS
+#include    "Resources/Sdk/sdk.hpp"
+#include    "Resources/Helpers/utils.hpp"
+#include    "Resources/Helpers/input.hpp"
 
-#include "hooks.hpp"
-#include "menu.hpp"
-//#include "offsets.hpp" //always rename offsets to "offsets.hpp" on update
+#include    "hooks.hpp"
+#include    "menu.hpp"
+#include    "options.hpp"
+#include    "render.hpp"
+#include    "offsets.hpp" //always rename offsets to "offsets.hpp" on update
 
-BOOL WINAPI DllMain(
-    HMODULE modulehandle,
-    DWORD   reasoncall,
-    LPVOID  reserved
-)
+DWORD WINAPI OnDllAttach(LPVOID base)
 {
-    switch (reasoncall)
-    {
-    case DLL_PROCESS_ATTACH:
-    case DLL_THREAD_ATTACH:
-    case DLL_THREAD_DETACH:
-    case DLL_PROCESS_DETACH:
-        break;
+    while (!GetModuleHandle(""))
+        sleep(1000);
+
+#ifdef DEBUG
+    Utils::AttachConsole();
+#endif
+
+    try {
+        Utils::ConsolePrint("Initializing Afinity...\n")
+
+        Interfaces::Initialise();
+        Interfaces::Dump();
+
+        NetvarSys::Get().Initialize();
+        InputSys::Get().Initialize();
+        Render::Get().Initialize();
+        Menu::Get().Initialize();
+
+        Hooks::Initialize();    
+
+       /* 
+       //Custom console toggle
+        InputSys::Get().RegisterHotkey(VK_F1, [base]() {
+            Console::Get().Toggle();
+        });
+       */
+
     }
-    return TRUE;
-}
 
 
 /* ARCHIVE OF DEFAULT DLL MAIN
