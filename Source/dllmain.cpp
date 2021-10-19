@@ -2,15 +2,30 @@
 #define     NOMINMAX
 #include    <windows.h>
 #include    <clocale>
-#include    
 #include    "pch.h"
 
 //Add SDK/UTILS
 
 #include "hooks.hpp"
 #include "menu.hpp"
-#include "offsets.hpp" //always rename offsets to "offsets.hpp" on update
+//#include "offsets.hpp" //always rename offsets to "offsets.hpp" on update
 
+BOOL WINAPI DllMain(
+    HMODULE modulehandle,
+    DWORD   reasoncall,
+    LPVOID  reserved
+)
+{
+    switch (reasoncall)
+    {
+    case DLL_PROCESS_ATTACH:
+    case DLL_THREAD_ATTACH:
+    case DLL_THREAD_DETACH:
+    case DLL_PROCESS_DETACH:
+        break;
+    }
+    return TRUE;
+}
 
 
 /* ARCHIVE OF DEFAULT DLL MAIN
