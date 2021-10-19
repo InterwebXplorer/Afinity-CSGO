@@ -1,22 +1,19 @@
-//Afinity main
-#include <iostream>
-#include <windows.h>
-#include "pch.h"
-//#include "offsets.hpp" //Hazedumper must be renamed to this when offsets updated
+//Afinity Main
+#define     NOMINMAX
+#include    <windows.h>
+#include    <clocale>
+#include    
+#include    "pch.h"
 
-//Fetch display resolution
-const int SCREEN_WIDTH = GetSystemMetrics(SM_CXSCREEN); const int xhairx = SCREEN_WIDTH / 2; //X-Axis (Width)
-const int SCREEN_HEIGHT = GetSystemMetrics(SM_CYSCREEN); const int xhairy = SCREEN_HEIGHT / 2; //Y-Axis (Height) 
+//Add SDK/UTILS
 
-//Global Variables
-HWND hwnd;
-DWORD procID;
-HANDLE hProcess;
-uintptr_t moduleBase;
-HDC hdc;
-int closest;
+#include "hooks.hpp"
+#include "menu.hpp"
+#include "offsets.hpp" //always rename offsets to "offsets.hpp" on update
 
-/*
+
+
+/* ARCHIVE OF DEFAULT DLL MAIN
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "pch.h"
 
