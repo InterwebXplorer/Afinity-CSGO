@@ -22,9 +22,9 @@ enum class KeyState
 DEFINE_ENUM_FLAG_OPERATORS(KeyState);
 
 class InputSys 
-    : public singleton<InputSys>
+    : public Singleton<InputSys>
 {
-    friend class singleton<InputSys>;
+    friend class Singleton<InputSys>;
 
     InputSys();
     ~InputSys();

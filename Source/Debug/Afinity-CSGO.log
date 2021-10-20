@@ -1,0 +1,120 @@
+﻿  pch.cpp
+  dllmain.cpp
+E:\Afinity-CSGO\Source\dllmain.cpp(2): warning C4603: 'NOMINMAX': macro is not defined or definition is different after precompiled header use
+E:\Afinity-CSGO\Source\dllmain.cpp(2): message : Add macro to precompiled header instead of defining here
+E:\Afinity-CSGO\Source\dllmain.cpp(4): message : use of precompiled header
+E:\Afinity-CSGO\Source\Resources\Sdk\Math\Vector.hpp(173,29): error C4596: '-': illegal qualified name in member declaration
+E:\Afinity-CSGO\Source\Resources\Sdk\Math\Vector.hpp(177,29): error C4596: '+': illegal qualified name in member declaration
+E:\Afinity-CSGO\Source\Resources\Sdk\Math\Vector.hpp(181,20): error C4596: '-': illegal qualified name in member declaration
+E:\Afinity-CSGO\Source\Resources\Sdk\Math\Vector.hpp(182,5): error C2059: syntax error: '{'
+E:\Afinity-CSGO\Source\Resources\Sdk\Math\Vector.hpp(182,5): error C2334: unexpected token(s) preceding '{'; skipping apparent function body
+E:\Afinity-CSGO\Source\Resources\Sdk\Math\Vector.hpp(185,29): error C4596: '*': illegal qualified name in member declaration
+E:\Afinity-CSGO\Source\Resources\Sdk\Math\Vector.hpp(189,20): error C4596: '*': illegal qualified name in member declaration
+E:\Afinity-CSGO\Source\Resources\Sdk\Math\Vector.hpp(190,5): error C2059: syntax error: '{'
+E:\Afinity-CSGO\Source\Resources\Sdk\Math\Vector.hpp(190,5): error C2334: unexpected token(s) preceding '{'; skipping apparent function body
+E:\Afinity-CSGO\Source\Resources\Sdk\Math\Vector.hpp(193,29): error C4596: '/': illegal qualified name in member declaration
+E:\Afinity-CSGO\Source\Resources\Sdk\Math\Vector.hpp(197,20): error C4596: '/': illegal qualified name in member declaration
+E:\Afinity-CSGO\Source\Resources\Sdk\Math\Vector.hpp(198,5): error C2059: syntax error: '{'
+E:\Afinity-CSGO\Source\Resources\Sdk\Math\Vector.hpp(198,5): error C2334: unexpected token(s) preceding '{'; skipping apparent function body
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\Studio.hpp(111,103): error C2065: 'byte': undeclared identifier
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\Studio.hpp(111,109): error C2059: syntax error: ')'
+E:\Afinity-CSGO\Source\Resources\Sdk\Interfaces\IEngineTrace.hpp(330,23): error C2676: binary '-': 'const Vector' does not define this operator or a conversion to a type acceptable to the predefined operator
+E:\Afinity-CSGO\Source\Resources\Sdk\Interfaces\IEngineTrace.hpp(346,23): error C2676: binary '-': 'const Vector' does not define this operator or a conversion to a type acceptable to the predefined operator
+E:\Afinity-CSGO\Source\Resources\Sdk\Interfaces\IEngineTrace.hpp(351,26): error C2676: binary '-': 'const Vector' does not define this operator or a conversion to a type acceptable to the predefined operator
+E:\Afinity-CSGO\Source\Resources\Sdk\Interfaces\IEngineTrace.hpp(447,38): error C4596: '=': illegal qualified name in member declaration
+E:\Afinity-CSGO\Source\Resources\Sdk\math\Vector2D.hpp(16,15): error C4596: '{ctor}': illegal qualified name in member declaration
+E:\Afinity-CSGO\Source\Resources\Sdk\math\Vector2D.hpp(17,5): error C2059: syntax error: '{'
+E:\Afinity-CSGO\Source\Resources\Sdk\math\Vector2D.hpp(17,5): error C2334: unexpected token(s) preceding '{'; skipping apparent function body
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\platform.hpp(709,12): error C2760: syntax error: unexpected token 'identifier', expected ';'
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(132,9): error C3861: 'UTLMEMORY_TRACK_ALLOC': identifier not found
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(132,30): message : 'UTLMEMORY_TRACK_ALLOC': function declaration must be available as none of the arguments depend on a template parameter
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(133,9): error C3861: 'MEM_ALLOC_CREDIT_CLASS': identifier not found
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(133,31): message : 'MEM_ALLOC_CREDIT_CLASS': function declaration must be available as none of the arguments depend on a template parameter
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(553,9): error C3861: 'UTLMEMORY_TRACK_ALLOC': identifier not found
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(553,30): message : 'UTLMEMORY_TRACK_ALLOC': function declaration must be available as none of the arguments depend on a template parameter
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(554,9): error C3861: 'MEM_ALLOC_CREDIT_CLASS': identifier not found
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(554,31): message : 'MEM_ALLOC_CREDIT_CLASS': function declaration must be available as none of the arguments depend on a template parameter
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(630,5): error C3861: 'UTLMEMORY_TRACK_FREE': identifier not found
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(630,25): message : 'UTLMEMORY_TRACK_FREE': function declaration must be available as none of the arguments depend on a template parameter
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(638,5): error C3861: 'UTLMEMORY_TRACK_ALLOC': identifier not found
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(638,26): message : 'UTLMEMORY_TRACK_ALLOC': function declaration must be available as none of the arguments depend on a template parameter
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(641,9): error C3861: 'MEM_ALLOC_CREDIT_CLASS': identifier not found
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(641,31): message : 'MEM_ALLOC_CREDIT_CLASS': function declaration must be available as none of the arguments depend on a template parameter
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(645,9): error C3861: 'MEM_ALLOC_CREDIT_CLASS': identifier not found
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(645,31): message : 'MEM_ALLOC_CREDIT_CLASS': function declaration must be available as none of the arguments depend on a template parameter
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(667,5): error C3861: 'UTLMEMORY_TRACK_FREE': identifier not found
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(667,25): message : 'UTLMEMORY_TRACK_FREE': function declaration must be available as none of the arguments depend on a template parameter
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(671,5): error C3861: 'UTLMEMORY_TRACK_ALLOC': identifier not found
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(671,26): message : 'UTLMEMORY_TRACK_ALLOC': function declaration must be available as none of the arguments depend on a template parameter
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(674,9): error C3861: 'MEM_ALLOC_CREDIT_CLASS': identifier not found
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(674,31): message : 'MEM_ALLOC_CREDIT_CLASS': function declaration must be available as none of the arguments depend on a template parameter
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(677,9): error C3861: 'MEM_ALLOC_CREDIT_CLASS': identifier not found
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(677,31): message : 'MEM_ALLOC_CREDIT_CLASS': function declaration must be available as none of the arguments depend on a template parameter
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(691,13): error C3861: 'UTLMEMORY_TRACK_FREE': identifier not found
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlMemory.hpp(691,33): message : 'UTLMEMORY_TRACK_FREE': function declaration must be available as none of the arguments depend on a template parameter
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlVector.hpp(293,5): error C3861: 'MEM_ALLOC_CREDIT_CLASS': identifier not found
+E:\Afinity-CSGO\Source\Resources\Sdk\Misc\UtlVector.hpp(293,27): message : 'MEM_ALLOC_CREDIT_CLASS': function declaration must be available as none of the arguments depend on a template parameter
+E:\Afinity-CSGO\Source\Resources\Sdk\Interfaces\IPhysics.hpp(50,7): error C3646: 'climbable': unknown override specifier
+E:\Afinity-CSGO\Source\Resources\Sdk\Interfaces\IPhysics.hpp(50,16): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+E:\Afinity-CSGO\Source\singleton.hpp(13,15): error C2061: syntax error: identifier 'singleton'
+E:\Afinity-CSGO\Source\singleton.hpp(22): message : see reference to class template instantiation 'Singleton<T>' being compiled
+E:\Afinity-CSGO\Source\singleton.hpp(13,1): error C2535: 'Singleton<T>::Singleton(void)': member function already defined or declared
+E:\Afinity-CSGO\Source\singleton.hpp(7): message : see declaration of 'Singleton<T>::Singleton'
+E:\Afinity-CSGO\Source\singleton.hpp(13,1): error C2535: 'Singleton<NetvarSys>::Singleton(void)': member function already defined or declared
+E:\Afinity-CSGO\Source\singleton.hpp(7): message : see declaration of 'Singleton<NetvarSys>::Singleton'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(57,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(58,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(59,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(60,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(61,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(62,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(63,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(64,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(65,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(66,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(67,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(68,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(69,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(70,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(71,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(72,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(73,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(74,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(75,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(76,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(77,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(78,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(79,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(80,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(81,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(82,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(83,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(84,30): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(116,22): error C7525: inline variables require at least '/std:c++17'
+E:\Afinity-CSGO\Source\singleton.hpp(13,1): error C2535: 'Singleton<InputSys>::Singleton(void)': member function already defined or declared
+E:\Afinity-CSGO\Source\singleton.hpp(7): message : see declaration of 'Singleton<InputSys>::Singleton'
+E:\Afinity-CSGO\Source\dllmain.cpp(19,9): error C3861: 'sleep': identifier not found
+E:\Afinity-CSGO\Source\dllmain.cpp(28,25): error C2039: 'Initialise': is not a member of 'Interfaces'
+E:\Afinity-CSGO\Source\Resources\Sdk\sdk.hpp(51): message : see declaration of 'Interfaces'
+E:\Afinity-CSGO\Source\dllmain.cpp(28,35): error C2146: syntax error: missing ';' before identifier 'Initialise'
+E:\Afinity-CSGO\Source\dllmain.cpp(28,35): error C3861: 'Initialise': identifier not found
+E:\Afinity-CSGO\Source\dllmain.cpp(33,9): error C2653: 'Render': is not a class or namespace name
+E:\Afinity-CSGO\Source\dllmain.cpp(33,17): error C3861: 'Get': identifier not found
+E:\Afinity-CSGO\Source\dllmain.cpp(34,9): error C2653: 'Menu': is not a class or namespace name
+E:\Afinity-CSGO\Source\dllmain.cpp(34,15): error C3861: 'Get': identifier not found
+E:\Afinity-CSGO\Source\dllmain.cpp(36,9): error C2653: 'Hooks': is not a class or namespace name
+E:\Afinity-CSGO\Source\dllmain.cpp(36,16): error C3861: 'Initialize': identifier not found
+E:\Afinity-CSGO\Source\dllmain.cpp(47,13): error C2065: 'g_Unload': undeclared identifier
+E:\Afinity-CSGO\Source\dllmain.cpp(51,31): error C2660: 'InputSys::GetKeyState': function does not take 0 arguments
+E:\Afinity-CSGO\Source\Resources\Helpers\input.hpp(37,19): message : see declaration of 'InputSys::GetKeyState'
+E:\Afinity-CSGO\Source\dllmain.cpp(52,17): error C2653: 'Menu': is not a class or namespace name
+E:\Afinity-CSGO\Source\dllmain.cpp(52,13): error C2065: 'g': undeclared identifier
+E:\Afinity-CSGO\Source\dllmain.cpp(52,23): error C2146: syntax error: missing ';' before identifier 'Get'
+E:\Afinity-CSGO\Source\dllmain.cpp(52,23): error C3861: 'Get': identifier not found
+E:\Afinity-CSGO\Source\dllmain.cpp(58,17): error C2065: 'g_unload': undeclared identifier
+E:\Afinity-CSGO\Source\dllmain.cpp(66,24): error C2039: 'exeption': is not a member of 'std'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30037\include\map(25): message : see declaration of 'std'
+E:\Afinity-CSGO\Source\dllmain.cpp(66,32): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+E:\Afinity-CSGO\Source\dllmain.cpp(66,32): error C2143: syntax error: missing ',' before '&'
+E:\Afinity-CSGO\Source\dllmain.cpp(68,37): error C2065: 'ex': undeclared identifier
+E:\Afinity-CSGO\Source\dllmain.cpp(81,1): fatal error C1070: mismatched #if/#endif pair in file 'E:\Afinity-CSGO\Source\dllmain.cpp'

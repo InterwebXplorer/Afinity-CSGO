@@ -1,6 +1,6 @@
 //Afinity Main
 #define     NOMINMAX
-#include    <windows.h>
+#include    <Windows.h>
 #include    "pch.h"
 
 #include    "Resources/Sdk/sdk.hpp"
@@ -11,14 +11,14 @@
 #include    "menu.hpp"
 #include    "options.hpp"
 #include    "render.hpp"
-#include    "offsets.hpp" //always rename offsets to "offsets.hpp" on update
+//#include    "offsets.hpp" //always rename offsets to "offsets.hpp" on update
 
 DWORD WINAPI OnDllAttach(LPVOID base)
 {
-    while (!GetModuleHandle("Afinity.dll"))
+    while (!GetModuleHandleA("Afinity.dll"))
         sleep(1000);
 
-#ifdef DEBUG
+#ifdef _DEBUG
     Utils::AttachConsole();
 #endif
 
@@ -63,6 +63,26 @@ DWORD WINAPI OnDllAttach(LPVOID base)
         const int SCREEN_HEIGHT = GetSystemMetrics(SM_CYSCREEN); const int xhairy = SCREEN_HEIGHT / 2; //YAXISHEIGHT
 
         FreeLibraryAndExitThread(static_cast<HMODULE>(base), 1);
+    } catch(const std::exeption& ex) {
+        Utils::ConsolePrint("An error has occured during initialization: \n");
+        Utils::ConsolePrint("%s\n", ex.what());
+        Utils::ConsolePrint("Press any key to exit\n");
+        Utils::ConsoleReadKey();
+        Utils::DetachConsole();
 
+        FreeLibraryAndExitThread(static_cast<HMODULE>(base), 1);
     }
 }
+
+BOOL WINAPI OnDllDetach()
+{
+#ifdef _DEBUG
+    Utils::DetachConsole();
+#endif
+
+    Hooks::Shutdown();
+
+    Menu::Get().Shutdown();
+    return TRUE;
+}
+

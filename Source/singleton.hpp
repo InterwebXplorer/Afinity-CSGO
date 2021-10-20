@@ -1,17 +1,17 @@
 #pragma once
 
 template<typename T>
-class singleton
+class Singleton
 {
 protected:
-    singleton() {}
-    ~singleton() {}
+    Singleton() {}
+    ~Singleton() {}
 
-    singleton(const singleton&) = delete;
-    singleton& operator=(const singleton&) = delete;
+    Singleton(const Singleton&) = delete;
+    Singleton& operator=(const Singleton&) = delete;
 
-    singleton(singleton&&) = delete;
-    singleton& operator=(singleton&&) = delete;
+    Singleton(singleton&&) = delete;
+    Singleton& operator=(Singleton&&) = delete;
 
 public:
     static T& Get()
