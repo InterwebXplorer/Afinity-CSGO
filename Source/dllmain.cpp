@@ -15,7 +15,7 @@
 
 DWORD WINAPI OnDllAttach(LPVOID base)
 {
-    while (!GetModuleHandle(""))
+    while (!GetModuleHandle("Afinity.dll"))
         sleep(1000);
 
 #ifdef DEBUG
@@ -25,7 +25,7 @@ DWORD WINAPI OnDllAttach(LPVOID base)
     try {
         Utils::ConsolePrint("Initializing Afinity...\n")
 
-        Interfaces::Initialise();
+            Interfaces::Initialise();
         Interfaces::Dump();
 
         NetvarSys::Get().Initialize();
@@ -33,35 +33,36 @@ DWORD WINAPI OnDllAttach(LPVOID base)
         Render::Get().Initialize();
         Menu::Get().Initialize();
 
-        Hooks::Initialize();    
+        Hooks::Initialize();
 
-       /* 
-       //Custom console toggle
+        /*
+        //Custom console toggle
         InputSys::Get().RegisterHotkey(VK_F1, [base]() {
-            Console::Get().Toggle();
-        });
-       */
+             Console::Get().Toggle();
+            });
+        */
+
+        //Uninject hotkey
+        InputSys::Get().RegisterHotkey(VK_DELETE, [base]() {
+            g_Unload = true;
+            });
+
+        //Menu toggle
+        InputSys::GetKeyState().RegisterHotkey(VK_INSERT, [base]() {
+            g   Menu::Get().Toggle();
+            });
+
+        Utils::ConsolePrint("Complete\n");
+        Utils::ConsolePrint("Build date: %s\n", __DATE__);
+
+        while (!g_unload)
+            Sleep(1000);
+
+        //Get screen resolution
+        const int SCREEN_WIDTH = GetSystemMetrics(SM_CXSCREEN); const int xhairx = SCREEN_WIDTH / 2; //XAXIS/WIDTH
+        const int SCREEN_HEIGHT = GetSystemMetrics(SM_CYSCREEN); const int xhairy = SCREEN_HEIGHT / 2; //YAXISHEIGHT
+
+        FreeLibraryAndExitThread(static_cast<HMODULE>(base), 1);
 
     }
-
-
-/* ARCHIVE OF DEFAULT DLL MAIN
-// dllmain.cpp : Defines the entry point for the DLL application.
-#include "pch.h"
-
-BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
-                     )
-{
-    switch (ul_reason_for_call)
-    {
-    case DLL_PROCESS_ATTACH:
-    case DLL_THREAD_ATTACH:
-    case DLL_THREAD_DETACH:
-    case DLL_PROCESS_DETACH:
-        break;
-    }
-    return TRUE;
 }
-*/

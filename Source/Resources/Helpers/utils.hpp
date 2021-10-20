@@ -4,7 +4,7 @@
 #include <Windows.h>
 #include <string>
 #include <initializer_list>
-#include "../valve_sdk/sdk.hpp"
+#include "../Sdk/sdk.hpp"
 
 namespace Utils {
 	std::vector<char> HexToBytes(const std::string& hex);

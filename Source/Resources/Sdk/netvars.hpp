@@ -5,7 +5,7 @@
 #include <unordered_map>
 
 #include "Misc/Recv.hpp"
-#include "../Singleton.hpp"
+#include "singleton.hpp"
 
 class NetvarSys
     : public Singleton<NetvarSys>
