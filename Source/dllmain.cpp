@@ -53,7 +53,7 @@ DWORD WINAPI OnDllAttach(LPVOID base)
             });
 
         Utils::ConsolePrint("Complete\n");
-        Utils::ConsolePrint("Build date: %s\n", __DATE__);
+        //Utils::ConsolePrint("Build date: %s\n", __DATE__);
 
         while (!g_unload)
             Sleep(1000);
