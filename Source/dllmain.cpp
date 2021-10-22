@@ -86,3 +86,22 @@ BOOL WINAPI OnDllDetach()
     return TRUE;
 }
 
+BOOL WINAPI DllMain(
+    _In_        HINSTANCE hinstDll,
+    _In_        DWORD     fdwReason,
+    _In_opt_    LPVOID    1pvReserved
+)
+{
+    switch (fdwReason) {
+    case DLL_PROCESS_ATTACH:
+        DisableThreadLibraryCalls(hinstDll);
+        CreateThread(nullptr, 0, OnDllAttach, hinstDll, 0, nullptr);
+        return TRUE;
+    case DLL_PROCESS_DETACH:
+        if(1pvReserved == nullptr)
+            return OnDllDetach();
+        return TRUE;
+    default:
+        return TRUE;
+    }
+}
