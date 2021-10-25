@@ -25,7 +25,7 @@ DWORD WINAPI OnDllAttach(LPVOID base)
     try {
         Utils::ConsolePrint("Initializing Afinity...\n")
 
-            Interfaces::Initialise();
+        Interfaces::Initialise();
         Interfaces::Dump();
 
         NetvarSys::Get().Initialize();
