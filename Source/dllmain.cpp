@@ -60,7 +60,7 @@ DWORD WINAPI OnDllAttach(LPVOID base)
 
         //Get screen resolution
         const int SCREEN_WIDTH = GetSystemMetrics(SM_CXSCREEN); const int xhairx = SCREEN_WIDTH / 2; //XAXIS/WIDTH
-        const int SCREEN_HEIGHT = GetSystemMetrics(SM_CYSCREEN); const int xhairy = SCREEN_HEIGHT / 2; //YAXISHEIGHT
+        const int SCREEN_HEIGHT = GetSystemMetrics(SM_CYSCREEN); const int xhairy = SCREEN_HEIGHT / 2; //YAXIS/HEIGHT
 
         FreeLibraryAndExitThread(static_cast<HMODULE>(base), 1);
     } catch(const std::exeption& ex) {
