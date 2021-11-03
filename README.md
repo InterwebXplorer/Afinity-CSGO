@@ -34,6 +34,6 @@ To load the cheat use either the provided afinity loader or any
 third party loader using load library method
 <br>
 <br>
-[WARNING]LOAD LIBRARY METHOD PREVENTS DLL FROM BEING REMOVED DURING USE,
+[WARNING] LOAD LIBRARY METHOD PREVENTS DLL FROM BEING REMOVED DURING USE,
 <br>
 IF THIS CHEAT IS STORED ON AN EXTERNAL DRIVE DO NOT REMOVE IT
