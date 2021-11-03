@@ -1,4 +1,4 @@
-	#include "menu.hpp"
+#include "menu.hpp"
 #define  NOMINMAX
 #include <Windows.h>
 //#include <chrono>
@@ -47,27 +47,35 @@ Checkbox 	- ImGui::Checkbox("TITLE", g_Options.NAME_NAME);
 Colour select 	- ImGuiEx::ColorEdit3("TITLE", g_Options.NAME_NAME);
 */
 
-/* Legit interactives
-Imgui::Checkbox("Enable", g_Options.legit_aim_enable);
-Imgui::SliderFloat("FOV", g_Options.legit_aim_fov, 0.0f, 90.0f); //90d aimbot
-ImGui::Checkbox("Use rectangle FOV", g_Options.legit_aim_rectangular);
-ImGui::Checkbox("Wall penetration", g_Options.legit_aim_wall_penetration);
-ImGui::Checkbox("Smoke check", g_Options.legit_aim_smoke_check);
-ImGui::Checkbox("Flash check", g_Options.legit_aim_flash_check);
-ImGui::Checkbox("Enable backtrack", g_Options.legit_aim_backtrack_enable);
-ImGui::SliderFloat("Backtrack amount(ms)", g_Options.legit_aim_backtrack_amount, 0.0f, 200.0f);
-ImGui::SliderFloat("Speed(X)", g_Options.legit_aim_speed_x, 0.0f, 100.0f);
-ImGui::SliderFloat("Speed(Y)", g_Options.legit_aim_speed_y, 0.0f, 100.0f);
-ImGui::SliderFloat("Strength", g_Options.legit_aim_strength, 0.0f, 100.0f);
-ImGui::SliderFloat("Distant FOV", g_Options.legit_aim_distant_fov, 0.0f, 90.0f);
-ImGui::SliderFloat("Delay(ms)", g_Options.legit_aim_delay, 0.0f, 1000.0f);
-ImGui::Checkbox("Recoil control", g_Options.legit_aim_recoil_control);
-ImGui::SliderFloat("X-axis", g_Options.legit_aim_recoil_control_x, 0.0f, 100.0f);
-ImGui::SliderFloat("Y-axis", g_Options.legit_aim_recoil_control_y, 0.0f, 100.0f);
+//Aimbot general TODO add individual weapon configs
+Imgui::Checkbox("Enable", g_Options.legit_aim_enable); //Add on key
 ImGui::Checkbox("Magnet", g_Options.legit_aim_magnet);
 ImGui::Checkbox("Aimlock", g_Options.legit_aim_aimlock);
 ImGui::SliderFloat("Hitchance", g_Options.legit_aim_hitchance, 0.0f, 100.0f);
-*/
+ImGui::Checkbox("Silent", g_Options.legit_aim_silent);
+Imgui::SliderFloat("FOV", g_Options.legit_aim_fov, 0.0f, 90.0f); //90d aimbot
+ImGui::SliderFloat("Distant FOV", g_Options.legit_aim_distant_fov, 0.0f, 90.0f);
+ImGui::Checkbox("Rectangle FOV", g_Options.legit_aim_rectangular);
+ImGui::SliderFloat("Strength", g_Options.legit_aim_strength, 0.0f, 100.0f);
+ImGui::SliderFloat("Speed(X)", g_Options.legit_aim_speed_x, 0.0f, 100.0f);
+ImGui::SliderFloat("Speed(Y)", g_Options.legit_aim_speed_y, 0.0f, 100.0f);
+ImGui::SliderFloat("Delay(ms)", g_Options.legit_aim_delay, 0.0f, 1000.0f);
+ImGui::Checkbox("Auto stop", g_Options.legit_aim_auto_stop);
+ImGui::Checkbox("Auto fire", g_Options.legit_aim_auto_fire);
+ImGui::Checkbox("Wall penetration", g_Options.legit_aim_wall_penetration);
+ImGui::Checkbox("Smoke check", g_Options.legit_aim_smoke_check);
+ImGui::Checkbox("Flash check", g_Options.legit_aim_flash_check);
+ImGui::Checkbox("Jump check", g_Options.legit_aim_jump_check);
+ImGui::Checkbox("Enable backtrack", g_Options.legit_aim_backtrack_enable);
+ImGui::SliderFloat("Backtrack amount(ms)", g_Options.legit_aim_backtrack_amount, 0.0f, 200.0f););
+ImGui::Checkbox("Friendly fire", g_Options.legit_aim_friendly_fire);
+
+//RCS
+ImGui::Checkbox("Recoil control", g_Options.legit_aim_recoil_control);
+ImGui::SliderFloat("Control after", g_Options.legit_aim_recoil_control_x, 0.0f, 10.0f);
+ImGui::SliderFloat("X-axis", g_Options.legit_aim_recoil_control_x, 0.0f, 100.0f);
+ImGui::SliderFloat("Y-axis", g_Options.legit_aim_recoil_control_y, 0.0f, 100.0f);
+
 
 //Incomplete
 

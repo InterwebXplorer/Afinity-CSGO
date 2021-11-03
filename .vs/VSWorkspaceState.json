@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Source"
+    "\\Source",
+    "\\Source\\Features"
   ],
-  "SelectedNode": "\\Source\\options.cpp",
+  "SelectedNode": "\\Source\\menu.cpp",
   "PreviewInSolutionExplorer": false
 }
