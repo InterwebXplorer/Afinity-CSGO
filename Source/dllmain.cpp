@@ -15,7 +15,7 @@
 
 DWORD WINAPI OnDllAttach(LPVOID base)
 {
-    while (!GetModuleHandleA("Afinity.dll"))
+    while (!GetModuleHandleA("serverbrowser.dll"))
         sleep(1000);
 
 #ifdef _DEBUG
