@@ -21,7 +21,6 @@ Link: https://discord.gg/RPKGaVnvhz
 <br>
 TODO
 </details>
-<br>
 
 ### Usage Instuctions
 To build the cheat into a dll open the solution file (Afinity-CSGO.sln)
