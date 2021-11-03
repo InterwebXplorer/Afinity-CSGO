@@ -19,14 +19,19 @@ Link: https://discord.gg/RPKGaVnvhz
 TODO
 </details>
 ### Usage Instuctions
-#### To build
-To build the dll for use, download and open the 
+<details>
+<summary>Usage instructions are as follows</summary>
 <br>
-#### To Use
-To use the dll in standalone or loader, download or build the dll/loader
-##### Afinity loader
-TODO
+To build the cheat into a dll open the solution file (Afinity-CSGO.sln)
 <br>
-##### Third party loader
-To use the dll with a third party loader use load library as injection method
+and change the configuration to release(x86) then press start
 <br>
+<br>
+To load the cheat use either the provided afinity loader or any
+<br>
+third party loader using load library method
+<br>
+[WARNING]LOAD LIBRARY METHOD PREVENTS DLL FROM BEING REMOVED DURING USE,
+<br>
+IF THIS CHEAT IS STORED ON AN EXTERNAL DRIVE DO NOT REMOVE IT
+</details>
