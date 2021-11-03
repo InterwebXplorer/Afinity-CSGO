@@ -16,4 +16,11 @@ Features of the cheat are as follows
 TODO
 
 Usage Instructions
+To build
+To build the dll for use, download and open the 
+To Use
+To use the dll in standalone or loader, download or build the dll/loader
+Afinity loader
 TODO
+Third party loader
+To use the dll with a third party loader use load library as injection method

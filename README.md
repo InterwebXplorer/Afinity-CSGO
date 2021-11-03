@@ -18,6 +18,15 @@ Link: https://discord.gg/RPKGaVnvhz
 <br>
 TODO
 </details>
-
 ### Usage Instuctions
+#### To build
+To build the dll for use, download and open the 
+<br>
+#### To Use
+To use the dll in standalone or loader, download or build the dll/loader
+##### Afinity loader
 TODO
+<br>
+##### Third party loader
+To use the dll with a third party loader use load library as injection method
+<br>
