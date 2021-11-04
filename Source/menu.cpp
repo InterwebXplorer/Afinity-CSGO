@@ -70,11 +70,22 @@ ImGui::Checkbox("Enable backtrack", g_Options.legit_aim_backtrack_enable);
 ImGui::SliderFloat("Backtrack amount(ms)", g_Options.legit_aim_backtrack_amount, 0.0f, 200.0f););
 ImGui::Checkbox("Friendly fire", g_Options.legit_aim_friendly_fire);
 
+//Triggerbot
+ImGui::Checkbox("Enable", g_Options.legit_trigger_enable);
+ImGui::SliderFloat("Hitchance", g_Options.legit_trigger_hitchance, 0.0f, 100.0f);
+ImGui::SliderFloat("Delay(ms)", g_Options.legit_trigger_delay, 0.0f, 1000.0f);
+ImGui::Checkbox("Auto stop", g_Options.legit_trigger_auto_stop);
+ImGui::Checkbox("Wall penetration", g_Options.legit_trigger_wall_penetration);
+ImGui::Checkbox("Smoke check", g_Options.legit_trigger_smoke_check);
+ImGui::Checkbox("Flash check", g_Options.legit_trigger_flash_check);
+ImGui::Checkbox("Jump check", g_Options.legit_trigger_jump_check);
+
+
 //RCS
-ImGui::Checkbox("Recoil control", g_Options.legit_aim_recoil_control);
-ImGui::SliderFloat("Control after", g_Options.legit_aim_recoil_control_x, 0.0f, 10.0f);
-ImGui::SliderFloat("X-axis", g_Options.legit_aim_recoil_control_x, 0.0f, 100.0f);
-ImGui::SliderFloat("Y-axis", g_Options.legit_aim_recoil_control_y, 0.0f, 100.0f);
+ImGui::Checkbox("Recoil control", g_Options.legit_rcs_enable);
+ImGui::SliderFloat("Control after", g_Options.legit_rcs_delay, 0.0f, 10.0f); //Shots
+ImGui::SliderFloat("X-axis", g_Options.legit_rcs_control_x, 0.0f, 100.0f);
+ImGui::SliderFloat("Y-axis", g_Options.legit_rcs_control_y, 0.0f, 100.0f);
 
 
 //Incomplete
