@@ -36,16 +36,11 @@ DWORD WINAPI OnDllAttach(LPVOID base)
         Hooks::Initialize();
 
         /*
-        //Custom console toggle
-        InputSys::Get().RegisterHotkey(VK_F1, [base]() {
-             Console::Get().Toggle();
-            });
-        */
-
-        //Uninject hotkey
+	//Uninject hotkey
         InputSys::Get().RegisterHotkey(VK_DELETE, [base]() {
             g_Unload = true;
             });
+        */
 
         //Menu toggle
         InputSys::GetKeyState().RegisterHotkey(VK_INSERT, [base]() {
