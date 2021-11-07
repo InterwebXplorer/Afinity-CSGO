@@ -87,6 +87,58 @@ ImGui::SliderFloat("Control after", g_Options.legit_rcs_delay, 0.0f, 10.0f); //S
 ImGui::SliderFloat("X-axis", g_Options.legit_rcs_control_x, 0.0f, 100.0f);
 ImGui::SliderFloat("Y-axis", g_Options.legit_rcs_control_y, 0.0f, 100.0f);
 
+//Hitbox selection dropdown menu
+const char* items[] = { "HEAD", "ARMS", "CHEST", "LOWER-CHEST", "STOMACH", "PELVIS", "LEGS", "FEET" }; //Hitbox groups
+static const char* current_item = NULL;
+
+if (ImGui::BeginCombo("Hitbox", current_item))
+{
+	for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+	{
+		bool is_selected = (current_item == items[n]);
+		if (ImGui::Selectable(items[n], is_selected)
+			current_item = items[n];
+			if (is_selected)
+				ImGui::SetItemDefaultFocus();
+	}
+	ImGui::EndCombo();
+}
+
+//Individual weapon dropdown menu
+const char* items[] = { "DEFAULT", "P200", "USP-S", "GLOCK-18", "DUEL-BERETTAS", "P250", "CZ75-AUTO", "TEC-9", "FIVE-SEVEN", "DESERT EAGLE", "R8 REVOLVER", //Pistols
+						"MAC-10", "MP9", "MP5-SD", "MP7", "UMP-45", "P90", "PP-BIZON",																		//SMGs
+						"GALIL-AR", "FAMAS", "AK-47", "M4A4", "M4A1-S", "SSG-08", "SG-553", "AUG", "AWP", "G3SG1", "SCAR-20",								//Rifles
+						"NOVA", "XM1014", "SAWED-OFF", "MAG-7", "M249", "NEGEV" };																			//Heavy
+static const char* current_item = NULL;
+
+if (ImGui::BeginCombo("Singular weapon", current_item))
+{
+	for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+	{
+		bool is_selected = (current_item == items[n]);
+		if (ImGui::Selectable(items[n], is_selected)
+			current_item = items[n];
+			if (is_selected)
+				ImGui::SetItemDefaultFocus();
+	}
+	ImGui::EndCombo();
+}
+
+//Group weapon dropdown menu
+const char* items[] = { "DEFAULT", "PISTOL", "SMG", "RIFLE", "SHOTGUN", "SNIPER" }; //Weapon groups
+static const char* current_item = NULL;
+
+if (ImGui::BeginCombo("Group weapon", current_item))
+{
+	for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+	{
+		bool is_selected = (current_item == items[n]);
+		if (ImGui::Selectable(items[n], is_selected)
+			current_item = items[n];
+			if (is_selected)
+				ImGui::SetItemDefaultFocus();
+	}
+	ImGui::EndCombo();
+}
 
 //Incomplete
-
