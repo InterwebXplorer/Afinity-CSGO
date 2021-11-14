@@ -11,7 +11,7 @@
 #include    "menu.hpp"
 #include    "options.hpp"
 #include    "render.hpp"
-//#include    "offsets.hpp" //always rename offsets to "offsets.hpp" on update
+//#include    "offsets.hpp" //Hazedumper is used, rename from csgo.hpp to offsets.hpp
 
 DWORD WINAPI OnDllAttach(LPVOID base)
 {
@@ -34,13 +34,6 @@ DWORD WINAPI OnDllAttach(LPVOID base)
         Menu::Get().Initialize();
 
         Hooks::Initialize();
-
-        /*
-	//Uninject hotkey
-        InputSys::Get().RegisterHotkey(VK_DELETE, [base]() {
-            g_Unload = true;
-            });
-        */
 
         //Menu toggle
         InputSys::GetKeyState().RegisterHotkey(VK_INSERT, [base]() {
