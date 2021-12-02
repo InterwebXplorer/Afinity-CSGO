@@ -1,7 +1,7 @@
 Afinity-CSGO [PUBLIC VERSION]
 Cheat software for counter strike global offensive [CS:GO]
 This Version is behind the current build and may be missing some features
-This cheat is a work in progress and unusable in its current state
+This cheat is a work in progress and is unusable in its current state
 
 About Afinity
 Afinity is a cheat development team that builds cheats for video games

@@ -3,7 +3,7 @@ Cheat software for Counter Strike Global offensive [CS:GO]
 <br>
 This Version is behind the current build and may be missing some features
 <br>
-This cheat is a work in progress and unusable in its current state
+This cheat is a work in progress and is unusable in its current state
 
 ### About Afinity
 Afinity is a cheat development team that builds cheats for video games
