@@ -1,46 +1,45 @@
 #include "interfaces.h"
 
-// used: logging
 #include "../Source/Resources/Utils/logging.h"
 
 bool I::Setup()
 {
-	Client =			Capture<IBaseClientDll>(CLIENT_DLL, XorStr("VClient"));
-	ClientEntityList =	Capture<IClientEntityList>(CLIENT_DLL, XorStr("VClientEntityList"));
-	Effects =			Capture<IEffects>(CLIENT_DLL, XorStr("IEffects"));
-	GameMovement =		Capture<IGameMovement>(CLIENT_DLL, XorStr("GameMovement"));
-	Prediction =		Capture<IPrediction>(CLIENT_DLL, XorStr("VClientPrediction"));
-	GameConsole =		Capture<IGameConsole>(CLIENT_DLL, XorStr("GameConsole"));
-	GameUI =			Capture<IGameUI>(CLIENT_DLL, XorStr("GameUI"));
-	Engine =			Capture<IEngineClient>(ENGINE_DLL, XorStr("VEngineClient"));
-	EngineVGui =		Capture<IEngineVGui>(ENGINE_DLL, XorStr("VEngineVGui"));
-	EngineTrace =		Capture<IEngineTrace>(ENGINE_DLL, XorStr("EngineTraceClient"));
-	EngineSound =		Capture<IEngineSound>(ENGINE_DLL, XorStr("IEngineSoundClient"));
-	NetworkContainer =	Capture<INetworkContainer>(ENGINE_DLL, XorStr("VEngineClientStringTable"));
-	GameEvent =			Capture<IGameEventManager2>(ENGINE_DLL, XorStr("GAMEEVENTSMANAGER002"));
-	RenderView =		Capture<IVRenderView>(ENGINE_DLL, XorStr("VEngineRenderView"));
-	DebugOverlay =		Capture<IVDebugOverlay>(ENGINE_DLL, XorStr("VDebugOverlay"));
-	EngineEffects =		Capture<IVEngineEffects>(ENGINE_DLL, XorStr("VEngineEffects"));
-	ModelInfo =			Capture<IVModelInfo>(ENGINE_DLL, XorStr("VModelInfoClient"));
-	ModelRender =		Capture<IVModelRender>(ENGINE_DLL, XorStr("VEngineModel"));
-	MDLCache =			Capture<IMDLCache>(DATACACHE_DLL, XorStr("MDLCache"));
-	StudioRender =		Capture<IStudioRender>(STUDIORENDER_DLL, XorStr("VStudioRender"));
-	ConVar =			Capture<IConVar>(VSTDLIB_DLL, XorStr("VEngineCvar"));
-	PhysicsProps =		Capture<IPhysicsSurfaceProps>(PHYSICS_DLL, XorStr("VPhysicsSurfaceProps"));
-	MaterialSystem =	Capture<IMaterialSystem>(MATERIALSYSTEM_DLL, XorStr("VMaterialSystem"));
-	Surface =			Capture<ISurface>(VGUI_DLL, XorStr("VGUI_Surface"));
-	Panel =				Capture<IVPanel>(VGUI2_DLL, XorStr("VGUI_Panel"));
-	InputSystem =		Capture<IInputSystem>(INPUTSYSTEM_DLL, XorStr("InputSystemVersion"));
-	Localize =			Capture<ILocalize>(LOCALIZE_DLL, XorStr("Localize_"));
-	MatchFramework =	Capture<IMatchFramework>(MATCHMAKING_DLL, XorStr("MATCHFRAMEWORK_"));
-	GameTypes =			Capture<IGameTypes>(MATCHMAKING_DLL, XorStr("VENGINE_GAMETYPES_VERSION"));
-	Server =			Capture<IServerGameDLL>(SERVER_DLL, XorStr("ServerGameDLL"));
+	Client = Capture<IBaseClientDll>(CLIENT_DLL, XorStr("VClient"));
+	ClientEntityList = Capture<IClientEntityList>(CLIENT_DLL, XorStr("VClientEntityList"));
+	Effects = Capture<IEffects>(CLIENT_DLL, XorStr("IEffects"));
+	GameMovement = Capture<IGameMovement>(CLIENT_DLL, XorStr("GameMovement"));
+	Prediction = Capture<IPrediction>(CLIENT_DLL, XorStr("VClientPrediction"));
+	GameConsole = Capture<IGameConsole>(CLIENT_DLL, XorStr("GameConsole"));
+	GameUI = Capture<IGameUI>(CLIENT_DLL, XorStr("GameUI"));
+	Engine = Capture<IEngineClient>(ENGINE_DLL, XorStr("VEngineClient"));
+	EngineVGui = Capture<IEngineVGui>(ENGINE_DLL, XorStr("VEngineVGui"));
+	EngineTrace = Capture<IEngineTrace>(ENGINE_DLL, XorStr("EngineTraceClient"));
+	EngineSound = Capture<IEngineSound>(ENGINE_DLL, XorStr("IEngineSoundClient"));
+	NetworkContainer = Capture<INetworkContainer>(ENGINE_DLL, XorStr("VEngineClientStringTable"));
+	GameEvent = Capture<IGameEventManager2>(ENGINE_DLL, XorStr("GAMEEVENTSMANAGER002"));
+	RenderView = Capture<IVRenderView>(ENGINE_DLL, XorStr("VEngineRenderView"));
+	DebugOverlay = Capture<IVDebugOverlay>(ENGINE_DLL, XorStr("VDebugOverlay"));
+	EngineEffects = Capture<IVEngineEffects>(ENGINE_DLL, XorStr("VEngineEffects"));
+	ModelInfo = Capture<IVModelInfo>(ENGINE_DLL, XorStr("VModelInfoClient"));
+	ModelRender = Capture<IVModelRender>(ENGINE_DLL, XorStr("VEngineModel"));
+	MDLCache = Capture<IMDLCache>(DATACACHE_DLL, XorStr("MDLCache"));
+	StudioRender = Capture<IStudioRender>(STUDIORENDER_DLL, XorStr("VStudioRender"));
+	ConVar = Capture<IConVar>(VSTDLIB_DLL, XorStr("VEngineCvar"));
+	PhysicsProps = Capture<IPhysicsSurfaceProps>(PHYSICS_DLL, XorStr("VPhysicsSurfaceProps"));
+	MaterialSystem = Capture<IMaterialSystem>(MATERIALSYSTEM_DLL, XorStr("VMaterialSystem"));
+	Surface = Capture<ISurface>(VGUI_DLL, XorStr("VGUI_Surface"));
+	Panel = Capture<IVPanel>(VGUI2_DLL, XorStr("VGUI_Panel"));
+	InputSystem = Capture<IInputSystem>(INPUTSYSTEM_DLL, XorStr("InputSystemVersion"));
+	Localize = Capture<ILocalize>(LOCALIZE_DLL, XorStr("Localize_"));
+	MatchFramework = Capture<IMatchFramework>(MATCHMAKING_DLL, XorStr("MATCHFRAMEWORK_"));
+	GameTypes = Capture<IGameTypes>(MATCHMAKING_DLL, XorStr("VENGINE_GAMETYPES_VERSION"));
+	Server = Capture<IServerGameDLL>(SERVER_DLL, XorStr("ServerGameDLL"));
 
 	SteamClient = Engine->GetSteamAPIContext()->pSteamClient;
 	if (SteamClient == nullptr)
 		return false;
 
-	SteamUser =	Engine->GetSteamAPIContext()->pSteamUser;
+	SteamUser = Engine->GetSteamAPIContext()->pSteamUser;
 	if (SteamUser == nullptr)
 		return false;
 
@@ -51,11 +50,11 @@ bool I::Setup()
 	if (SteamGameCoordinator == nullptr)
 		return false;
 
-	ClientMode = **reinterpret_cast<IClientModeShared***>(MEM::GetVFunc<std::uintptr_t>(Client, 10) + 0x5); // get it from CHLClient::HudProcessInput
+	ClientMode = **reinterpret_cast<IClientModeShared***>(MEM::GetVFunc<std::uintptr_t>(Client, 10) + 0x5);
 	if (ClientMode == nullptr)
 		return false;
 
-	Globals = **reinterpret_cast<IGlobalVarsBase***>(MEM::GetVFunc<std::uintptr_t>(Client, 11) + 0xA); // get it from CHLClient::HudUpdate @xref: "(time_int)", "(time_float)"
+	Globals = **reinterpret_cast<IGlobalVarsBase***>(MEM::GetVFunc<std::uintptr_t>(Client, 11) + 0xA);
 	if (Globals == nullptr)
 		return false;
 
@@ -63,7 +62,7 @@ bool I::Setup()
 	if (MemAlloc == nullptr)
 		return false;
 
-	DirectDevice = **reinterpret_cast<IDirect3DDevice9***>(MEM::FindPattern(SHADERPIDX9_DLL, XorStr("A1 ? ? ? ? 50 8B 08 FF 51 0C")) + 0x1); // @xref: "HandleLateCreation"
+	DirectDevice = **reinterpret_cast<IDirect3DDevice9***>(MEM::FindPattern(SHADERPIDX9_DLL, XorStr("A1 ? ? ? ? 50 8B 08 FF 51 0C")) + 0x1);
 	if (DirectDevice == nullptr)
 		return false;
 
@@ -71,11 +70,11 @@ bool I::Setup()
 	if (ViewRender == nullptr)
 		return false;
 
-	ViewRenderBeams = *reinterpret_cast<IViewRenderBeams**>(MEM::FindPattern(CLIENT_DLL, XorStr("B9 ? ? ? ? A1 ? ? ? ? FF 10 A1 ? ? ? ? B9")) + 0x1); // @xref: "r_drawbrushmodels"
+	ViewRenderBeams = *reinterpret_cast<IViewRenderBeams**>(MEM::FindPattern(CLIENT_DLL, XorStr("B9 ? ? ? ? A1 ? ? ? ? FF 10 A1 ? ? ? ? B9")) + 0x1);
 	if (ViewRenderBeams == nullptr)
 		return false;
 
-	Input =	*reinterpret_cast<IInput**>(MEM::FindPattern(CLIENT_DLL, XorStr("B9 ? ? ? ? F3 0F 11 04 24 FF 50 10")) + 0x1); // @note: or address of some indexed input function in chlclient class (like IN_ActivateMouse, IN_DeactivateMouse, IN_Accumulate, IN_ClearStates) + 0x1 (jmp to m_pInput)
+	Input = *reinterpret_cast<IInput**>(MEM::FindPattern(CLIENT_DLL, XorStr("B9 ? ? ? ? F3 0F 11 04 24 FF 50 10")) + 0x1);
 	if (Input == nullptr)
 		return false;
 
@@ -114,28 +113,23 @@ T* I::Capture(const char* szModule, std::string_view szInterface)
 
 	for (auto pRegister = GetRegisterList(); pRegister != nullptr; pRegister = pRegister->pNext)
 	{
-		// found needed interface
 		if ((std::string_view(pRegister->szName).compare(0U, szInterface.length(), szInterface) == 0 &&
-			// and it have digits after name
 			std::atoi(pRegister->szName + szInterface.length()) > 0) ||
-			// or given full interface with hardcoded digits
 			szInterface.compare(pRegister->szName) == 0)
 		{
-			// capture our interface
 			auto pInterface = pRegister->pCreateFn();
 
-			// log interface address
 			L::Print(fmt::format(XorStr("captured {} interface -> {:#08X}"), pRegister->szName, reinterpret_cast<std::uintptr_t>(pInterface)));
 
 			return static_cast<T*>(pInterface);
 		}
 	}
 
-	#ifdef DEBUG_CONSOLE
+#ifdef DEBUG_CONSOLE
 	L::PushConsoleColor(FOREGROUND_INTENSE_RED);
 	L::Print(fmt::format(XorStr("[error] failed to find interface \"{}\" in \"{}\""), szInterface, szModule));
 	L::PopConsoleColor();
-	#endif
+#endif
 
 	return nullptr;
 }

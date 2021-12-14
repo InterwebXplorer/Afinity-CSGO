@@ -1,95 +1,47 @@
 #pragma once
-// used: winapi, directx, fmt includes
-#include "../Source/common.h"
-// used: hook setup/destroy
+#include "Resources/common.h"
 #include "../Source/Resources/Utils/detourhook.h"
-// used: recvprop hook setup/destroy, recvproxydata
 #include "netvar.h"
-// used: baseclasses
 #include "interfaces.h"
 
 #ifndef FASTCALL
 #define FASTCALL __fastcall
 #endif
 
-/*
-* VTABLE INDEXES
-* functions indexes in their virtual tables
-*/
 namespace VTABLE
 {
-	// work with namespace cuz if use enum class need additional convert to int
 	enum
 	{
-		/* directx table */
 		RESET = 16,
 		ENDSCENE = 42,
 		RESETEX = 132,
-
-		/* client table */
 		FRAMESTAGENOTIFY = 37,
-
-		/* panel table */
 		PAINTTRAVERSE = 41,
-
-		/* clientmode table */
 		OVERRIDEVIEW = 18,
 		OVERRIDEMOUSEINPUT = 23,
 		CREATEMOVE = 24,
 		GETVIEWMODELFOV = 35,
 		DOPOSTSCREENEFFECTS = 44,
-
-		/* modelrender table */
 		DRAWMODELEXECUTE = 21,
-
-		/* studiorender table */
 		DRAWMODEL = 29,
-
-		/* viewrender table */
 		RENDERSMOKEOVERLAY = 41,
-
-		/* engine table */
 		ISCONNECTED = 27,
-
-		/* bsp query table */
 		LISTLEAVESINBOX = 6,
-
-		/* prediction table */
 		RUNCOMMAND = 19,
-
-		/* steamgamecoordinator table */
 		SENDMESSAGE = 0,
 		RETRIEVEMESSAGE = 2,
-
-		/* sound table */
 		EMITSOUND = 5,
-
-		/* materialsystem table */
 		OVERRIDECONFIG = 21,
-
-		/* renderview table */
 		SCENEEND = 9,
-
-		/* surface table */
 		LOCKCURSOR = 67,
 		PLAYSOUND = 82,
-
-		/* gameevent table */
 		FIREEVENT = 9,
-
-		/* convar table */
 		GETBOOL = 13,
-
-		/* netchannel table */
 		SENDNETMSG = 40,
 		SENDDATAGRAM = 46
 	};
 }
 
-/*
- * DETOURS
- * detour hook managers
- */
 namespace DTR
 {
 	inline CDetourHook Reset;
@@ -115,18 +67,11 @@ namespace DTR
 	inline CDetourHook SvCheatsGetBool;
 }
 
-/*
- * HOOKS
- * swap functions with given pointers
- */
 namespace H
 {
-	// Get
 	bool	Setup();
 	void	Restore();
 
-	// Handlers
-	/* [type][call]		hk[name] (args...) */
 	long	D3DAPI		hkReset(IDirect3DDevice9* pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters);
 	long	D3DAPI		hkEndScene(IDirect3DDevice9* pDevice);
 	bool	FASTCALL	hkCreateMove(IClientModeShared* thisptr, int edx, float flInputSampleTime, CUserCmd* pCmd);
@@ -151,25 +96,15 @@ namespace H
 	long	CALLBACK	hkWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 }
 
-/*
- * RECV VAR PROXY MANAGERS
- * proxy property hook managers
- */
 namespace RVP
 {
 	inline std::shared_ptr<CRecvPropHook> SmokeEffectTickBegin;
 }
 
-/*
- * PROXIES
- * networkable property proxy swap functions
- */
 namespace P
 {
-	// Get
 	bool	Setup();
 	void	Restore();
 
-	// Handlers
 	void	SmokeEffectTickBegin(const CRecvProxyData* pData, void* pStruct, void* pOut);
 }

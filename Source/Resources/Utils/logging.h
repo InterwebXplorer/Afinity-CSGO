@@ -1,9 +1,6 @@
 #pragma once
-// used: std::ofstream
 #include <fstream>
-
-// used: winapi, fmt includes
-#include "../Source/common.h"
+#include "../common.h"
 
 #pragma region logging_console_colors
 #define FOREGROUND_WHITE		    (FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN)
