@@ -2,7 +2,7 @@
 
 #include "Resources/common.h"
 #include "global.h"
-#include "variables.h"
+#include "options.h"
 #include "utils.h"
 #include "Resources/Utils/logging.h"
 #include "Resources/Utils/math.h"

@@ -2,7 +2,7 @@
 
 #include "../Source/hooks.h"
 #include "../global.h"
-#include "variables.h"
+#include "options.h"
 #include "../Source/Resources/Utils/inputsystem.h"
 #include "../Source/Resources/Utils/logging.h"
 #include "../Source/Resources/Utils/draw.h"
@@ -24,7 +24,7 @@
 
 static constexpr std::array<const char*, 3U> arrSmokeMaterials =
 {
-	"particle/vistasmokev1/vistasmokev1_fire",
+	//"particle/vistasmokev1/vistasmokev1_fire", //Add back later
 	"particle/vistasmokev1/vistasmokev1_smokegrenade",
 	"particle/vistasmokev1/vistasmokev1_emods",
 	"particle/vistasmokev1/vistasmokev1_emods_impactdust",

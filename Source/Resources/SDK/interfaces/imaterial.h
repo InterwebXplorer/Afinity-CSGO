@@ -2,7 +2,7 @@
 // used: keyvalues
 #include "../datatypes/keyvalues.h"
 // used: call virtual function
-#include "../../utilities/memory.h"
+#include "../Source/Resources/Utils/memory.h"
 
 using VertexFormat_t = std::uint64_t;
 

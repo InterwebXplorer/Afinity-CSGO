@@ -3,7 +3,7 @@
 #include <array>
 
 // used: winapi includes
-#include "../Source/common.h"
+#include "../common.h"
 
 enum class EKeyState : int
 {

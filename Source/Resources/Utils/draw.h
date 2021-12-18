@@ -11,7 +11,7 @@
 #include <any>
 
 // used: winapi, directx, imgui, fmt includes
-#include "../Source/common.h"
+#include "../common.h"
 // used: color
 #include "../sdk/datatypes/color.h"
 // used: vector

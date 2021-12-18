@@ -1,6 +1,6 @@
 #pragma once
 // used: winapi includes
-#include "../Source/common.h"
+#include "../common.h"
 // used: color
 #include "datatypes/color.h"
 // used: utlvector
