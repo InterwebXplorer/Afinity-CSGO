@@ -6,6 +6,7 @@
       ],
       "name": "x86-Debug",
       "includePath": [
+        "C:\\Program Files (x86)\\Microsoft DirectX SDK (June 2010)\\Include",
         "${env.INCLUDE}",
         "${workspaceRoot}\\**"
       ],

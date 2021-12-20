@@ -13,7 +13,8 @@
 #include <windows.h>
 
 #include <d3d9.h>
-#include <d3dx9.h> //wont locate yay
+#include "Utils/d3dx9.h" //Temp fix
+//#include <d3dx9.h> //wont locate yay
 
 //https://github.com/ocornut/imgui
 #include "../Source/Resources/Imgui/imgui.h"

@@ -2,3 +2,18 @@
 #pragma once
 #include "config.h"
 
+enum WeaponGroups
+{
+	KNIFE,
+	PISTOL,
+	RIFLE,
+	SHOTGUN,
+	SMG,
+	HEAVY,
+	SCOUT,
+	AUTO,
+	AWP,
+	UNKNOWN
+};
+
+//FUCK

@@ -845,5 +845,8 @@
     <ClInclude Include="source\resources\utils\xorstr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Resources\Utils\d3dx9.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
