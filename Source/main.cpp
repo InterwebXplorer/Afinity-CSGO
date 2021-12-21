@@ -17,7 +17,7 @@ DWORD WINAPI OnDllAttach(LPVOID lpParameter)
 	try
 	{
 		while (GetModuleHandle(SERVERBROWSER_DLL) == nullptr)
-			std::this_thread::sleep_for(200ms);
+			std::this_thread::sleep_for(1000ms);
 
 		#ifdef DEBUG_CONSOLE
 		if (!L::Attach(XorStr("Afinity developer-mode")))

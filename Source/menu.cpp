@@ -88,7 +88,7 @@ ImVec2 get_sidebar_size()
     return ImVec2{ size_w, ImMax(325.0f, size_h) };
 }
 
-        void RenderLegitTab() //Legit tab
+void RenderLegitTab() //Legit tab
 {
     static char* legit_tab_names[] = { "GENERAL", "TRIGGERBOT", "RCS" };
     static int   active_legit_tab = 0;
@@ -104,7 +104,7 @@ ImVec2 get_sidebar_size()
     ImGui::PopStyleVar();
     ImGui::BeginGroupBox("##body_content");
     {
-        if (active_legit_tab == 0) {               //General
+        if (active_legit_tab == 0) { //General
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
             ImGui::Columns(4, nullptr, false);
             ImGui::SetColumnOffset(1, group_w / 3.0f);
@@ -115,19 +115,7 @@ ImVec2 get_sidebar_size()
             //ImGui::Checkbox("", g_Options.);
 
             ImGui::Checkbox("Enable", g_Options.legit_enabled); //Add on key
-            ImGui::Checkbox("FriendlyFire", g_Options.legit_friendlyfire);
-            ImGui::Checkbox("TeamCheck", g_Options.legit_teamcheck);
-            ImGui::Checkbox("SmokeCheck", g_Options.legit_smokecheck);
-            ImGui::Checkbox("MolotovCheck", g_Options.legit_molotovcheck);
-            ImGui::Checkbox("FlashCheck", g_Options.legit_flashcheck);
-            ImGui::Checkbox("JumpCheck", g_Options.legit_jumpcheck);
-            ImGui::Checkbox("AutoShoot", g_Options.legit_autoshoot);
-            ImGui::Checkbox("AutoScope", g_Options.legit_autoscope);
-            ImGui::Checkbox("AutoStop", g_Options.legit_autostop);
-            ImGui::Checkbox("Resolver", g_Options.legit_resolver);
-            ImGui::Checkbox("DrawFOV", g_Options.legit_drawfov);
 
-            //Hitbox selection dropdown menu
             const char* items[] = { "Head", "Chest", "Stomach", "Pelvis", "Arms", "Legs", "Feet" }
             static const char* current_item = NULL;
 
@@ -136,15 +124,14 @@ ImVec2 get_sidebar_size()
                 for (int n = 0; n < IM_ARRAYSIZE(items); n++)
                 {
                     bool is_selected = (current_item == items[n])
-                    if (ImGui::Selectable(items[n], is_selected)
-                        current_item = items[n];
-                        if (is_selected)
-                            ImGui::SetItemDefaultFocus();
+                        if (ImGui::Selectable(items[n], is_selected)
+                            current_item = items[n];
+                            if (is_selected)
+                                ImGui::SetItemDefaultFocus();
                 }
                 ImGui::EndCombo();
             }
 
-            //Priority selection dropdown menu
             const char* items[] = { "Closest", "Body", "Head", "MostDamage" }
             static const char* current_item = NULL;
 
@@ -161,22 +148,37 @@ ImVec2 get_sidebar_size()
                     ImGui::EndCombo();
                 }
 
-            //FOVs n shit
             ImGui::SliderInt("FOV", g_Options.legit_fov, 0, 90);
-            ImGui::SliderInt("DistantFOV", g_Options.legit_distantfov, 0, 30);
+            ImGui::SliderInt("DistantFOV", g_Options.legit_distantfov, 0, 30); 
             ImGui::SliderInt("HitChance", g_Options.legit_hitchance, 0, 100);
             ImGui::SliderInt("InAirHitChance", g_Options.legit_inairhitchance, 0, 100);
-            ImGui::SliderInt("MissShots", g_Options.legit_missshots, 0, 8);
-            ImGui::SliderInt("Strength", g_Options.legit_strength, 0, 100);
             ImGui::SliderInt("MinDamage", g_Options.legit_mindamage, 0, 100);
-            ImGui::SliderInt("BackTrack", g_Options.legit_backtrack, 0, 200); //ms
             ImGui::SliderInt("SwitchTargetSpeed", g_Options.legit_switchtargetspeed, 0, 100);
-            ImGui::SliderInt("Speed", g_Options.legit_speed, 0, 100);
             ImGui::SliderInt("Reaction Time", g_Options.legit_reactiontime, 0, 1000);
-            ImGui::SliderInt("Smooth", g_Options.legit_smooth   , 0, 100);
+            ImGui::SliderInt("MissShots", g_Options.legit_missshots, 0, 8);
+            ImGui::Checkbox("FriendlyFire", g_Options.legit_friendlyfire);
+            ImGui::Checkbox("SmokeCheck", g_Options.legit_smokecheck);
+            ImGui::Checkbox("MolotovCheck", g_Options.legit_molotovcheck);
+            ImGui::Checkbox("FlashCheck", g_Options.legit_flashcheck);
+            ImGui::Checkbox("JumpCheck", g_Options.legit_jumpcheck);
+            ImGui::SliderInt("Strength", g_Options.legit_strength, 0, 100);
+            ImGui::Checkbox("AutoShoot", g_Options.legit_autoshoot);
+            ImGui::Checkbox("AutoScope", g_Options.legit_autoscope);
+            ImGui::Checkbox("AutoStop", g_Options.legit_autostop);
+            ImGui::Checkbox("Resolver", g_Options.legit_resolver);
+            ImGui::SliderInt("Smooth", g_Options.legit_smooth, 0, 100);
+            ImGui::Checkbox("EnableBacktrack", g_Options.legit_enablebacktrack);
+            ImGui::SliderInt("BacktrackAmmount", g_Options.legit_backtrackammount, 0, 200); //ms
         }
-        else if (active_legit_tab == 1) {           //Triggerbot
+        else if (active_legit_tab == 1) { //Triggerbot
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
+            ImGui::Columns(4, nullptr, false);
+            ImGui::SetColumnOffset(1, group_w / 3.0f);
+            ImGui::SetColumnOffset(2, 2 * group_w / 3.0f);
+            ImGui::SetColumnOffset(3, group_w);
+
             ImGui::Checkbox("Enable", g_Options.trigger_enable);
+
             const char* items[] = { "Head", "Chest", "Stomach", "Pelvis", "Arms", "Legs", "Feet" }
             static const char* current_item = NULL;
 
@@ -192,6 +194,7 @@ ImVec2 get_sidebar_size()
                 }
                 ImGui::EndCombo();
             }
+
             ImGui::Checkbox("FriendlyFire", g_Options.trigger_friendlyfire);
             ImGui::Checkbox("TeamCheck", g_Options.trigger_teamcheck);
             ImGui::Checkbox("SmokeCheck", g_Options.trigger_smokecheck);
@@ -203,21 +206,69 @@ ImVec2 get_sidebar_size()
             ImGui::SliderInt("MinDamage", g_Options.trigger_mindamage, 0, 100);
             ImGui::SliderInt("ReactionTime", g_Options.trigger_rectiontime, 0, 1000);
         }
-        else if (active_legit_tab == 2) {           //RCS(Recoil Control System)
+        else if (active_legit_tab == 2) { //RCS(Recoil Control System)
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
+            ImGui::Columns(4, nullptr, false);
+            ImGui::SetColumnOffset(1, group_w / 3.0f);
+            ImGui::SetColumnOffset(2, 2 * group_w / 3.0f);
+            ImGui::SetColumnOffset(3, group_w);
+
             ImGui::Checkbox("Enable", g_Options.rcs_enable);
-            //Dropdown (Method)
+
+            const char* items[] = { "Methyl", "Ethyl", "Propyl" } //Making three methods will brainfuck me
+            static const char* current_item = NULL;
+
+            if (ImGui::BeginCombo("Method", current_item))
+            {
+                for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+                {
+                    bool is_selected = (current_item == items[n])
+                        if (ImGui::Selectable(items[n], is_selected)
+                            current_item = items[n];
+                            if (is_selected)
+                                ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+
             ImGui::SliderInt("X-Axis", g_Options.rcs_xaxis, 0, 100);
             ImGui::SliderInt("Y-Axis", g_Options.rcs_yaxis, 0, 100);
         }
+        ImGui::EndGroupBox();
+
+        ImGui::Columns(1, nullptr, false);
+        ImGui::PopStyleVar();
+        }
     }
+    ImGui::EndGroupBox();
+}
 
+void RenderRageTab() //Rage tab
+{
+    static char* rage_tab_names[] = { "General", "", "" };
+    static int   active_rage_tab = 0;
 
+    bool placeholder_true = true;
 
-//RAGE
+    auto& style = ImGui::GetStyle();
+    float group_w = ImGui::GetCurrentWindow()->Size.x - style.WindowPadding.x * 2;
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+    {
+        render_tabs(rage_tab_names, active_rage_tab, group_w / _countof(rage_tab_names), 25.0f, true);
+    }
+    ImGui::PopStyleVar();
+    ImGui::BeginGroupBox("##body_content");
+    {
+        if (active_rage_tab == 0) { //General
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
+            ImGui::Columns(4, nullptr, false);
+            ImGui::SetColumnOffset(1, group_w / 3.0f);
+            ImGui::SetColumnOffset(2, 2 * group_w / 3.0f);
+            ImGui::SetColumnOffset(3, group_w);
+
 
 //VISUALS
 
 //SKINCHANGER
 
 //MISC
-
