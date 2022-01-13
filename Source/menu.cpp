@@ -10,7 +10,7 @@
 #include "Resources/Utils/logging.h"
 
 //Imgui crap
-#define IMGUI_DEFINE_MATH_OPERATORS
+#define IMGUI_MATH_OPERATORS
 #include "Resources/Imgui/imgui_stdlib.h"
 #include "Resources/Imgui/imgui_internal.h"
 #include "Resources/Imgui/Impl/imgui_impl_dx9.h"
@@ -24,7 +24,7 @@ skinchanger.h
 static char* sidebar_tabs[] = {
 	"LEGIT",
 	"RAGE",
-	"VISUALS",
+	"VISUAL",
 	"SHRUG",
 	"MISC"
 };
@@ -35,7 +35,7 @@ constexpr static float get_sidebar_item_height() { return  80.0f; }
 enum {
 	TAB_LEGIT,
 	TAB_RAGE,
-	TAB_VISUALS,
+	TAB_VISUAL,
 	TAB_SHRUG,
 	TAB_MISC
 };
@@ -106,7 +106,7 @@ void RenderLegitTab() //Legit tab
     {
         if (active_legit_tab == 0) { //General
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
-            ImGui::Columns(4, nullptr, false);
+            ImGui::Columns(3, nullptr, false);
             ImGui::SetColumnOffset(1, group_w / 3.0f);
             ImGui::SetColumnOffset(2, 2 * group_w / 3.0f);
             ImGui::SetColumnOffset(3, group_w);
@@ -172,7 +172,7 @@ void RenderLegitTab() //Legit tab
         }
         else if (active_legit_tab == 1) { //Triggerbot
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
-            ImGui::Columns(4, nullptr, false);
+            ImGui::Columns(3, nullptr, false);
             ImGui::SetColumnOffset(1, group_w / 3.0f);
             ImGui::SetColumnOffset(2, 2 * group_w / 3.0f);
             ImGui::SetColumnOffset(3, group_w);
@@ -208,7 +208,7 @@ void RenderLegitTab() //Legit tab
         }
         else if (active_legit_tab == 2) { //RCS(Recoil Control System)
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
-            ImGui::Columns(4, nullptr, false);
+            ImGui::Columns(3, nullptr, false);
             ImGui::SetColumnOffset(1, group_w / 3.0f);
             ImGui::SetColumnOffset(2, 2 * group_w / 3.0f);
             ImGui::SetColumnOffset(3, group_w);
@@ -261,14 +261,413 @@ void RenderRageTab() //Rage tab
     {
         if (active_rage_tab == 0) { //General
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
-            ImGui::Columns(4, nullptr, false);
+            ImGui::Columns(3, nullptr, false);
+            ImGui::SetColumnOffset(1, group_w / 3.0f);
+            ImGui::SetColumnOffset(2, 2 * group_w / 3.0f);
+            ImGui::SetColumnOffset(3, group_w);
+        }
+        else if (active_rage_tab == 1) {
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
+            ImGui::Columns(3, nullptr, false);
+            ImGui::SetColumnOffset(1, group_w / 3.0f);
+            ImGui::SetColumnOffset(2, 2 * group_w / 3.0f);
+            ImGui::SetColumnOffset(3, group_w);
+        }
+        else if (active_rage_tab == 2) {
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
+            ImGui::Columns(3, nullptr, false);
+            ImGui::SetColumnOffset(1, group_w / 3.0f);
+            ImGui::SetColumnOffset(2, 2 * group_w / 3.0f);
+            ImGui::SetColumnOffset(3, group_w);
+        }
+        ImGui::EndGroupBox();
+
+        ImGui::Columns(1, nullptr, false);
+        ImGui::PopStyleVar();
+    }
+}
+ImGui::EndGroupBox();
+}
+
+void RenderAntiaimTab() //Antiaim tab
+{
+    static char* antiaim_tab_names[] = { "Legit", "Rage", "Scripting" };
+    static int   active_antiaim_tab = 0;
+
+    bool placeholder_true = true;
+
+    auto& style = ImGui::GetStyle();
+    float group_w = ImGui::GetCurrentWindow()->Size.x - style.WindowPadding.x * 2;
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+    {
+        render_tabs(antiaim_tab_names, active_antiaim_tab, group_w / _countof(antiaim_tab_names), 25.0f, true);
+    }
+    ImGui::PopStyleVar();
+    ImGui::BeginGroupBox("##body_content");
+    {
+        if (active_antiaim_tab == 0) { //Legit AA
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
+            ImGui::Columns(3, nullptr, false);
             ImGui::SetColumnOffset(1, group_w / 3.0f);
             ImGui::SetColumnOffset(2, 2 * group_w / 3.0f);
             ImGui::SetColumnOffset(3, group_w);
 
+            ImGui::Checkbox("Enable", g_Options.);
+            ImGui::SliderInt("Desync", g_Options., 0, 60);
+            ImGui::SliderInt("Jitter", g_Options., 0, 100);
+            ImGui::SliderInt("Jitter Range", g_Options., -180, 180);
+        }
+        else if (active_antiaim_tab == 1) { //Rage AA
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
+            ImGui::Columns(3, nullptr, false);
+            ImGui::SetColumnOffset(1, group_w / 3.0f);
+            ImGui::SetColumnOffset(2, 2 * group_w / 3.0f);
+            ImGui::SetColumnOffset(3, group_w);
 
-//VISUALS
+            ImGui::Checkbox("Enable", g_Options.);
+            const char* items[] = { "Low-Delta", "Extended", "Random", "Spinbot" }
+            static const char* current_item = NULL;
 
-//SKINCHANGER
+            if (ImGui::BeginCombo("Preset", current_item))
+            {
+                for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+                {
+                    bool is_selected = (current_item == items[n])
+                        if (ImGui::Selectable(items[n], is_selected)
+                            current_item = items[n];
+                            if (is_selected)
+                                ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::SliderInt("Y-Axis", g_Options., -90, 90);
+            ImGui::SliderInt("Z-Axis", g_Options., -180, 180);
+            const char* items[] = { "Static", "Spin" }
+            static const char* current_item = NULL;
 
-//MISC
+                if (ImGui::BeginCombo("Z-Axis mode", current_item))
+                {
+                    for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+                    {
+                        bool is_selected = (current_item == items[n])
+                            if (ImGui::Selectable(items[n], is_selected)
+                                current_item = items[n];
+                                if (is_selected)
+                                    ImGui::SetItemDefaultFocus();
+                    }
+                    ImGui::EndCombo();
+                }
+            ImGui::Checkbox("Desync", g_Options.);
+            const char* items[] = { "Left", "Right" }
+            static const char* current_item = NULL;
+
+                if (ImGui::BeginCombo("Desync Angle", current_item))
+                {
+                    for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+                    {
+                        bool is_selected = (current_item == items[n])
+                            if (ImGui::Selectable(items[n], is_selected)
+                                current_item = items[n];
+                                if (is_selected)
+                                    ImGui::SetItemDefaultFocus();
+                    }
+                    ImGui::EndCombo();
+                }
+            ImGui::SliderInt("Ammount", g_Options., 0, 60);
+            ImGui::Checkbox("Invert", g_Options.); //Add on key
+            ImGui::SliderInt("Jitter", g_Options., 0, 100);
+            ImGui::SliderInt("Jitter Range", g_Options., -180, 180);
+            ImGui::Checkbox("Fake Lag", g_Options.);
+            ImGui::SliderInt("Min", g_Options., 0, 12 );
+            ImGui::SliderInt("Max", g_Options., 0, 12 );
+            const char* items[] = { "Dormant", "Velocity-Change", "In-Air", "Peek" }
+            static const char* current_item = NULL;
+
+            if (ImGui::BeginCombo("Triggers", current_item))
+            {
+                for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+                {
+                    bool is_selected = (current_item == items[n])
+                        if (ImGui::Selectable(items[n], is_selected)
+                            current_item = items[n];
+                            if (is_selected)
+                                ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+        }
+        else if (active_antiaim_tab == 2) { //Scripting
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
+            ImGui::Columns(3, nullptr, false);
+            ImGui::SetColumnOffset(1, group_w / 3.0f);
+            ImGui::SetColumnOffset(2, 2 * group_w / 3.0f);
+            ImGui::SetColumnOffset(3, group_w);
+
+            ImGui::Text("Unavailable");
+        } 
+        ImGui::EndGroupBox();
+
+        ImGui::Columns(1, nullptr, false);
+        ImGui::PopStyleVar();
+    }
+}
+ImGui::EndGroupBox();
+}
+
+void RenderVisualTab() //Visual tab
+{
+    static char* visual_tab_names[] = { "Player", "Team", "Enemy", "World" };
+    static int   active_visual_tab = 0;
+
+    bool placeholder_true = true;
+
+    auto& style = ImGui::GetStyle();
+    float group_w = ImGui::GetCurrentWindow()->Size.x - style.WindowPadding.x * 2;
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+    {
+        render_tabs(visual_tab_names, active_visual_tab, group_w / _countof(visual_tab_names), 25.0f, true);
+    }
+    ImGui::PopStyleVar();
+    ImGui::BeginGroupBox("##body_content");
+    {
+        if (active_visual_tab == 0) { //Player
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
+            ImGui::Columns(4, nullptr, false);
+            ImGui::SetColumnOffset(1, group_w / 3.0f);
+            ImGui::SetColumnOffset(2, 2 * group_w / 3.0f);
+            ImGui::SetColumnOffset(3, 3 * group_w / 3.0f);
+            ImGui::SetColumnOffset(4, group_w);
+        }
+        else if (active_visual_tab == 1) { //Team
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
+            ImGui::Columns(4, nullptr, false);
+            ImGui::SetColumnOffset(1, group_w / 3.0f);
+            ImGui::SetColumnOffset(2, 2 * group_w / 3.0f);
+            ImGui::SetColumnOffset(3, 3 * group_w / 3.0f);
+            ImGui::SetColumnOffset(4, group_w);
+        }
+        else if (active_visual_tab == 2) { //Enemy
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
+            ImGui::Columns(4, nullptr, false);
+            ImGui::SetColumnOffset(1, group_w / 3.0f);
+            ImGui::SetColumnOffset(2, 2 * group_w / 3.0f);
+            ImGui::SetColumnOffset(3, 3 * group_w / 3.0f);
+            ImGui::SetColumnOffset(4, group_w);
+        }
+        else if (active_visual_tab == 3) { //World
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
+            ImGui::Columns(4, nullptr, false);
+            ImGui::SetColumnOffset(1, group_w / 3.0f);
+            ImGui::SetColumnOffset(2, 2 * group_w / 3.0f);
+            ImGui::SetColumnOffset(3, 3 * group_w / 3.0f);
+            ImGui::SetColumnOffset(4, group_w);
+        }
+        ImGui::EndGroupBox();
+
+        ImGui::Columns(1, nullptr, false);
+        ImGui::PopStyleVar();
+    }
+}
+ImGui::EndGroupBox();
+}
+
+void RenderShrugTab() //Shrug tab
+{
+    static char* shrug_tab_names[] = { "InventoryChanger", "ModelChanger" };
+    static int   active_shrug_tab = 0;
+
+    bool placeholder_true = true;
+
+    auto& style = ImGui::GetStyle();
+    float group_w = ImGui::GetCurrentWindow()->Size.x - style.WindowPadding.x * 2;
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+    {
+        render_tabs(shrug_tab_names, active_shrug_tab, group_w / _countof(shrug_tab_names), 25.0f, true);
+    }
+    ImGui::PopStyleVar();
+    ImGui::BeginGroupBox("##body_content");
+    {
+        if (active_shrug_tab == 0) { //InventoryChanger
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
+            ImGui::Columns(2, nullptr, false);
+            ImGui::SetColumnOffset(1, group_w / 3.0f);
+            ImGui::SetColumnOffset(2, group_w);
+        }
+        else if (active_shrug_tab == 1) { //ModelChanger
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
+            ImGui::Columns(2, nullptr, false);
+            ImGui::SetColumnOffset(1, group_w / 3.0f);
+            ImGui::SetColumnOffset(2, group_w);
+        }
+        ImGui::EndGroupBox();
+
+        ImGui::Columns(1, nullptr, false);
+        ImGui::PopStyleVar();
+    }
+}
+ImGui::EndGroupBox();
+}
+
+void RenderMiscTab() //Misc tab
+{
+    static char* misc_tab_names[] = { "General", "Players", "Scripting", "Console" };
+    static int   active_misc_tab = 0;
+
+    bool placeholder_true = true;
+
+    auto& style = ImGui::GetStyle();
+    float group_w = ImGui::GetCurrentWindow()->Size.x - style.WindowPadding.x * 2;
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+    {
+        render_tabs(misc_tab_names, active_misc_tab, group_w / _countof(misc_tab_names), 25.0f, true);
+    }
+    ImGui::PopStyleVar();
+    ImGui::BeginGroupBox("##body_content");
+    {
+        if (active_misc_tab == 0) { //General
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
+            ImGui::Columns(4, nullptr, false);
+            ImGui::SetColumnOffset(1, group_w / 3.0f);
+            ImGui::SetColumnOffset(2, 2 * group_w / 3.0f);
+            ImGui::SetColumnOffset(3, 3 * group_w / 3.0f);
+            ImGui::SetColumnOffset(4, group_w);
+
+            ImGui::Checkbox("Name-Steal", g_Options.);
+            ImGui::Checkbox("Slide-Walk", g_Options.);
+            ImGui::Checkbox("Bhop", g_Options.);
+            ImGui::SliderInt("Miss Ratio", g_Options., 0, 10);
+            const char* items[] = { "Legit", "Rage", "Directional" }
+            static const char* current_item = NULL;
+
+            if (ImGui::BeginCombo("Method", current_item))
+            {
+                for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+                {
+                    bool is_selected = (current_item == items[n])
+                        if (ImGui::Selectable(items[n], is_selected)
+                            current_item = items[n];
+                            if (is_selected)
+                                ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::Checkbox("Auto-Accept", g_Options.);
+            ImGui::Checkbox("Clantag", g_Options.);
+            const char* items[] = { "Aimwhere", "Notap", "Afinity", "Gamefence" }
+            static const char* current_item = NULL;
+
+                if (ImGui::BeginCombo("Tag", current_item))
+                {
+                    for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+                    {
+                        bool is_selected = (current_item == items[n])
+                            if (ImGui::Selectable(items[n], is_selected)
+                                current_item = items[n];
+                                if (is_selected)
+                                    ImGui::SetItemDefaultFocus();
+                    }
+                    ImGui::EndCombo();
+                }
+            ImGui::Checkbox("Auto-Fire", g_Options.);
+            ImGui::Checkbox("Infinite-Duck", g_Options.);
+            ImGui::Checkbox("Quick-Stop", g_Options.);
+            ImGui::Checkbox("Buy-Bot", g_Options.);
+            const char* items[] = { "Auto", "Scout", "Awp", "Ak/M4" }
+            static const char* current_item = NULL;
+
+                if (ImGui::BeginCombo("Primary", current_item))
+                {
+                    for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+                    {
+                        bool is_selected = (current_item == items[n])
+                            if (ImGui::Selectable(items[n], is_selected)
+                                current_item = items[n];
+                                if (is_selected)
+                                    ImGui::SetItemDefaultFocus();
+                    }
+                    ImGui::EndCombo();
+                }
+            const char* items[] = { "Deagle/R8", "Dual", "P250", "Five7/Tec9" }
+            static const char* current_item = NULL;
+
+                if (ImGui::BeginCombo("Secondary", current_item))
+                {
+                    for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+                    {
+                        bool is_selected = (current_item == items[n])
+                            if (ImGui::Selectable(items[n], is_selected)
+                                current_item = items[n];
+                                if (is_selected)
+                                    ImGui::SetItemDefaultFocus();
+                    }
+                    ImGui::EndCombo();
+                }
+            const char* items[] = { "Smoke", "Grenade", "Molotov", "Flashbang", "Decoy" }
+            static const char* current_item = NULL;
+
+                if (ImGui::BeginCombo("Util", current_item))
+                {
+                    for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+                    {
+                        bool is_selected = (current_item == items[n])
+                            if (ImGui::Selectable(items[n], is_selected)
+                                current_item = items[n];
+                                if (is_selected)
+                                    ImGui::SetItemDefaultFocus();
+                    }
+                    ImGui::EndCombo();
+                }
+            const char* items[] = { "Kevlar", "Helmet", "Diffuser", "Taser" }
+            static const char* current_item = NULL;
+
+                if (ImGui::BeginCombo("Equipment", current_item))
+                {
+                    for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+                    {
+                        bool is_selected = (current_item == items[n])
+                            if (ImGui::Selectable(items[n], is_selected)
+                                current_item = items[n];
+                                if (is_selected)
+                                    ImGui::SetItemDefaultFocus();
+                    }
+                    ImGui::EndCombo();
+                }
+        }
+        else if (active_misc_tab == 1) { //Players
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
+            ImGui::Columns(4, nullptr, false);
+            ImGui::SetColumnOffset(1, group_w / 3.0f);
+            ImGui::SetColumnOffset(2, 2 * group_w / 3.0f);
+            ImGui::SetColumnOffset(3, 3 * group_w / 3.0f);
+            ImGui::SetColumnOffset(4, group_w);
+
+            ImGui::Text("Unavailable");
+        }
+        else if (active_misc_tab == 2) { //Scripting
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
+            ImGui::Columns(4, nullptr, false);
+            ImGui::SetColumnOffset(1, group_w / 3.0f);
+            ImGui::SetColumnOffset(2, 2 * group_w / 3.0f);
+            ImGui::SetColumnOffset(3, 3 * group_w / 3.0f);
+            ImGui::SetColumnOffset(4, group_w);
+
+            ImGui::Text("Unavailable");
+        }
+        else if (active_misc_tab == 3) { //Console
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ style.WindowPadding.x, style.ItemSpacing.y });
+            ImGui::Columns(4, nullptr, false);
+            ImGui::SetColumnOffset(1, group_w / 3.0f);
+            ImGui::SetColumnOffset(2, 2 * group_w / 3.0f);
+            ImGui::SetColumnOffset(3, 3 * group_w / 3.0f);
+            ImGui::SetColumnOffset(4, group_w);
+
+            ImGui::Text("Unavailable");
+        }
+        ImGui::EndGroupBox();
+
+        ImGui::Columns(1, nullptr, false);
+        ImGui::PopStyleVar();
+    }
+}
+ImGui::EndGroupBox();
+}
