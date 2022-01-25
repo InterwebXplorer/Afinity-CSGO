@@ -28,7 +28,7 @@ To build the cheat into a dll open the solution file (Afinity-CSGO.sln)
 and change the configuration to release(x86) then press start
 <br>
 <br>
-To load the cheat use either the provided afinity loader or any
+To load the cheat use either the official afinity loader or any
 <br>
 third party loader using load library method
 <br>
