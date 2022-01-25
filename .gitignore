@@ -1,1 +1,9 @@
+/.vs
 .vs
+CppProperties.json
+Afinity-CSGO.vcxproj.user
+/Debug
+Debug
+TODO.md
+logs
+*.log

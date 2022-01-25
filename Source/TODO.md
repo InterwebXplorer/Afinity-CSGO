@@ -1,1 +1,0 @@
-ADD vtable array of keys (windows one probs wont include)
