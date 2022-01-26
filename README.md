@@ -17,7 +17,7 @@ Link: https://discord.gg/RPKGaVnvhz
 
 ### Features
 <details>
-<summary>Features of the cheat are as follows</summary>
+<summary>Features of the cheat are as follows:</summary>
 <br>
 TODO
 </details>

@@ -11,7 +11,7 @@ Join the afinity discord server for updates on cheats among other stuff
 Link: https://discord.gg/RPKGaVnvhz
 
 Features
-Features of the cheat are as follows
+Features of the cheat are as follows:
 TODO
 
 Usage Instructions
