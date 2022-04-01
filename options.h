@@ -1,0 +1,44 @@
+
+
+//rage antiaim
+//xaxis
+bool Options.antiaim_rage_xenable
+int Options.antiaim_rage_xbase_angle
+bool Options.antiaim_rage_xjitter_enable
+int Options.antiaim_rage_xjitter_range
+int Options.antiaim_rage_xjitter_speed
+bool Options.antiaim_rage_xjitter_mode
+//yaxis
+bool Options.antiaim_rage_yenable
+int Options.antiaim_rage_ybase_angle
+bool Options.antiaim_rage_yangle_mode
+int Options.antiaim_rage_yangle_speed
+bool Options.antiaim_rage_yjitter_enable
+int Options.antiaim_rage_yjitter_range
+int Options.antiaim_rage_yjitter_speed
+bool Options.antiaim_rage_yjitter_mode
+//desync
+bool Options.antiaim_rage_desync_enable
+bool Options.antiaim_rage_desync_side
+int Options.antiaim_rage_desync_range
+bool Options.antiaim_rage_desync_invert
+bool Options.antiaim_rage_desync_invert_spam
+int Options.antiaim_rage_desync_invert_spam_delay
+bool Options.antiaim_rage_desync_freestand
+bool Options.antiaim_rage_desync_avoid_overlap
+bool Options.antiaim_rage_desync_dormant
+//fakelag
+bool Options.antiaim_rage_fakelag_enable
+int Options.antiaim_rage_fakelag_range
+bool Options.antiaim_rage_fakelag_triggers
+bool Options.antiaim_rage_fakelag_dormant
+//other
+bool Options.antiaim_rage_other_at_targets
+bool Options.antiaim_rage_other_wall_detection
+bool Options.antiaim_rage_other_slidewalk
+bool Options.antiaim_rage_other_slidewalk_spam
+bool Options.antiaim_rage_other_fakeduck
+bool Options.misc_rage_other_aircrouch
+bool Options.antiaim_rage_other_teleport
+bool Options.antiaim_rage_other_damage_teleport
+bool Options.antiaim_rage_other_crim_walk

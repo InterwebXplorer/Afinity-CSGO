@@ -1,0 +1,10 @@
+/.vs
+.vs
+CppProperties.json
+Afinity-CSGO[V2].vcxproj.user
+/Debug
+Debug
+logs
+*.log
+*.env
+/env
