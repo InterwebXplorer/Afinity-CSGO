@@ -7,7 +7,7 @@ To convert font files into header files
 <br>
 3/ Once the path is highlighted type cmd and hit enter
 <br>
-4/ In CMD type the following command "converter.exe [FONT_NAME.TTF] [OUTPUT_NAME]"
+4/ In CMD type the following command "fontconverter.exe [FONT_NAME.TTF] [OUTPUT_NAME]"
 <br>
 5/ Hit enter and the conversion will begin
 <br>
