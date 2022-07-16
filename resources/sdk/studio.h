@@ -1,52 +1,51 @@
 #pragma once
-// used: matrix
 #include "datatypes/matrix.h"
 
 using RadianEuler = float[3];
 using Quaternion = float[4];
 
 #pragma region studio_definitions
-#define MAXSTUDIOBONECTRLS			4
-#define MAXSTUDIOPOSEPARAM			24
-#define MAXSTUDIOSKINS				32		// total textures
-#define MAXSTUDIOFLEXCTRL			96		// maximum number of flexcontrollers (input sliders)
-#define MAXSTUDIOBONES				128		// total bones actually used
-#define MAXSTUDIOANIMBLOCKS			256
-#define MAXSTUDIOFLEXDESC			1024	// maximum number of low level flexes (actual morph targets)
+#define MAXSTUDIOBONECTRLS 4
+#define MAXSTUDIOPOSEPARAM 24
+#define MAXSTUDIOSKINS 32
+#define MAXSTUDIOFLEXCTRL 96
+#define MAXSTUDIOBONES 128
+#define MAXSTUDIOANIMBLOCKS 256
+#define MAXSTUDIOFLEXDESC 1024
 
-#define BONE_CALCULATE_MASK			0x1F
-#define BONE_PHYSICALLY_SIMULATED	0x01
-#define BONE_PHYSICS_PROCEDURAL		0x02
-#define BONE_ALWAYS_PROCEDURAL		0x04
-#define BONE_SCREEN_ALIGN_SPHERE	0x08
-#define BONE_SCREEN_ALIGN_CYLINDER	0x10
+#define BONE_CALCULATE_MASK 0x1F
+#define BONE_PHYSICALLY_SIMULATED 0x01
+#define BONE_PHYSICS_PROCEDURAL 0x02
+#define BONE_ALWAYS_PROCEDURAL 0x04
+#define BONE_SCREEN_ALIGN_SPHERE 0x08
+#define BONE_SCREEN_ALIGN_CYLINDER 0x10
 
-#define BONE_USED_MASK				0x0007FF00
-#define BONE_USED_BY_ANYTHING		0x0007FF00
-#define BONE_USED_BY_HITBOX			0x00000100
-#define BONE_USED_BY_ATTACHMENT		0x00000200
-#define BONE_USED_BY_VERTEX_MASK	0x0003FC00
-#define BONE_USED_BY_VERTEX_LOD0	0x00000400
-#define BONE_USED_BY_VERTEX_LOD1	0x00000800
-#define BONE_USED_BY_VERTEX_LOD2	0x00001000
-#define BONE_USED_BY_VERTEX_LOD3	0x00002000
-#define BONE_USED_BY_VERTEX_LOD4	0x00004000
-#define BONE_USED_BY_VERTEX_LOD5	0x00008000
-#define BONE_USED_BY_VERTEX_LOD6	0x00010000
-#define BONE_USED_BY_VERTEX_LOD7	0x00020000
-#define BONE_USED_BY_BONE_MERGE		0x00040000
-#define BONE_ALWAYS_SETUP			0x00080000
+#define BONE_USED_MASK 0x0007FF00
+#define BONE_USED_BY_ANYTHING 0x0007FF00
+#define BONE_USED_BY_HITBOX 0x00000100
+#define BONE_USED_BY_ATTACHMENT 0x00000200
+#define BONE_USED_BY_VERTEX_MASK 0x0003FC00
+#define BONE_USED_BY_VERTEX_LOD0 0x00000400
+#define BONE_USED_BY_VERTEX_LOD1 0x00000800
+#define BONE_USED_BY_VERTEX_LOD2 0x00001000
+#define BONE_USED_BY_VERTEX_LOD3 0x00002000
+#define BONE_USED_BY_VERTEX_LOD4 0x00004000
+#define BONE_USED_BY_VERTEX_LOD5 0x00008000
+#define BONE_USED_BY_VERTEX_LOD6 0x00010000
+#define BONE_USED_BY_VERTEX_LOD7 0x00020000
+#define BONE_USED_BY_BONE_MERGE 0x00040000
+#define BONE_ALWAYS_SETUP 0x00080000
 
-#define BONE_USED_BY_VERTEX_AT_LOD( iLOD ) ( BONE_USED_BY_VERTEX_LOD0 << ( iLOD ) )
-#define BONE_USED_BY_ANYTHING_AT_LOD( iLOD ) ( ( BONE_USED_BY_ANYTHING & ~BONE_USED_BY_VERTEX_MASK ) | BONE_USED_BY_VERTEX_AT_LOD( iLOD ) )
+#define BONE_USED_BY_VERTEX_AT_LOD(iLOD) (BONE_USED_BY_VERTEX_LOD0 << (iLOD))
+#define BONE_USED_BY_ANYTHING_AT_LOD(iLOD) ((BONE_USED_BY_ANYTHING & ~BONE_USED_BY_VERTEX_MASK) | BONE_USED_BY_VERTEX_AT_LOD(iLOD))
 
-#define MAX_NUM_LODS				8
+#define MAX_NUM_LODS 8
 
-#define BONE_TYPE_MASK				0x00F00000
-#define BONE_FIXED_ALIGNMENT		0x00100000
-#define BONE_HAS_SAVEFRAME_POS		0x00200000
-#define BONE_HAS_SAVEFRAME_ROT64	0x00400000
-#define BONE_HAS_SAVEFRAME_ROT32	0x00800000
+#define BONE_TYPE_MASK 0x00F00000
+#define BONE_FIXED_ALIGNMENT 0x00100000
+#define BONE_HAS_SAVEFRAME_POS 0x00200000
+#define BONE_HAS_SAVEFRAME_ROT64 0x00400000
+#define BONE_HAS_SAVEFRAME_ROT32 0x00800000
 #pragma endregion
 
 struct vcollide_t;
@@ -57,89 +56,91 @@ struct studiohdr_t;
 class CStudioHdr
 {
 public:
-	studiohdr_t*	pStudioHdr;
-	virtualmodel_t*	pVirtualModel;
-	void*			pSoftbody;
-	mutable CUtlVector<const studiohdr_t*> pStudioHdrCache;
-	mutable int		mnFrameUnlockCounter;
-	int*			pFrameUnlockCounter;
-	std::byte		pad0[0x8];
-	CUtlVector<int>	vecBoneFlags;
-	CUtlVector<int>	vecBoneParent;
-	void*			pActivityToSequence;
+	studiohdr_t *pStudioHdr;
+	virtualmodel_t *pVirtualModel;
+	void *pSoftbody;
+	mutable CUtlVector<const studiohdr_t *> pStudioHdrCache;
+	mutable int mnFrameUnlockCounter;
+	int *pFrameUnlockCounter;
+	std::byte pad0[0x8];
+	CUtlVector<int> vecBoneFlags;
+	CUtlVector<int> vecBoneParent;
+	void *pActivityToSequence;
 };
 
 struct mstudiobone_t
 {
-	int			nNameIndex;
-	int			iParent;			// parent bone
-	int			iBoneController[6]; // bone controller index, -1 == none
+	int nNameIndex;
+	int iParent;
+	int iBoneController[6];
 
-	// default values
-	Vector		vecPosition;
-	Quaternion	qWorld;
+	Vector vecPosition;
+	Quaternion qWorld;
 	RadianEuler radRotation;
 
-	// compression scale
-	Vector		vecPositionScale;
-	Vector		vecEulerScale;
+	Vector vecPositionScale;
+	Vector vecEulerScale;
 
 	matrix3x4_t matPoseToBone;
-	Quaternion	qAlignment;
-	int			iFlags;
-	int			iProcedureType;
-	int			nProcedureIndex;	// procedural rule
-	mutable int miPhysicsBone;		// index into physically simulated bone
-	int			nSurfacePropIndex;	// index into string table for property name
-	int			iContents;			// see bspflags.h for the contents flags
-	int			iSurfaceProp;		// this index must be cached by the loader, not saved in the file
-	std::byte	pad0[0x1C];
+	Quaternion qAlignment;
+	int iFlags;
+	int iProcedureType;
+	int nProcedureIndex;
+	mutable int miPhysicsBone;
+	int nSurfacePropIndex;
+	int iContents;
+	int iSurfaceProp;
+	std::byte pad0[0x1C];
 
-	inline const char* GetName()
+	inline const char *GetName()
 	{
-		if (!nNameIndex) return nullptr;
-		return (char*)this + nNameIndex;
+		if (!nNameIndex)
+			return nullptr;
+		return (char *)this + nNameIndex;
 	}
 
-	inline void* GetProcedure() const
+	inline void *GetProcedure() const
 	{
-		if (!nProcedureIndex) return nullptr;
-		return (std::uint8_t*)this + nProcedureIndex;
+		if (!nProcedureIndex)
+			return nullptr;
+		return (std::uint8_t *)this + nProcedureIndex;
 	}
 
-	inline const char* GetSurfacePropName() const
+	inline const char *GetSurfacePropName() const
 	{
-		if (!nSurfacePropIndex) return nullptr;
-		return (char*)this + nSurfacePropIndex;
+		if (!nSurfacePropIndex)
+			return nullptr;
+		return (char *)this + nSurfacePropIndex;
 	}
 };
 
 struct mstudiobonecontroller_t
 {
-	int			iBone; // -1 == 0
-	int			nType; // X, Y, Z, XR, YR, ZR, M
-	float		flStart;
-	float		flEnd;
-	int			iRest; // byte index value at rest
-	int			iInputField; // 0-3 user set controller, 4 mouth
-	std::byte	pad0[0x40];
+	int iBone;
+	int nType;
+	float flStart;
+	float flEnd;
+	int iRest;
+	int iInputField;
+	std::byte pad0[0x40];
 };
 
 struct mstudiobbox_t
 {
-	int			iBone;
-	int			iGroup; // intersection group
-	Vector		vecBBMin; // bounding box
-	Vector		vecBBMax;
-	int			nHitboxNameIndex; // offset to the name of the hitbox
-	QAngle		angOffsetOrientation;
-	float		flRadius;
-	std::byte	pad0[0x10];
+	int iBone;
+	int iGroup;
+	Vector vecBBMin;
+	Vector vecBBMax;
+	int nHitboxNameIndex;
+	QAngle angOffsetOrientation;
+	float flRadius;
+	std::byte pad0[0x10];
 
-	inline const char* GetHitboxName() const
+	inline const char *GetHitboxName() const
 	{
-		if (!nHitboxNameIndex) return nullptr;
-		return (const char*)this + nHitboxNameIndex;
+		if (!nHitboxNameIndex)
+			return nullptr;
+		return (const char *)this + nHitboxNameIndex;
 	}
 };
 
@@ -149,23 +150,25 @@ struct mstudiohitboxset_t
 	int nHitboxes;
 	int nHitboxIndex;
 
-	inline const char* GetName() const
+	inline const char *GetName() const
 	{
-		if (!nNameIndex) return nullptr;
-		return (char*)this + nNameIndex;
+		if (!nNameIndex)
+			return nullptr;
+		return (char *)this + nNameIndex;
 	}
 
-	inline mstudiobbox_t* GetHitbox(int iHitBox) const
+	inline mstudiobbox_t *GetHitbox(int iHitBox) const
 	{
-		if (iHitBox < 0 || iHitBox >= nHitboxes) return nullptr;
-		return (mstudiobbox_t*)((std::uint8_t*)this + nHitboxIndex) + iHitBox;
+		if (iHitBox < 0 || iHitBox >= nHitboxes)
+			return nullptr;
+		return (mstudiobbox_t *)((std::uint8_t *)this + nHitboxIndex) + iHitBox;
 	}
 };
 
 class virtualgroup_t
 {
 public:
-	void* pCache;
+	void *pCache;
 	CUtlVector<int> vecBoneMap;
 	CUtlVector<int> vecMasterBone;
 	CUtlVector<int> vecMasterSequence;
@@ -177,7 +180,7 @@ public:
 
 struct virtualsequence_t
 {
-	int	nFlags;
+	int nFlags;
 	int iActivity;
 	int iGroup;
 	int nIndex;
@@ -191,19 +194,19 @@ struct virtualgeneric_t
 
 struct virtualmodel_t
 {
-	inline virtualgroup_t* GetAnimGroup(const int iAnimation)
+	inline virtualgroup_t *GetAnimGroup(const int iAnimation)
 	{
-		// Note: user must manage mutex for this
+
 		return &vecGroup[vecAnim[iAnimation].iGroup];
 	}
 
-	inline virtualgroup_t* GetSequenceGroup(const int iSequence)
+	inline virtualgroup_t *GetSequenceGroup(const int iSequence)
 	{
-		// Note: user must manage mutex for this
+
 		return &vecGroup[vecSequence[iSequence].iGroup];
 	}
 
-	std::byte pad0[0x8]; // CThreadFastMutex
+	std::byte pad0[0x8];
 	CUtlVector<virtualsequence_t> vecSequence;
 	CUtlVector<virtualgeneric_t> vecAnim;
 	CUtlVector<virtualgeneric_t> vecAttachment;
@@ -218,41 +221,42 @@ struct studiohdr_t;
 struct mstudioseqdesc_t
 {
 	int nBaseStudio;
-	inline studiohdr_t* GetStudioHdr() const
+	inline studiohdr_t *GetStudioHdr() const
 	{
-		return (studiohdr_t*)((std::uint8_t*)this + nBaseStudio);
+		return (studiohdr_t *)((std::uint8_t *)this + nBaseStudio);
 	}
 
-	int	nLabelIndex;
-	inline const char* GetLabel() const
+	int nLabelIndex;
+	inline const char *GetLabel() const
 	{
-		return (char*)this + nLabelIndex;
+		return (char *)this + nLabelIndex;
 	}
 
-	int	nActivityNameIndex;
-	inline const char* GetActivityName() const
+	int nActivityNameIndex;
+	inline const char *GetActivityName() const
 	{
-		return (char*)this + nActivityNameIndex;
+		return (char *)this + nActivityNameIndex;
 	}
 
-	int	iFlags;
+	int iFlags;
 
-	int	iActivity;
-	int	iActivityWeight;
+	int iActivity;
+	int iActivityWeight;
 
 	int nEvents;
 	int nEventIndex;
-	inline void* GetEvent(int iEvent) const
+	inline void *GetEvent(int iEvent) const
 	{
-		if (iEvent < 0 || iEvent >= nEvents) return nullptr;
-		return ((std::uint8_t*)this + nEventIndex) + iEvent;
+		if (iEvent < 0 || iEvent >= nEvents)
+			return nullptr;
+		return ((std::uint8_t *)this + nEventIndex) + iEvent;
 	}
 
 	Vector vecBBMin;
 	Vector vecBBMax;
 
-	int	nBlends;
-	int	nBlendIndex;
+	int nBlends;
+	int nBlendIndex;
 
 	inline int GetAnimValue(int x, int y) const
 	{
@@ -263,79 +267,82 @@ struct mstudioseqdesc_t
 			y = iGroupSize[1] - 1;
 
 		int iOffset = y * iGroupSize[0] + x;
-		short* arrBlends = (short*)((std::uint8_t*)this + nBlendIndex);
+		short *arrBlends = (short *)((std::uint8_t *)this + nBlendIndex);
 		return (int)arrBlends[iOffset];
 	}
 
-	int	nMovementIndex;		// [blend] float array for blended movement
+	int nMovementIndex;
 	int iGroupSize[2];
-	int nParamIndex[2];		// X, Y, Z, XR, YR, ZR
-	float flParamStart[2];	// local (0..1) starting value
-	float flParamEnd[2];	// local (0..1) ending value
-	int	iParamParent;
+	int nParamIndex[2];
+	float flParamStart[2];
+	float flParamEnd[2];
+	int iParamParent;
 
-	float flFadeInTime;		// ideal cross fate in time (0.2 default)
-	float flFadeOutTime;	// ideal cross fade out time (0.2 default)
+	float flFadeInTime;
+	float flFadeOutTime;
 
-	int	iEntryNode;			// transition node at entry
-	int	iExitNode;			// transition node at exit
-	int	iNodeFlags;			// transition rules
+	int iEntryNode;
+	int iExitNode;
+	int iNodeFlags;
 
-	float flEntryPhase;		// used to match entry gait
-	float flExitPhase;		// used to match exit gait
+	float flEntryPhase;
+	float flExitPhase;
 
-	float flLastFrame;		// frame that should generation EndOfSequence
+	float flLastFrame;
 
-	int	iNextSequence;		// auto advancing sequences
-	int	iPose;				// index of delta animation between end and nextseq
+	int iNextSequence;
+	int iPose;
 
-	int	nIKRules;
+	int nIKRules;
 
-	int	nAutoLayers;
-	int	nAutoLayerIndex;
-	inline void* GetAutoLayer(int iAutoLayer) const
+	int nAutoLayers;
+	int nAutoLayerIndex;
+	inline void *GetAutoLayer(int iAutoLayer) const
 	{
-		if (iAutoLayer < 0 || iAutoLayer >= nAutoLayers) return nullptr;
-		return ((std::uint8_t*)this + nAutoLayerIndex) + iAutoLayer;
+		if (iAutoLayer < 0 || iAutoLayer >= nAutoLayers)
+			return nullptr;
+		return ((std::uint8_t *)this + nAutoLayerIndex) + iAutoLayer;
 	}
 
-	int	nWeightListIndex;
-	inline float* GetBoneWeight(int iBone) const
+	int nWeightListIndex;
+	inline float *GetBoneWeight(int iBone) const
 	{
-		return ((float*)((std::uint8_t*)this + nWeightListIndex) + iBone);
+		return ((float *)((std::uint8_t *)this + nWeightListIndex) + iBone);
 	}
 
-	int	nPoseKeyIndex;
-	inline float* GetPoseKey(int iParameter, int iAnimation) const
+	int nPoseKeyIndex;
+	inline float *GetPoseKey(int iParameter, int iAnimation) const
 	{
-		return (float*)((std::uint8_t*)this + nPoseKeyIndex) + iParameter * iGroupSize[0] + iAnimation;
+		return (float *)((std::uint8_t *)this + nPoseKeyIndex) + iParameter * iGroupSize[0] + iAnimation;
 	}
 
-	int	nIKLocks;
-	int	nIKLockIndex;
-	inline void* GetIKLock(int iIK) const
+	int nIKLocks;
+	int nIKLockIndex;
+	inline void *GetIKLock(int iIK) const
 	{
-		if (iIK < 0 || iIK >= nIKLocks) return nullptr;
-		return ((std::uint8_t*)this + nIKLockIndex) + iIK;
+		if (iIK < 0 || iIK >= nIKLocks)
+			return nullptr;
+		return ((std::uint8_t *)this + nIKLockIndex) + iIK;
 	}
 
-	int	nKeyValueIndex;
-	int	iKeyValueSize;
-	inline const char* KeyValueText() const
+	int nKeyValueIndex;
+	int iKeyValueSize;
+	inline const char *KeyValueText() const
 	{
-		if (!iKeyValueSize) return nullptr;
-		return (char*)this + nKeyValueIndex;
+		if (!iKeyValueSize)
+			return nullptr;
+		return (char *)this + nKeyValueIndex;
 	}
 
-	int	nCyclePoseIndex;
+	int nCyclePoseIndex;
 
 	int nActivityModifierIndex;
-	int	nActivityModifiers;
+	int nActivityModifiers;
 
-	int	nAnimTagIndex;
-	int	nAnimTags;
+	int nAnimTagIndex;
+	int nAnimTags;
 
-	int	nRootDriverIndex;
+	int nRootDriverIndex;
 	std::byte pad[0x8];
 };
 
@@ -343,24 +350,24 @@ struct mstudioposeparamdesc_t
 {
 	int nNameIndex;
 	int nFlags;
-	float flStart; // starting value
-	float flEnd; // ending value
-	float flLoop; // looping range, 0 for no looping, 360 for rotations, etc.
+	float flStart;
+	float flEnd;
+	float flLoop;
 
-	inline const char* GetName() const
+	inline const char *GetName() const
 	{
-		return (char*)this + nNameIndex;
+		return (char *)this + nNameIndex;
 	}
 };
 
 struct studiohwdata_t;
 struct studiohdr_t
 {
-	int	nID;
-	int	iVersion;
+	int nID;
+	int iVersion;
 	int iChecksum;
 	char szName[64];
-	int	iLength;
+	int iLength;
 
 	Vector vecEyePosition;
 	Vector vecIllumPosition;
@@ -369,35 +376,38 @@ struct studiohdr_t
 	Vector vecViewBBMin;
 	Vector vecViewBBMax;
 
-	int	iFlags;
+	int iFlags;
 
-	int	nBones;
-	int	nBoneIndex;
-	inline mstudiobone_t* GetBone(int iBone) const
+	int nBones;
+	int nBoneIndex;
+	inline mstudiobone_t *GetBone(int iBone) const
 	{
-		if (iBone < 0 || iBone >= nBones) return nullptr;
-		return (mstudiobone_t*)((std::uint8_t*)this + nBoneIndex) + iBone;
+		if (iBone < 0 || iBone >= nBones)
+			return nullptr;
+		return (mstudiobone_t *)((std::uint8_t *)this + nBoneIndex) + iBone;
 	}
 
-	int	nBoneControllers;
-	int	nBoneControllerIndex;
-	inline void* GetBoneController(int iBoneController) const
+	int nBoneControllers;
+	int nBoneControllerIndex;
+	inline void *GetBoneController(int iBoneController) const
 	{
-		if (iBoneController < 0 || iBoneController >= nBoneControllers) return nullptr;
-		return ((std::uint8_t*)this + nBoneControllerIndex) + iBoneController;
+		if (iBoneController < 0 || iBoneController >= nBoneControllers)
+			return nullptr;
+		return ((std::uint8_t *)this + nBoneControllerIndex) + iBoneController;
 	}
 
-	int	nHitboxSets;
-	int	nHitboxSetIndex;
-	inline mstudiohitboxset_t* GetHitboxSet(int iSet) const
+	int nHitboxSets;
+	int nHitboxSetIndex;
+	inline mstudiohitboxset_t *GetHitboxSet(int iSet) const
 	{
-		if (iSet < 0 || iSet >= nHitboxSets) return nullptr;
-		return (mstudiohitboxset_t*)((std::uint8_t*)this + nHitboxSetIndex) + iSet;
+		if (iSet < 0 || iSet >= nHitboxSets)
+			return nullptr;
+		return (mstudiohitboxset_t *)((std::uint8_t *)this + nHitboxSetIndex) + iSet;
 	}
 
-	inline mstudiobbox_t* GetHitbox(int iHitBox, int iSet) const
+	inline mstudiobbox_t *GetHitbox(int iHitBox, int iSet) const
 	{
-		const mstudiohitboxset_t* pHitboxSet = GetHitboxSet(iSet);
+		const mstudiohitboxset_t *pHitboxSet = GetHitboxSet(iSet);
 
 		if (pHitboxSet == nullptr)
 			return nullptr;
@@ -407,7 +417,7 @@ struct studiohdr_t
 
 	inline int GetHitboxCount(int iSet) const
 	{
-		const mstudiohitboxset_t* pHitboxSet = GetHitboxSet(iSet);
+		const mstudiohitboxset_t *pHitboxSet = GetHitboxSet(iSet);
 
 		if (pHitboxSet == nullptr)
 			return 0;
@@ -415,23 +425,25 @@ struct studiohdr_t
 		return pHitboxSet->nHitboxes;
 	}
 
-	int	nLocalAnimations;
-	int	nLocalAnimationIndex;
-	inline void* GetAnimDescription(int iAnimation) const
+	int nLocalAnimations;
+	int nLocalAnimationIndex;
+	inline void *GetAnimDescription(int iAnimation) const
 	{
-		if (iAnimation < 0 || iAnimation >= nLocalAnimations) iAnimation = 0;
-		return ((std::uint8_t*)this + nLocalAnimationIndex) + iAnimation;
+		if (iAnimation < 0 || iAnimation >= nLocalAnimations)
+			iAnimation = 0;
+		return ((std::uint8_t *)this + nLocalAnimationIndex) + iAnimation;
 	}
 
 	int nLocalSequences;
 	int nLocalSequenceIndex;
-	inline mstudioseqdesc_t* GetLocalSequenceDescription(int iSequence) const
+	inline mstudioseqdesc_t *GetLocalSequenceDescription(int iSequence) const
 	{
-		if (iSequence < 0 || iSequence >= nLocalSequences) iSequence = 0;
-		return (mstudioseqdesc_t*)((std::uint8_t*)this + nLocalSequenceIndex) + iSequence;
+		if (iSequence < 0 || iSequence >= nLocalSequences)
+			iSequence = 0;
+		return (mstudioseqdesc_t *)((std::uint8_t *)this + nLocalSequenceIndex) + iSequence;
 	}
 
-	inline mstudioseqdesc_t& GetSequenceDescription(int iSequence, virtualmodel_t* pVirtualModel = nullptr, const studiohdr_t* pStudioHdr = nullptr) const
+	inline mstudioseqdesc_t &GetSequenceDescription(int iSequence, virtualmodel_t *pVirtualModel = nullptr, const studiohdr_t *pStudioHdr = nullptr) const
 	{
 		if (nIncludeModels == 0 || pVirtualModel == nullptr || pStudioHdr == nullptr)
 			return *GetLocalSequenceDescription(iSequence);
@@ -442,160 +454,177 @@ struct studiohdr_t
 	mutable int miActivityListVersion;
 	mutable int miEventsIndexed;
 
-	int	nTextures;
-	int	nTextureIndex;
-	inline void* GetTexture(int nIndex) const
+	int nTextures;
+	int nTextureIndex;
+	inline void *GetTexture(int nIndex) const
 	{
-		if (nIndex < 0 || nIndex >= nTextures) return nullptr;
-		return ((std::uint8_t*)this + nTextureIndex) + nIndex;
+		if (nIndex < 0 || nIndex >= nTextures)
+			return nullptr;
+		return ((std::uint8_t *)this + nTextureIndex) + nIndex;
 	}
 
-	int	nCdTextures;
-	int	nCdTextureIndex;
-	inline char* GetCdTexture(int nIndex) const
+	int nCdTextures;
+	int nCdTextureIndex;
+	inline char *GetCdTexture(int nIndex) const
 	{
-		if (nIndex < 0 || nIndex >= nCdTextures) return nullptr;
-		return (((char*)this) + *((int*)((std::uint8_t*)this + nCdTextureIndex) + nIndex));
+		if (nIndex < 0 || nIndex >= nCdTextures)
+			return nullptr;
+		return (((char *)this) + *((int *)((std::uint8_t *)this + nCdTextureIndex) + nIndex));
 	}
 
-	int	nSkinRefs;
-	int	nSkinFamilies;
-	int	nSkinIndex;
-	inline short* GetSkinRef(int nIndex) const
+	int nSkinRefs;
+	int nSkinFamilies;
+	int nSkinIndex;
+	inline short *GetSkinRef(int nIndex) const
 	{
-		if (nIndex < 0 || nIndex >= nSkinRefs) return nullptr;
-		return (short*)((std::uint8_t*)this + nSkinIndex) + nIndex;
+		if (nIndex < 0 || nIndex >= nSkinRefs)
+			return nullptr;
+		return (short *)((std::uint8_t *)this + nSkinIndex) + nIndex;
 	}
 
-	int	nBodyParts;
-	int	nBodyPartIndex;
-	inline void* GetBodyPart(int nIndex) const
+	int nBodyParts;
+	int nBodyPartIndex;
+	inline void *GetBodyPart(int nIndex) const
 	{
-		if (nIndex < 0 || nIndex >= nBodyParts) return nullptr;
-		return ((std::uint8_t*)this + nBodyPartIndex) + nIndex;
+		if (nIndex < 0 || nIndex >= nBodyParts)
+			return nullptr;
+		return ((std::uint8_t *)this + nBodyPartIndex) + nIndex;
 	}
 
-	int	nAttachments;
-	int	nAttachmentIndex;
-	inline void* GetAttachment(int nIndex) const
+	int nAttachments;
+	int nAttachmentIndex;
+	inline void *GetAttachment(int nIndex) const
 	{
-		if (nIndex < 0 || nIndex >= nAttachments) return nullptr;
-		return ((std::uint8_t*)this + nAttachmentIndex) + nIndex;
+		if (nIndex < 0 || nIndex >= nAttachments)
+			return nullptr;
+		return ((std::uint8_t *)this + nAttachmentIndex) + nIndex;
 	}
 
-	int	nTransitions;
-	int	nTransitionIndex;
-	int	nTransitionNameIndex;
-	inline std::uint8_t* GetTransition(int nIndex) const
+	int nTransitions;
+	int nTransitionIndex;
+	int nTransitionNameIndex;
+	inline std::uint8_t *GetTransition(int nIndex) const
 	{
-		if (nIndex < 0 || nIndex >= (nTransitions * nTransitions)) return nullptr;
-		return (std::uint8_t*)((std::uint8_t*)this + nTransitionIndex) + nIndex;
+		if (nIndex < 0 || nIndex >= (nTransitions * nTransitions))
+			return nullptr;
+		return (std::uint8_t *)((std::uint8_t *)this + nTransitionIndex) + nIndex;
 	}
 
-	int	nFlexDescs;
-	int	nFlexDescIndex;
-	inline void* GetFlexDescription(int nIndex) const
+	int nFlexDescs;
+	int nFlexDescIndex;
+	inline void *GetFlexDescription(int nIndex) const
 	{
-		if (nIndex < 0 || nIndex >= nFlexDescs) return nullptr;
-		return ((std::uint8_t*)this + nFlexDescIndex) + nIndex;
+		if (nIndex < 0 || nIndex >= nFlexDescs)
+			return nullptr;
+		return ((std::uint8_t *)this + nFlexDescIndex) + nIndex;
 	}
 
-	int	nFlexControllers;
-	int	nFlexControllerIndex;
-	inline void* GetFlexController(int nIndex) const
+	int nFlexControllers;
+	int nFlexControllerIndex;
+	inline void *GetFlexController(int nIndex) const
 	{
-		if (nIndex < 0 || nIndex >= nFlexControllers) return nullptr;
-		return ((std::uint8_t*)this + nFlexControllerIndex) + nIndex;
+		if (nIndex < 0 || nIndex >= nFlexControllers)
+			return nullptr;
+		return ((std::uint8_t *)this + nFlexControllerIndex) + nIndex;
 	}
 
-	int	nFlexRules;
-	int	nFlexRuleIndex;
-	inline void* GetFlexRule(int nIndex) const
+	int nFlexRules;
+	int nFlexRuleIndex;
+	inline void *GetFlexRule(int nIndex) const
 	{
-		if (nIndex < 0 || nIndex >= nFlexRules) return nullptr;
-		return ((std::uint8_t*)this + nFlexRuleIndex) + nIndex;
+		if (nIndex < 0 || nIndex >= nFlexRules)
+			return nullptr;
+		return ((std::uint8_t *)this + nFlexRuleIndex) + nIndex;
 	}
 
-	int	nIkChains;
-	int	nIkChainIndex;
-	inline void* GetIKChain(int nIndex) const
+	int nIkChains;
+	int nIkChainIndex;
+	inline void *GetIKChain(int nIndex) const
 	{
-		if (nIndex < 0 || nIndex >= nIkChains) return nullptr;
-		return ((std::uint8_t*)this + nIkChainIndex) + nIndex;
+		if (nIndex < 0 || nIndex >= nIkChains)
+			return nullptr;
+		return ((std::uint8_t *)this + nIkChainIndex) + nIndex;
 	}
 
-	int	nMouths;
-	int	nMouthIndex;
-	inline void* GetMouth(int nIndex) const
+	int nMouths;
+	int nMouthIndex;
+	inline void *GetMouth(int nIndex) const
 	{
-		if (nIndex < 0 || nIndex >= nMouths) return nullptr;
-		return ((std::uint8_t*)this + nMouthIndex) + nIndex;
+		if (nIndex < 0 || nIndex >= nMouths)
+			return nullptr;
+		return ((std::uint8_t *)this + nMouthIndex) + nIndex;
 	}
 
-	int	nPoseParameters;
-	int	nPoseParameterIndex;
-	inline void* GetPoseParameter(int nIndex) const
+	int nPoseParameters;
+	int nPoseParameterIndex;
+	inline void *GetPoseParameter(int nIndex) const
 	{
-		if (nIndex < 0 || nIndex >= nPoseParameters) return nullptr;
-		return ((std::uint8_t*)this + nPoseParameterIndex) + nIndex;
+		if (nIndex < 0 || nIndex >= nPoseParameters)
+			return nullptr;
+		return ((std::uint8_t *)this + nPoseParameterIndex) + nIndex;
 	}
 
-	int	nSurfacePropIndex;
-	inline const char* GetSurfaceProp() const
+	int nSurfacePropIndex;
+	inline const char *GetSurfaceProp() const
 	{
-		if (!nSurfacePropIndex) return nullptr;
-		return (char*)this + nSurfacePropIndex;
+		if (!nSurfacePropIndex)
+			return nullptr;
+		return (char *)this + nSurfacePropIndex;
 	}
 
-	int	nKeyValueIndex;
-	int	nKeyValueSize;
-	inline const char* KeyValueText() const
+	int nKeyValueIndex;
+	int nKeyValueSize;
+	inline const char *KeyValueText() const
 	{
-		if (!nKeyValueSize) return nullptr;
-		return (char*)this + nKeyValueIndex;
+		if (!nKeyValueSize)
+			return nullptr;
+		return (char *)this + nKeyValueIndex;
 	}
 
-	int	nIkAutoplayLocks;
-	int	nIkAutoplayLockIndex;
-	inline void* GetIKAutoplayLock(int nIndex) const
+	int nIkAutoplayLocks;
+	int nIkAutoplayLockIndex;
+	inline void *GetIKAutoplayLock(int nIndex) const
 	{
-		if (nIndex < 0 || nIndex >= nIkAutoplayLocks) return nullptr;
-		return ((std::uint8_t*)this + nIkAutoplayLockIndex) + nIndex;
+		if (nIndex < 0 || nIndex >= nIkAutoplayLocks)
+			return nullptr;
+		return ((std::uint8_t *)this + nIkAutoplayLockIndex) + nIndex;
 	}
 
 	float flMass;
-	int	iContents;
+	int iContents;
 
-	int	nIncludeModels;
-	int	nIncludeModelIndex;
-	inline void* GetModelGroup(int nIndex) const
+	int nIncludeModels;
+	int nIncludeModelIndex;
+	inline void *GetModelGroup(int nIndex) const
 	{
-		if (nIndex < 0 || nIndex >= nIncludeModels) return nullptr;
-		return ((std::uint8_t*)this + nIncludeModelIndex) + nIndex;
+		if (nIndex < 0 || nIndex >= nIncludeModels)
+			return nullptr;
+		return ((std::uint8_t *)this + nIncludeModelIndex) + nIndex;
 	}
 
-	int	iVirtualModel;
+	int iVirtualModel;
 
-	int	nAnimBlockNameIndex;
-	inline const char* GetAnimBlockName() const
+	int nAnimBlockNameIndex;
+	inline const char *GetAnimBlockName() const
 	{
-		return ((char*)this) + nAnimBlockNameIndex;
+		return ((char *)this) + nAnimBlockNameIndex;
 	}
 
-	int	nAnimBlocks;
-	int	nAnimBlockIndex;
-	inline void* GetAnimBlock(int nIndex) const
+	int nAnimBlocks;
+	int nAnimBlockIndex;
+	inline void *GetAnimBlock(int nIndex) const
 	{
-		if (nIndex < 0 || nIndex >= nAnimBlocks) return nullptr;
-		return (((std::uint8_t*)this) + nAnimBlockIndex) + nIndex;
+		if (nIndex < 0 || nIndex >= nAnimBlocks)
+			return nullptr;
+		return (((std::uint8_t *)this) + nAnimBlockIndex) + nIndex;
 	}
 
-	int	iAnimBlockModel;
+	int iAnimBlockModel;
 
-	int	nBoneTableByNameIndex;
-	inline const std::uint8_t* GetBoneTableSortedByName() const
+	int nBoneTableByNameIndex;
+	inline const std::uint8_t *GetBoneTableSortedByName() const
 	{
-		return (std::uint8_t*)this + nBoneTableByNameIndex;
+		return (std::uint8_t *)this + nBoneTableByNameIndex;
 	}
 
 	int iVertexBase;
@@ -606,12 +635,12 @@ struct studiohdr_t
 	std::uint8_t nAllowedRootLODs;
 	std::byte pad0[0x5];
 
-	int	nFlexControllerUI;
-	int	nFlexcontrollerUIIndex;
+	int nFlexControllerUI;
+	int nFlexcontrollerUIIndex;
 
 	float flVertAnimFixedPointScale;
 	mutable int miSurfacePropLookup;
-	int	nStudioHdr2Index;
+	int nStudioHdr2Index;
 
 	std::byte pad1[0x4];
 };

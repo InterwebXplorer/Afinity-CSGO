@@ -1,5 +1,4 @@
 #pragma once
-// used: InterlockedDecrement
 #include <windows.h>
 
 class IRefCounted
@@ -29,44 +28,42 @@ template <class T>
 class CBaseAutoPtr
 {
 public:
-	CBaseAutoPtr() :
-		pObject(nullptr) { }
+	CBaseAutoPtr() : pObject(nullptr) {}
 
-	CBaseAutoPtr(T* pObject) :
-		pObject(pObject) { }
+	CBaseAutoPtr(T *pObject) : pObject(pObject) {}
 
-	operator const void* () const
+	operator const void *() const
 	{
 		return pObject;
 	}
 
-	operator void* () const
+	operator void *() const
 	{
 		return pObject;
 	}
 
-	operator const T* () const
+	operator const T *() const
 	{
 		return pObject;
 	}
 
-	operator const T* ()
+	operator const T *()
 	{
 		return pObject;
 	}
 
-	operator T* ()
+	operator T *()
 	{
 		return pObject;
 	}
 
-	int	operator=(int i)
+	int operator=(int i)
 	{
 		pObject = nullptr;
 		return 0;
 	}
 
-	T* operator=(T* pSecondObject)
+	T *operator=(T *pSecondObject)
 	{
 		pObject = pSecondObject;
 		return pSecondObject;
@@ -77,90 +74,90 @@ public:
 		return (!pObject);
 	}
 
-	bool operator==(const void* pSecondObject) const
+	bool operator==(const void *pSecondObject) const
 	{
 		return (pObject == pSecondObject);
 	}
 
-	bool operator!=(const void* pSecondObject) const
+	bool operator!=(const void *pSecondObject) const
 	{
 		return (pObject != pSecondObject);
 	}
 
-	bool operator==(T* pSecondObject) const
+	bool operator==(T *pSecondObject) const
 	{
-		return operator==(static_cast<void*>(pSecondObject));
+		return operator==(static_cast<void *>(pSecondObject));
 	}
 
-	bool operator!=(T* pSecondObject) const
+	bool operator!=(T *pSecondObject) const
 	{
-		return operator!=(static_cast<void*>(pSecondObject));
+		return operator!=(static_cast<void *>(pSecondObject));
 	}
 
-	bool operator==(const CBaseAutoPtr<T>& pSecondPtr) const
+	bool operator==(const CBaseAutoPtr<T> &pSecondPtr) const
 	{
-		return operator==(static_cast<const void*>(pSecondPtr));
+		return operator==(static_cast<const void *>(pSecondPtr));
 	}
 
-	bool operator!=(const CBaseAutoPtr<T>& pSecondPtr) const
+	bool operator!=(const CBaseAutoPtr<T> &pSecondPtr) const
 	{
-		return operator!=(static_cast<const void*>(pSecondPtr));
+		return operator!=(static_cast<const void *>(pSecondPtr));
 	}
 
-	T* operator->()
+	T *operator->()
 	{
 		return pObject;
 	}
 
-	T& operator*()
+	T &operator*()
 	{
 		return *pObject;
 	}
 
-	T** operator&()
+	T **operator&()
 	{
 		return &pObject;
 	}
 
-	const T* operator->() const
+	const T *operator->() const
 	{
 		return pObject;
 	}
 
-	const T& operator*() const
+	const T &operator*() const
 	{
 		return *pObject;
 	}
 
-	T* const* operator&() const
+	T *const *operator&() const
 	{
 		return &pObject;
 	}
 
 protected:
-	CBaseAutoPtr(const CBaseAutoPtr<T>& pSecondPtr) :
-		pObject(pSecondPtr.pObject) { }
+	CBaseAutoPtr(const CBaseAutoPtr<T> &pSecondPtr) : pObject(pSecondPtr.pObject) {}
 
-	void operator=(const CBaseAutoPtr<T>& pSecondPtr)
+	void operator=(const CBaseAutoPtr<T> &pSecondPtr)
 	{
 		pObject = pSecondPtr.pObject;
 	}
 
-	T* pObject;
+	T *pObject;
 };
 
 template <class T>
 class CRefPtr : public CBaseAutoPtr<T>
 {
 	typedef CBaseAutoPtr<T> CBaseClass;
+
 public:
-	CRefPtr() { }
+	CRefPtr() {}
 
-	CRefPtr(T* pInit)
-		: CBaseClass(pInit) { }
+	CRefPtr(T *pInit)
+		: CBaseClass(pInit) {}
 
-	CRefPtr(const CRefPtr<T>& pRefPtr)
-		: CBaseClass(pRefPtr) { }
+	CRefPtr(const CRefPtr<T> &pRefPtr)
+		: CBaseClass(pRefPtr) {}
 
 	~CRefPtr()
 	{
@@ -168,7 +165,7 @@ public:
 			CBaseClass::pObject->Release();
 	}
 
-	void operator=(const CRefPtr<T>& pSecondRefPtr)
+	void operator=(const CRefPtr<T> &pSecondRefPtr)
 	{
 		CBaseClass::operator=(pSecondRefPtr);
 	}
@@ -178,7 +175,7 @@ public:
 		return CBaseClass::operator=(i);
 	}
 
-	T* operator=(T* pSecond)
+	T *operator=(T *pSecond)
 	{
 		return CBaseClass::operator=(pSecond);
 	}
@@ -201,7 +198,7 @@ public:
 		CBaseClass::pObject = nullptr;
 	}
 
-	void AssignAddReference(T* pFrom)
+	void AssignAddReference(T *pFrom)
 	{
 		if (pFrom != nullptr)
 			pFrom->AddReference();
@@ -210,7 +207,7 @@ public:
 		CBaseClass::pObject = pFrom;
 	}
 
-	void AddReferenceAssignTo(T*& pTo)
+	void AddReferenceAssignTo(T *&pTo)
 	{
 		if (CBaseClass::pObject != nullptr)
 			CBaseClass::pObject->AddReference();

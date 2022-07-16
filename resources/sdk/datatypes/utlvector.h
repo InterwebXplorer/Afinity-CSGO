@@ -1,31 +1,29 @@
 #pragma once
-// @credits: https://github.com/ValveSoftware/source-sdk-2013/blob/master/mp/src/public/tier1/utlvector.h
-
-// used: utlmemory
 #include "utlmemory.h"
 
 template <class T>
-void Destruct(T* pMemory)
+void Destruct(T *pMemory)
 {
 	pMemory->~T();
 }
 
 template <class T>
-T* Construct(T* pMemory)
+T *Construct(T *pMemory)
 {
-	return new(pMemory) T;
+	return new (pMemory) T;
 }
 
-template< class T >
-T* Copy(T* pMemory, T const& src)
+template <class T>
+T *Copy(T *pMemory, T const &src)
 {
-	return new(pMemory) T(src);
+	return new (pMemory) T(src);
 }
 
 template <class T, class A = CUtlMemory<T>>
 class CUtlVector
 {
 	using CAllocator = A;
+
 public:
 	auto begin() noexcept
 	{
@@ -47,27 +45,27 @@ public:
 		return pMemory.Base() + iSize;
 	}
 
-	T& operator[](int i)
+	T &operator[](int i)
 	{
 		return pMemory[i];
 	}
 
-	const T& operator[](int i) const
+	const T &operator[](int i) const
 	{
 		return pMemory[i];
 	}
 
-	T& Element(int i)
+	T &Element(int i)
 	{
 		return pMemory[i];
 	}
 
-	const T& Element(int i) const
+	const T &Element(int i) const
 	{
 		return pMemory[i];
 	}
 
-	T* Base()
+	T *Base()
 	{
 		return pMemory.Base();
 	}
@@ -77,7 +75,7 @@ public:
 		return iSize;
 	}
 
-	int& Size()
+	int &Size()
 	{
 		return iSize;
 	}
@@ -108,17 +106,16 @@ public:
 
 	int InsertBefore(const int nElement)
 	{
-		// can insert at the end
+
 		GrowVector();
 		ShiftElementsRight(nElement);
 		Construct(&Element(nElement));
 		return nElement;
 	}
 
-	int InsertBefore(int nElement, const T& src)
+	int InsertBefore(int nElement, const T &src)
 	{
-		// reallocate if can't insert something that's in the list
-		// can insert at the end
+
 		GrowVector();
 		ShiftElementsRight(nElement);
 		Copy(&Element(nElement), src);
@@ -130,12 +127,12 @@ public:
 		return InsertBefore(iSize);
 	}
 
-	int AddToTail(const T& src)
+	int AddToTail(const T &src)
 	{
 		return InsertBefore(iSize, src);
 	}
 
-	int Find(const T& src) const
+	int Find(const T &src) const
 	{
 		for (int i = 0; i < Count(); ++i)
 		{
@@ -161,7 +158,7 @@ public:
 		iSize = 0;
 	}
 
-	bool FindAndRemove(const T& src)
+	bool FindAndRemove(const T &src)
 	{
 		if (const int nElement = Find(src); nElement != -1)
 		{
@@ -175,5 +172,5 @@ public:
 protected:
 	CAllocator pMemory;
 	int iSize;
-	T* pElements;
+	T *pElements;
 };

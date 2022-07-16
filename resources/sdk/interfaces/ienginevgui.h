@@ -1,5 +1,4 @@
 #pragma once
-// @credits: https://github.com/ValveSoftware/source-sdk-2013/blob/master/sp/src/public/ienginevgui.h
 
 using VPANEL = unsigned int;
 #define INVALID_PANEL 0xFFFFFFFF
@@ -25,7 +24,7 @@ enum EPaintMode
 class IEngineVGui
 {
 public:
-	virtual			~IEngineVGui() { }
-	virtual VPANEL	GetPanel(EVGuiPanel type) = 0;
-	virtual bool	IsGameUIVisible() = 0;
+	virtual ~IEngineVGui() {}
+	virtual VPANEL GetPanel(EVGuiPanel type) = 0;
+	virtual bool IsGameUIVisible() = 0;
 };

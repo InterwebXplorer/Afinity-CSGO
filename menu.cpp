@@ -65,7 +65,7 @@ void RenderRageTab() {
         UI::Checkbox("Bruteforce", Options.rage_); //shoot previous sucessful points
         UI::Checkbox("Hideshots", Options.rage_); //
         UI::Checkbox("Doubletap", Options.rage_); //
-        UI::Checkbox("No recoil", Options.rage_);
+        UI::Checkbox("No recoil", Options.rage_global_norecoil);
         UI::Checkbox("Revolver prep", Options.rage_);
         UI::Dropdown("Target scanning", targetscanning[], Options.rage_);
         UI::Checkbox("No-scope", Options.rage_);
@@ -307,7 +307,7 @@ void RenderAntiAimTab() {
         UI::Checkbox("Jitter", Options.antiaim_rage_yjitterenable);
         UI::Doubleslider("Jitter range", Options.antiaim_rage_yjitterrange, -90, 90);
         UI::Slider("Jitter speed", Options.antiaim_rage_yjitterspeed, 0, 100);
-        UI::Dropdown("Jitter mode", yaxisanglemode[], Options.antiaim_rage_yjittermode);
+        UI::Dropdown("Jitter mode", yaxisjittermode[], Options.antiaim_rage_yjittermode);
         UI::EndGroup();
         UI::BeginGroup("Desync");
         UI::Checkbox("Enable", Options.antiaim_rage_desyncenable);
@@ -367,7 +367,6 @@ void RenderMiscTab() {
 
     if (misc_tab_index == 0) {
         const char* forceregion[] = {"Off", "Australia", "Austria", "Brazil", "Chile", "Dubai", "France", "Germany", "Hong Kong", "India(Chennai)", "India(Mumbai)", "Japan", "Luxembourg", "The Nether", "Peru", "Phillipines", "Poland", "Singapore", "No Water", "Spain", "Sweden", "United Kingdom", "USA(Atlanta)", "USA(Seattle)", "USA(Chicago)", "USA(Los Angeles)", "USA(Moses Lake)", "USA(Oklahoma)", "USA(Seattle)", "USA(Washington DC)"};
-        const char* chatspam[] = {"Off", "Default", "Mimmic", "Ezfrags", "Custom"};
         const char* namechanger[] = {"Off", "Team-Only", "Enemy-Only", "Everyone", "Corrupt", "Custom"};
         const char* informationspammer[] = {"Name", "Rank", "Weapon", "Location", "Health"};
         const char* buybotprimary[] = {"Off", "Auto", "Scout", "AWP", "Ak/M4"};
@@ -378,9 +377,10 @@ void RenderMiscTab() {
 
         UI::Checkbox("Auto-accept", Options.misc_general_autoaccept);
         UI::Checkbox("Auto-fire", Options.misc_general_autofire);
-        UI::Slider("Delay", Options.misc_general_autofiredelay, 0, 500);
+        UI::Slider("Delay", Options.misc_general_autofiredelay, 0, 1000);
         UI::Checkbox("Preserve killfeed", Options.misc_general_preservekillfeed);
         UI::Checkbox("Auto-defuse", Options.misc_general_autodefuse);
+        UI::Checkbox("Auto-smoke", Options.misc_general_autosmoke); //
         UI::Checkbox("Clantag", Options.misc_general_clantag);
         UI::Checkbox("Block bot", Options.misc_general_blockbot); //
         UI::Checkbox("Headstand bot", Options.misc_general_headstandbot); //
@@ -388,11 +388,9 @@ void RenderMiscTab() {
         UI::Checkbox("Reveal overwatch", Options.misc_general_revealoverwatch);
         UI::Checkbox("Reveal ranks", Options.misc_general_revealranks);
         UI::Checkbox("Slowwalk", Options.misc_general_slowwalk);
-        UI::Slider("Speed", Options.misc_general_slowwalkspeed, 0, 240); //set to 135 for fast walk with no sound
+        UI::Slider("Speed", Options.misc_general_slowwalkspeed, 0, 100); //135 ups for fast walk with no sound
         UI::Checkbox("Anti-untrusted", Options.misc_general_antiuntrusted); //executed in other files not misc.cpp
         UI::Checkbox("Bypass sv_pure", Options.misc_general_bypasssvpure);
-        UI::Dropdown("Chatspam", chatspam[], Options.misc_general_chatspam);
-        UI::Textbox("Custom", Options.misc_general_chatspamcustom); //File name e.g.CUSTOM.accss
         UI::Checkbox("Infinite duck", Options.misc_general_infiniteduck);
         UI::Checkbox("Quick stop", Options.misc_general_quickstop);
         UI::Checkbox("Unlock inventory", Options.misc_general_unlockinventory);
@@ -402,10 +400,11 @@ void RenderMiscTab() {
         UI::Checkbox("Grenade helper", Options.misc_general_grenadehelper); // Add 2 select boxes (1 toggle visible, 1 toggle execute) TODO:Add programmable lineups //executed in other files not misc.cpp
         UI::Checkbox("Visible when grenade equip", Options.misc_general_grenadehelpervwge);
         UI::Checkbox("Bunnyhop", Options.misc_general_bhop);
+        UI::Slider("Hitchance", Options.misc_general_bhophitchance, 0, 100);
+        UI::Checkbox("Random", Options.misc_general_bhophitchancerandom);
         UI::Checkbox("Auto strafe", Options.misc_general_autostrafe);
-        UI::Slider("Miss percentage", Options.misc_general_bhopmiss, 0, 100);
-        UI::Checkbox("Randomise misses", Options.misc_general_bhopmissrandom);
         UI::Checkbox("Aircrouch", Options.misc_general_aircrouch);
+        UI::Checkbox("Peek assist", Options.misc_general_peekassist);
         UI::BeginGroup("Buybot");
         UI::Checkbox("Enable buybot", Options.misc_buybot_enable);
         UI::Dropdown("Primary", buybotprimary[], Options.misc_buybot_primary);

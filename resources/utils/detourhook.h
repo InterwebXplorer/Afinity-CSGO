@@ -1,24 +1,16 @@
 #pragma once
-// used: format
 #include <format>
-
-// used: minhook hooking library
 #include "../minhook/minhook.h"
 
-/*
- * detour hooking implementation using minhook
- * @credits: https://github.com/TsudaKageyu/minhook
- */
-class CDetourHook
+class DetourHook
 {
 public:
-	CDetourHook() = default;
+	DetourHook() = default;
 
-	explicit CDetourHook(void* pFunction, void* pDetour)
-		: pBaseFn(pFunction), pReplaceFn(pDetour) { }
+	explicit DetourHook(void *pFunction, void *pDetour)
+		: pBaseFn(pFunction), pReplaceFn(pDetour) {}
 
-	/* first hook setup */
-	bool Create(void* pFunction, void* pDetour)
+	bool Create(void *pFunction, void *pDetour)
 	{
 		pBaseFn = pFunction;
 
@@ -41,14 +33,11 @@ public:
 		return true;
 	}
 
-	/* replace function to our modified */
 	bool Replace()
 	{
-		// check is hook be created
 		if (pBaseFn == nullptr)
 			return false;
 
-		// check is function not already hooked
 		if (bIsHooked)
 			return false;
 
@@ -57,15 +46,12 @@ public:
 		if (status != MH_OK)
 			throw std::runtime_error(std::format(XorStr("failed to enable hook function, status: {}\nbase function -> {:#08X} address"), MH_StatusToString(status), reinterpret_cast<std::uintptr_t>(pBaseFn)));
 
-		// switch hook state
 		bIsHooked = true;
 		return true;
 	}
 
-	/* remove hook fully */
 	bool Remove()
 	{
-		// restore it at first
 		if (!this->Restore())
 			return false;
 
@@ -77,10 +63,8 @@ public:
 		return true;
 	}
 
-	/* replace swaped modified function back to original */
 	bool Restore()
 	{
-		// check is function hooked
 		if (!bIsHooked)
 			return false;
 
@@ -89,32 +73,24 @@ public:
 		if (status != MH_OK)
 			throw std::runtime_error(std::format(XorStr("failed to restore hook, status: {}\n base function -> {:#08X} address"), MH_StatusToString(status), reinterpret_cast<std::uintptr_t>(pBaseFn)));
 
-		// switch hook state
 		bIsHooked = false;
 		return true;
 	}
 
-	/* get original function pointer (not a call!) */
 	template <typename Fn>
 	Fn GetOriginal()
 	{
 		return static_cast<Fn>(pOriginalFn);
 	}
 
-	/* returns hook state */
 	inline bool IsHooked() const
 	{
 		return bIsHooked;
 	}
 
 private:
-	// Values
-	/* hook state */
 	bool bIsHooked = false;
-	/* function base address */
-	void* pBaseFn = nullptr;
-	/* in future that is being modified and replace original */
-	void* pReplaceFn = nullptr;
-	/* saved function to get available restore hook later */
-	void* pOriginalFn = nullptr;
+	void *pBaseFn = nullptr;
+	void *pReplaceFn = nullptr;
+	void *pOriginalFn = nullptr;
 };

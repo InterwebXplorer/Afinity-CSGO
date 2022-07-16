@@ -1,5 +1,4 @@
 #pragma once
-// @credits: https://github.com/ValveSoftware/source-sdk-2013/blob/master/sp/src/public/istudiorender.h
 
 #pragma region studiorender_enumerations
 enum
@@ -31,34 +30,37 @@ enum EOverrideType : int
 
 struct MaterialLightingState_t
 {
-	Vector			vecAmbientCube[6];
-	Vector			vecLightingOrigin;
-	int				nLocalLightCount;
-	LightDesc_t		localLightDesc[4];
+	Vector vecAmbientCube[6];
+	Vector vecLightingOrigin;
+	int nLocalLightCount;
+	LightDesc_t localLightDesc[4];
 };
 
 struct DrawModelResults_t;
 struct ColorMeshInfo_t;
-struct StudioDecalHandle_t { int iUnused; };
+struct StudioDecalHandle_t
+{
+	int iUnused;
+};
 struct DrawModelInfo_t
 {
-	studiohdr_t*			pStudioHdr;
-	studiohwdata_t*			pHardwareData;
-	StudioDecalHandle_t		hDecals;
-	int						iSkin;
-	int						iBody;
-	int						iHitboxSet;
-	IClientRenderable*		pClientEntity;
-	int						iLOD;
-	ColorMeshInfo_t*		pColorMeshes;
-	bool					bStaticLighting;
-	MaterialLightingState_t	lightingState;
+	studiohdr_t *pStudioHdr;
+	studiohwdata_t *pHardwareData;
+	StudioDecalHandle_t hDecals;
+	int iSkin;
+	int iBody;
+	int iHitboxSet;
+	IClientRenderable *pClientEntity;
+	int iLOD;
+	ColorMeshInfo_t *pColorMeshes;
+	bool bStaticLighting;
+	MaterialLightingState_t lightingState;
 };
 
 class IStudioRender
 {
 public:
-	void SetColorModulation(float const* arrColor)
+	void SetColorModulation(float const *arrColor)
 	{
 		MEM::CallVFunc<void>(this, 27, arrColor);
 	}
@@ -68,7 +70,7 @@ public:
 		MEM::CallVFunc<void>(this, 28, flAlpha);
 	}
 
-	void ForcedMaterialOverride(IMaterial* pMaterial, EOverrideType nOverrideType = OVERRIDE_NORMAL, int nOverrides = 0)
+	void ForcedMaterialOverride(IMaterial *pMaterial, EOverrideType nOverrideType = OVERRIDE_NORMAL, int nOverrides = 0)
 	{
 		MEM::CallVFunc<void>(this, 33, pMaterial, nOverrideType, nOverrides);
 	}

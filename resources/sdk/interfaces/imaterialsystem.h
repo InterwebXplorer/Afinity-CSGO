@@ -1,9 +1,5 @@
 #pragma once
-// @credits: https://github.com/ValveSoftware/source-sdk-2013/blob/master/sp/src/public/materialsystem/imaterialsystem.h
-
-// used: imatrendercontext, stencilstate, material, texture
 #include "imatrendercontext.h"
-// used: texture_group definitions
 #include "../definitions.h"
 
 using MaterialHandle_t = std::uint16_t;
@@ -14,7 +10,7 @@ enum ECreateRenderTargetFlags : unsigned int
 	CREATERENDERTARGETFLAGS_HDR = 0x00000001,
 	CREATERENDERTARGETFLAGS_AUTOMIPMAP = 0x00000002,
 	CREATERENDERTARGETFLAGS_UNFILTERABLE_OK = 0x00000004,
-	CREATERENDERTARGETFLAGS_NOEDRAM	= 0x00000008,
+	CREATERENDERTARGETFLAGS_NOEDRAM = 0x00000008,
 	CREATERENDERTARGETFLAGS_TEMP = 0x00000010
 };
 
@@ -66,15 +62,15 @@ enum EClearFlags : unsigned int
 
 enum ERenderTargetSizeMode : int
 {
-	RT_SIZE_NO_CHANGE = 0,					// only allowed for render targets that don't want a depth buffer
-	RT_SIZE_DEFAULT,						// don't play with the specified width and height other than making sure it fits in the framebuffer.
-	RT_SIZE_PICMIP,							// apply picmip to the render target's width and height.
-	RT_SIZE_HDR,							// frame_buffer_width / 4
-	RT_SIZE_FULL_FRAME_BUFFER,				// same size as frame buffer, or next lower power of 2 if we can't do that.
-	RT_SIZE_OFFSCREEN,						// target of specified size, don't mess with dimensions
-	RT_SIZE_FULL_FRAME_BUFFER_ROUNDED_UP,	// same size as the frame buffer, rounded up if necessary for systems that can't do non-power of two textures.
-	RT_SIZE_REPLAY_SCREENSHOT,				// rounded down to power of 2, essentially...
-	RT_SIZE_LITERAL							// use the size passed in. Don't clamp it to the frame buffer size. Really.
+	RT_SIZE_NO_CHANGE = 0,
+	RT_SIZE_DEFAULT,
+	RT_SIZE_PICMIP,
+	RT_SIZE_HDR,
+	RT_SIZE_FULL_FRAME_BUFFER,
+	RT_SIZE_OFFSCREEN,
+	RT_SIZE_FULL_FRAME_BUFFER_ROUNDED_UP,
+	RT_SIZE_REPLAY_SCREENSHOT,
+	RT_SIZE_LITERAL
 };
 
 enum EMaterialRenderTargetDepth : unsigned int
@@ -86,60 +82,59 @@ enum EMaterialRenderTargetDepth : unsigned int
 };
 #pragma endregion
 
-// @credits: https://github.com/pmrowla/hl2sdk-csgo/blob/master/public/materialsystem/materialsystem_config.h
 struct MaterialVideoMode_t
 {
-	int				iWidth;
-	int				iHeight;
-	EImageFormat	Format;
-	int				iRefreshRate;
+	int iWidth;
+	int iHeight;
+	EImageFormat Format;
+	int iRefreshRate;
 };
 
 struct MaterialSystemConfig_t
 {
 	MaterialVideoMode_t VideoMode;
-	float				flMonitorGamma;
-	float				flGammaTVRangeMin;
-	float				flGammaTVRangeMax;
-	float				flGammaTVExponent;
-	bool				bGammaTVEnabled;
-	bool				bTripleBuffered;
-	int					nAASamples;
-	int					nForceAnisotropicLevel;
-	int					iSkipMipLevels;
-	int					nDxSupportLevel;
-	unsigned int		uFlags;
-	bool				bEditMode;
-	unsigned char		dProxiesTestMode;
-	bool				bCompressedTextures;
-	bool				bFilterLightmaps;
-	bool				bFilterTextures;
-	bool				bReverseDepth;
-	bool				bBufferPrimitives;
-	bool				bDrawFlat;
-	bool				bMeasureFillRate;
-	bool				bVisualizeFillRate;
-	bool				bNoTransparency;
-	bool				bSoftwareLighting;
-	bool				bAllowCheats;
-	char				nShowMipLevels;
-	bool				bShowLowResImage;
-	bool				bShowNormalMap;
-	bool				bMipMapTextures;
-	unsigned char		uFullbright;
-	bool				bFastNoBump;
-	bool				bSuppressRendering;
-	bool				bDrawGray;
-	bool				bShowSpecular;
-	bool				bShowDiffuse;
-	std::uint32_t		uWindowedSizeLimitWidth;
-	std::uint32_t		uWindowedSizeLimitHeight;
-	int					nAAQuality;
-	bool				bShadowDepthTexture;
-	bool				bMotionBlur;
-	bool				bSupportFlashlight;
-	bool				bPaintEnabled;
-	std::byte			pad0[0xC];
+	float flMonitorGamma;
+	float flGammaTVRangeMin;
+	float flGammaTVRangeMax;
+	float flGammaTVExponent;
+	bool bGammaTVEnabled;
+	bool bTripleBuffered;
+	int nAASamples;
+	int nForceAnisotropicLevel;
+	int iSkipMipLevels;
+	int nDxSupportLevel;
+	unsigned int uFlags;
+	bool bEditMode;
+	unsigned char dProxiesTestMode;
+	bool bCompressedTextures;
+	bool bFilterLightmaps;
+	bool bFilterTextures;
+	bool bReverseDepth;
+	bool bBufferPrimitives;
+	bool bDrawFlat;
+	bool bMeasureFillRate;
+	bool bVisualizeFillRate;
+	bool bNoTransparency;
+	bool bSoftwareLighting;
+	bool bAllowCheats;
+	char nShowMipLevels;
+	bool bShowLowResImage;
+	bool bShowNormalMap;
+	bool bMipMapTextures;
+	unsigned char uFullbright;
+	bool bFastNoBump;
+	bool bSuppressRendering;
+	bool bDrawGray;
+	bool bShowSpecular;
+	bool bShowDiffuse;
+	std::uint32_t uWindowedSizeLimitWidth;
+	std::uint32_t uWindowedSizeLimitHeight;
+	int nAAQuality;
+	bool bShadowDepthTexture;
+	bool bMotionBlur;
+	bool bSupportFlashlight;
+	bool bPaintEnabled;
+	std::byte pad0[0xC];
 };
 
 class IMaterialSystem
@@ -150,14 +145,14 @@ public:
 		return MEM::CallVFunc<EImageFormat>(this, 36);
 	}
 
-	IMaterial* CreateMaterial(const char* szName, CKeyValues* pKeyValues)
+	IMaterial *CreateMaterial(const char *szName, CKeyValues *pKeyValues)
 	{
-		return MEM::CallVFunc<IMaterial*>(this, 83, szName, pKeyValues);
+		return MEM::CallVFunc<IMaterial *>(this, 83, szName, pKeyValues);
 	}
 
-	IMaterial* FindMaterial(char const* szMaterialName, const char* szTextureGroupName = TEXTURE_GROUP_MODEL, bool bComplain = true, const char* pComplainPrefix = nullptr)
+	IMaterial *FindMaterial(char const *szMaterialName, const char *szTextureGroupName = TEXTURE_GROUP_MODEL, bool bComplain = true, const char *pComplainPrefix = nullptr)
 	{
-		return MEM::CallVFunc<IMaterial*>(this, 84, szMaterialName, szTextureGroupName, bComplain, pComplainPrefix);
+		return MEM::CallVFunc<IMaterial *>(this, 84, szMaterialName, szTextureGroupName, bComplain, pComplainPrefix);
 	}
 
 	MaterialHandle_t FirstMaterial()
@@ -175,19 +170,19 @@ public:
 		return MEM::CallVFunc<MaterialHandle_t>(this, 88);
 	}
 
-	IMaterial* GetMaterial(MaterialHandle_t hMaterial)
+	IMaterial *GetMaterial(MaterialHandle_t hMaterial)
 	{
-		return MEM::CallVFunc<IMaterial*>(this, 89, hMaterial);
+		return MEM::CallVFunc<IMaterial *>(this, 89, hMaterial);
 	}
 
-	int	GetNumMaterials()
+	int GetNumMaterials()
 	{
 		return MEM::CallVFunc<int>(this, 90);
 	}
 
-	ITexture* FindTexture(char const* szTextureName, const char* szTextureGroupName, bool bComplain = true, int nAdditionalCreationFlags = 0)
+	ITexture *FindTexture(char const *szTextureName, const char *szTextureGroupName, bool bComplain = true, int nAdditionalCreationFlags = 0)
 	{
-		return MEM::CallVFunc<ITexture*>(this, 91, szTextureName, szTextureGroupName, bComplain, nAdditionalCreationFlags);
+		return MEM::CallVFunc<ITexture *>(this, 91, szTextureName, szTextureGroupName, bComplain, nAdditionalCreationFlags);
 	}
 
 	void BeginRenderTargetAllocation()
@@ -218,29 +213,29 @@ public:
 		DisableRenderTargetAllocationForever() = bOldState;
 	}
 
-	ITexture* CreateRenderTargetTexture(int iWidth, int iHeight, ERenderTargetSizeMode sizeMode, EImageFormat format, EMaterialRenderTargetDepth depth = MATERIAL_RT_DEPTH_SHARED)
+	ITexture *CreateRenderTargetTexture(int iWidth, int iHeight, ERenderTargetSizeMode sizeMode, EImageFormat format, EMaterialRenderTargetDepth depth = MATERIAL_RT_DEPTH_SHARED)
 	{
-		return MEM::CallVFunc<ITexture*>(this, 96, iWidth, iHeight, sizeMode, format, depth);
+		return MEM::CallVFunc<ITexture *>(this, 96, iWidth, iHeight, sizeMode, format, depth);
 	}
 
-	ITexture* CreateNamedRenderTargetTextureEx(const char* szName, int iWidth, int iHeight, ERenderTargetSizeMode sizeMode, EImageFormat format, EMaterialRenderTargetDepth depth = MATERIAL_RT_DEPTH_SHARED, unsigned int fTextureFlags = 0U, unsigned int fRenderTargetFlags = CREATERENDERTARGETFLAGS_HDR)
+	ITexture *CreateNamedRenderTargetTextureEx(const char *szName, int iWidth, int iHeight, ERenderTargetSizeMode sizeMode, EImageFormat format, EMaterialRenderTargetDepth depth = MATERIAL_RT_DEPTH_SHARED, unsigned int fTextureFlags = 0U, unsigned int fRenderTargetFlags = CREATERENDERTARGETFLAGS_HDR)
 	{
-		return MEM::CallVFunc<ITexture*>(this, 97, szName, iWidth, iHeight, sizeMode, format, depth, fTextureFlags, fRenderTargetFlags);
+		return MEM::CallVFunc<ITexture *>(this, 97, szName, iWidth, iHeight, sizeMode, format, depth, fTextureFlags, fRenderTargetFlags);
 	}
 
-	ITexture* CreateNamedRenderTargetTexture(const char* szName, int iWidth, int iHeight, ERenderTargetSizeMode sizeMode, EImageFormat format, EMaterialRenderTargetDepth depth = MATERIAL_RT_DEPTH_SHARED, bool bClampTexCoords = true, bool bAutoMipMap = false)
+	ITexture *CreateNamedRenderTargetTexture(const char *szName, int iWidth, int iHeight, ERenderTargetSizeMode sizeMode, EImageFormat format, EMaterialRenderTargetDepth depth = MATERIAL_RT_DEPTH_SHARED, bool bClampTexCoords = true, bool bAutoMipMap = false)
 	{
-		return MEM::CallVFunc<ITexture*>(this, 98, szName, iWidth, iHeight, sizeMode, format, depth, bClampTexCoords, bAutoMipMap);
+		return MEM::CallVFunc<ITexture *>(this, 98, szName, iWidth, iHeight, sizeMode, format, depth, bClampTexCoords, bAutoMipMap);
 	}
 
-	ITexture* CreateNamedRenderTargetTextureEx2(const char* szName, int iWidth, int iHeight, ERenderTargetSizeMode sizeMode, EImageFormat format, EMaterialRenderTargetDepth depth = MATERIAL_RT_DEPTH_SHARED, unsigned int fTextureFlags = 0U, unsigned int fRenderTargetFlags = CREATERENDERTARGETFLAGS_HDR)
+	ITexture *CreateNamedRenderTargetTextureEx2(const char *szName, int iWidth, int iHeight, ERenderTargetSizeMode sizeMode, EImageFormat format, EMaterialRenderTargetDepth depth = MATERIAL_RT_DEPTH_SHARED, unsigned int fTextureFlags = 0U, unsigned int fRenderTargetFlags = CREATERENDERTARGETFLAGS_HDR)
 	{
-		return MEM::CallVFunc<ITexture*>(this, 99, szName, iWidth, iHeight, sizeMode, format, depth, fTextureFlags, fRenderTargetFlags);
+		return MEM::CallVFunc<ITexture *>(this, 99, szName, iWidth, iHeight, sizeMode, format, depth, fTextureFlags, fRenderTargetFlags);
 	}
 
-	IMatRenderContext* GetRenderContext()
+	IMatRenderContext *GetRenderContext()
 	{
-		return MEM::CallVFunc<IMatRenderContext*>(this, 115);
+		return MEM::CallVFunc<IMatRenderContext *>(this, 115);
 	}
 
 	void FinishRenderTargetAllocation()
@@ -248,33 +243,33 @@ public:
 		MEM::CallVFunc<void>(this, 136);
 	}
 
-	// i realize if i call this all textures will be unloaded and load time will suffer horribly
 	void ReEnableRenderTargetAllocation()
 	{
 		MEM::CallVFunc<void>(this, 137);
 	}
 
-	bool& DisableRenderTargetAllocationForever()
+	bool &DisableRenderTargetAllocationForever()
 	{
-		// @xref: "Tried BeginRenderTargetAllocation after game startup. If I let you do this, all users would suffer.\n"
-		static auto uDisableRenderTargetAllocationForever = *reinterpret_cast<std::uintptr_t*>(MEM::FindPattern(MATERIALSYSTEM_DLL, XorStr("80 B9 ? ? ? ? ? 74 0F")) + 0x2);
-		return *reinterpret_cast<bool*>(reinterpret_cast<std::uintptr_t>(this) + uDisableRenderTargetAllocationForever);
+
+		static auto uDisableRenderTargetAllocationForever = *reinterpret_cast<std::uintptr_t *>(MEM::FindPattern(MATERIALSYSTEM_DLL, XorStr("80 B9 ? ? ? ? ? 74 0F")) + 0x2);
+		return *reinterpret_cast<bool *>(reinterpret_cast<std::uintptr_t>(this) + uDisableRenderTargetAllocationForever);
 	}
 };
 
 class CMatRenderContextPtr : public CRefPtr<IMatRenderContext>
 {
 	typedef CRefPtr<IMatRenderContext> CBaseClass;
+
 public:
 	CMatRenderContextPtr() = default;
 
-	CMatRenderContextPtr(IMatRenderContext* pInit) : CBaseClass(pInit)
+	CMatRenderContextPtr(IMatRenderContext *pInit) : CBaseClass(pInit)
 	{
 		if (CBaseClass::pObject != nullptr)
 			CBaseClass::pObject->BeginRender();
 	}
 
-	CMatRenderContextPtr(IMaterialSystem* pFrom) : CBaseClass(pFrom->GetRenderContext())
+	CMatRenderContextPtr(IMaterialSystem *pFrom) : CBaseClass(pFrom->GetRenderContext())
 	{
 		if (CBaseClass::pObject != nullptr)
 			CBaseClass::pObject->BeginRender();
@@ -286,7 +281,7 @@ public:
 			CBaseClass::pObject->EndRender();
 	}
 
-	IMatRenderContext* operator=(IMatRenderContext* pSecondContext)
+	IMatRenderContext *operator=(IMatRenderContext *pSecondContext)
 	{
 		if (pSecondContext != nullptr)
 			pSecondContext->BeginRender();
@@ -302,7 +297,7 @@ public:
 		CBaseClass::SafeRelease();
 	}
 
-	void AssignAddReference(IMatRenderContext* pFrom)
+	void AssignAddReference(IMatRenderContext *pFrom)
 	{
 		if (CBaseClass::pObject)
 			CBaseClass::pObject->EndRender();
@@ -311,12 +306,12 @@ public:
 		CBaseClass::pObject->BeginRender();
 	}
 
-	void GetFrom(IMaterialSystem* pFrom)
+	void GetFrom(IMaterialSystem *pFrom)
 	{
 		AssignAddReference(pFrom->GetRenderContext());
 	}
 
 private:
-	CMatRenderContextPtr(const CMatRenderContextPtr& pRefPtr);
-	void operator=(const CMatRenderContextPtr& pSecondRefPtr);
+	CMatRenderContextPtr(const CMatRenderContextPtr &pRefPtr);
+	void operator=(const CMatRenderContextPtr &pSecondRefPtr);
 };

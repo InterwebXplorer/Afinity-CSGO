@@ -1,9 +1,5 @@
 #pragma once
-// @credits: https://github.com/ValveSoftware/source-sdk-2013/blob/master/sp/src/public/vgui/ISurface.h
-
-// used: color
 #include "../datatypes/color.h"
-// used: vector
 #include "../datatypes/vector.h"
 
 typedef unsigned long HScheme, HPanel, HTexture, HCursor, HFont;
@@ -39,20 +35,20 @@ struct Vertex_t
 {
 	Vertex_t() = default;
 
-	Vertex_t(const Vector2D& vecPosition, const Vector2D& vecCoordinate = Vector2D(0, 0))
+	Vertex_t(const Vector2D &vecPosition, const Vector2D &vecCoordinate = Vector2D(0, 0))
 	{
 		this->vecPosition = vecPosition;
 		this->vecCoordinate = vecCoordinate;
 	}
 
-	void Init(const Vector2D& vecPosition, const Vector2D& vecCoordinate = Vector2D(0, 0))
+	void Init(const Vector2D &vecPosition, const Vector2D &vecCoordinate = Vector2D(0, 0))
 	{
 		this->vecPosition = vecPosition;
 		this->vecCoordinate = vecCoordinate;
 	}
 
-	Vector2D vecPosition = { };
-	Vector2D vecCoordinate = { };
+	Vector2D vecPosition = {};
+	Vector2D vecCoordinate = {};
 };
 
 class ISurface
@@ -88,7 +84,7 @@ public:
 		MEM::CallVFunc<void>(this, 19, x0, y0, x1, y1);
 	}
 
-	void DrawPolyLine(int* x, int* y, int nPoints)
+	void DrawPolyLine(int *x, int *y, int nPoints)
 	{
 		MEM::CallVFunc<void>(this, 20, x, y, nPoints);
 	}
@@ -113,12 +109,12 @@ public:
 		MEM::CallVFunc<void>(this, 26, x, y);
 	}
 
-	void DrawPrintText(const wchar_t* wszText, int nTextLength, EFontDrawType drawType = FONT_DRAW_DEFAULT)
+	void DrawPrintText(const wchar_t *wszText, int nTextLength, EFontDrawType drawType = FONT_DRAW_DEFAULT)
 	{
 		MEM::CallVFunc<void>(this, 28, wszText, nTextLength, drawType);
 	}
 
-	void DrawSetTextureRGBA(int nIndex, const unsigned char* rgba, int iWide, int iTall)
+	void DrawSetTextureRGBA(int nIndex, const unsigned char *rgba, int iWide, int iTall)
 	{
 		MEM::CallVFunc<void>(this, 37, nIndex, rgba, iWide, iTall);
 	}
@@ -148,17 +144,17 @@ public:
 		return MEM::CallVFunc<HFont>(this, 71);
 	}
 
-	bool SetFontGlyphSet(HFont hFont, const char* szWindowsFontName, int iTall, int iWeight, int iBlur, int nScanLines, int iFlags, int nRangeMin = 0, int nRangeMax = 0)
+	bool SetFontGlyphSet(HFont hFont, const char *szWindowsFontName, int iTall, int iWeight, int iBlur, int nScanLines, int iFlags, int nRangeMin = 0, int nRangeMax = 0)
 	{
 		return MEM::CallVFunc<bool>(this, 72, hFont, szWindowsFontName, iTall, iWeight, iBlur, nScanLines, iFlags, nRangeMin, nRangeMax);
 	}
 
-	void GetTextSize(HFont hFont, const wchar_t* wszText, int& iWide, int& iTall)
+	void GetTextSize(HFont hFont, const wchar_t *wszText, int &iWide, int &iTall)
 	{
 		MEM::CallVFunc<void>(this, 79, hFont, wszText, std::ref(iWide), std::ref(iTall));
 	}
 
-	void PlaySoundSurface(const char* szFileName)
+	void PlaySoundSurface(const char *szFileName)
 	{
 		MEM::CallVFunc<void>(this, 82, szFileName);
 	}
@@ -168,7 +164,7 @@ public:
 		MEM::CallVFunc<void>(this, 103, x, y, iRadius, nSegments);
 	}
 
-	void DrawTexturedPolygon(int n, Vertex_t* pVertice, bool bClipVertices = true)
+	void DrawTexturedPolygon(int n, Vertex_t *pVertice, bool bClipVertices = true)
 	{
 		MEM::CallVFunc<void>(this, 106, n, pVertice, bClipVertices);
 	}

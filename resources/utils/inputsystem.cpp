@@ -1,19 +1,13 @@
-// used: std::this_thread
 #include <thread>
-
 #include "inputsystem.h"
-// used: wndproc hook, inputsystem interface
-#include "../core/hooks.h"
-// used: menu open/panic keys
-#include "../core/variables.h"
-// used: get variable
-#include "../core/config.h"
-// used: menu open state
-#include "../core/menu.h"
+#include "../../hooks.h"
+#include "variables.h"
+#include "../../config.h"
+#include "../../menu.h"
 
 bool IPT::Setup()
 {
-	D3DDEVICE_CREATION_PARAMETERS creationParameters = { };
+	D3DDEVICE_CREATION_PARAMETERS creationParameters = {};
 	while (FAILED(I::DirectDevice->GetCreationParameters(&creationParameters)))
 		std::this_thread::sleep_for(200ms);
 
@@ -38,19 +32,17 @@ void IPT::Restore()
 		pOldWndProc = nullptr;
 	}
 
-	// reset input state
 	I::InputSystem->EnableInput(true);
 }
 
 bool IPT::Process(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	// prevent process when e.g. binding something in-menu
+
 	if (W::bMainOpened && wParam != C::Get<int>(Vars.iMenuKey) && wParam != C::Get<int>(Vars.iPanicKey))
 		return false;
 
-	// current active key
 	int nKey = 0;
-	// current active key state
+
 	EKeyState state = EKeyState::NONE;
 
 	switch (uMsg)
@@ -99,8 +91,7 @@ bool IPT::Process(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		return false;
 	}
 
-	// save key states
-	if (state == EKeyState::UP && arrKeyState.at(nKey) == EKeyState::DOWN) // if swap states it will be pressed state
+	if (state == EKeyState::UP && arrKeyState.at(nKey) == EKeyState::DOWN)
 		arrKeyState.at(nKey) = EKeyState::RELEASED;
 	else
 		arrKeyState.at(nKey) = state;

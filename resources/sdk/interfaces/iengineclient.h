@@ -1,9 +1,5 @@
 #pragma once
-// @credits: https://github.com/ValveSoftware/source-sdk-2013/blob/master/sp/src/public/cdll_int.h
-
-// used: viewmatrix_t, matrix3x4_t
 #include "../datatypes/matrix.h"
-// used: angle
 #include "../datatypes/qangle.h"
 
 #pragma region engineclient_enumerations
@@ -11,33 +7,33 @@ enum EClientFrameStage : int
 {
 	FRAME_UNDEFINED = -1,
 	FRAME_START,
-	// a network packet is being recieved
+
 	FRAME_NET_UPDATE_START,
-	// data has been received and we are going to start calling postdataupdate
+
 	FRAME_NET_UPDATE_POSTDATAUPDATE_START,
-	// data has been received and called postdataupdate on all data recipients
+
 	FRAME_NET_UPDATE_POSTDATAUPDATE_END,
-	// received all packets, we can now do interpolation, prediction, etc
+
 	FRAME_NET_UPDATE_END,
-	// start rendering the scene
+
 	FRAME_RENDER_START,
-	// finished rendering the scene
+
 	FRAME_RENDER_END,
 	FRAME_NET_FULL_FRAME_UPDATE_ON_REMOVE
 };
 
 enum ERenderViewInfo : int
 {
-	RENDERVIEW_UNSPECIFIED =				0,
-	RENDERVIEW_DRAWVIEWMODEL =				(1 << 0),
-	RENDERVIEW_DRAWHUD =					(1 << 1),
-	RENDERVIEW_SUPPRESSMONITORRENDERING =	(1 << 2)
+	RENDERVIEW_UNSPECIFIED = 0,
+	RENDERVIEW_DRAWVIEWMODEL = (1 << 0),
+	RENDERVIEW_DRAWHUD = (1 << 1),
+	RENDERVIEW_SUPPRESSMONITORRENDERING = (1 << 2)
 };
 #pragma endregion
 
 struct PlayerInfo_t
 {
-	std::uint64_t	ullVersion = 0ULL;
+	std::uint64_t ullVersion = 0ULL;
 	union
 	{
 		std::uint64_t ullXuid;
@@ -48,22 +44,22 @@ struct PlayerInfo_t
 		};
 	};
 
-	char			szName[128];
-	int				nUserID;
-	char			szSteamID[33];
-	std::uint32_t	nFriendsID;
-	char			szFriendsName[128];
-	bool			bFakePlayer;
-	bool			bIsHLTV;
-	CRC32_t			uCustomFiles[4];
-	std::uint8_t	dFilesDownloaded;
+	char szName[128];
+	int nUserID;
+	char szSteamID[33];
+	std::uint32_t nFriendsID;
+	char szFriendsName[128];
+	bool bFakePlayer;
+	bool bIsHLTV;
+	CRC32_t uCustomFiles[4];
+	std::uint8_t dFilesDownloaded;
 };
 
 struct AudioState_t
 {
-	Vector			vecOrigin;
-	QAngle			angAngles;
-	bool			bIsUnderwater;
+	Vector vecOrigin;
+	QAngle angAngles;
+	bool bIsUnderwater;
 };
 
 struct Model_t;
@@ -84,12 +80,12 @@ class IMaterialSystem;
 class IEngineClient
 {
 public:
-	void GetScreenSize(int& iWidth, int& iHeight)
+	void GetScreenSize(int &iWidth, int &iHeight)
 	{
 		MEM::CallVFunc<void>(this, 5, std::ref(iWidth), std::ref(iHeight));
 	}
 
-	bool GetPlayerInfo(int nEntityIndex, PlayerInfo_t* pInfo)
+	bool GetPlayerInfo(int nEntityIndex, PlayerInfo_t *pInfo)
 	{
 		return MEM::CallVFunc<bool>(this, 8, nEntityIndex, pInfo);
 	}
@@ -114,12 +110,12 @@ public:
 		return MEM::CallVFunc<float>(this, 14);
 	}
 
-	void GetViewAngles(QAngle& angView)
+	void GetViewAngles(QAngle &angView)
 	{
 		MEM::CallVFunc<void>(this, 18, std::ref(angView));
 	}
 
-	void SetViewAngles(QAngle& angView)
+	void SetViewAngles(QAngle &angView)
 	{
 		MEM::CallVFunc<void>(this, 19, std::ref(angView));
 	}
@@ -129,13 +125,11 @@ public:
 		return MEM::CallVFunc<int>(this, 20);
 	}
 
-	// returns true if the player is fully connected and active in game (i.e, not still loading) and for check doesnt need isconnected
 	bool IsInGame()
 	{
 		return MEM::CallVFunc<bool>(this, 26);
 	}
 
-	// returns true if the player is connected, but not necessarily active in game (could still be loading)
 	bool IsConnected()
 	{
 		return MEM::CallVFunc<bool>(this, 27);
@@ -146,29 +140,29 @@ public:
 		return MEM::CallVFunc<bool>(this, 28);
 	}
 
-	const ViewMatrix_t& WorldToScreenMatrix()
+	const ViewMatrix_t &WorldToScreenMatrix()
 	{
-		return MEM::CallVFunc<const ViewMatrix_t&>(this, 37);
+		return MEM::CallVFunc<const ViewMatrix_t &>(this, 37);
 	}
 
-	void* GetBSPTreeQuery()
+	void *GetBSPTreeQuery()
 	{
-		return MEM::CallVFunc<void*>(this, 43);
+		return MEM::CallVFunc<void *>(this, 43);
 	}
 
-	const char* GetLevelName()
+	const char *GetLevelName()
 	{
-		return MEM::CallVFunc<const char*>(this, 52);
+		return MEM::CallVFunc<const char *>(this, 52);
 	}
 
-	const char* GetLevelNameShort()
+	const char *GetLevelNameShort()
 	{
-		return MEM::CallVFunc<const char*>(this, 53);
+		return MEM::CallVFunc<const char *>(this, 53);
 	}
 
-	INetChannelInfo* GetNetChannelInfo()
+	INetChannelInfo *GetNetChannelInfo()
 	{
-		return MEM::CallVFunc<INetChannelInfo*>(this, 78);
+		return MEM::CallVFunc<INetChannelInfo *>(this, 78);
 	}
 
 	bool IsPlayingDemo()
@@ -201,24 +195,24 @@ public:
 		return MEM::CallVFunc<unsigned int>(this, 104);
 	}
 
-	const char* GetProductVersionString()
+	const char *GetProductVersionString()
 	{
-		return MEM::CallVFunc<const char*>(this, 105);
+		return MEM::CallVFunc<const char *>(this, 105);
 	}
 
-	void ExecuteClientCmd(const char* szCmdString)
+	void ExecuteClientCmd(const char *szCmdString)
 	{
 		MEM::CallVFunc<void>(this, 108, szCmdString);
 	}
 
-	void ClientCmdUnrestricted(const char* szCmdString, bool bFromConsoleOrKeybind = false)
+	void ClientCmdUnrestricted(const char *szCmdString, bool bFromConsoleOrKeybind = false)
 	{
 		MEM::CallVFunc<void>(this, 114, szCmdString, bFromConsoleOrKeybind);
 	}
 
-	SteamAPIContext_t* GetSteamAPIContext()
+	SteamAPIContext_t *GetSteamAPIContext()
 	{
-		return MEM::CallVFunc<SteamAPIContext_t*>(this, 185);
+		return MEM::CallVFunc<SteamAPIContext_t *>(this, 185);
 	}
 
 	bool IsVoiceRecording()

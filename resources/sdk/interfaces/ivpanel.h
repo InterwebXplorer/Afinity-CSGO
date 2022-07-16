@@ -13,13 +13,13 @@ public:
 		return MEM::CallVFunc<void>(this, 32, nPanelIndex, bState);
 	}
 
-	const char* GetName(int nPanelIndex)
+	const char *GetName(int nPanelIndex)
 	{
-		return MEM::CallVFunc<const char*>(this, 36, nPanelIndex);
+		return MEM::CallVFunc<const char *>(this, 36, nPanelIndex);
 	}
 
-	const char* GetNameClass(int nPanelIndex)
+	const char *GetNameClass(int nPanelIndex)
 	{
-		return MEM::CallVFunc<const char*>(this, 37, nPanelIndex);
+		return MEM::CallVFunc<const char *>(this, 37, nPanelIndex);
 	}
 };

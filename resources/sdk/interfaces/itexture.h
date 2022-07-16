@@ -1,19 +1,19 @@
 #pragma once
-// used: directx texture class, call virtual function
-#include "../../utilities/memory.h"
+#include "../../utils/memory.h"
 
 struct Texture_t
 {
-	std::byte			pad0[0xC];		// 0x0000
-	IDirect3DTexture9*	lpRawTexture;	// 0x000C
+	std::byte pad0[0xC];
+	IDirect3DTexture9 *lpRawTexture;
 };
 
 class ITexture
 {
 private:
-	std::byte	pad0[0x50];		 // 0x0000
+	std::byte pad0[0x50];
+
 public:
-	Texture_t** pTextureHandles; // 0x0050
+	Texture_t **pTextureHandles;
 
 	int GetActualWidth()
 	{

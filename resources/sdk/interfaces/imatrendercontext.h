@@ -1,14 +1,9 @@
 #pragma once
-// used: vector
 #include "../datatypes/vector.h"
-// used: irefcouted
 #include "irefcount.h"
-// used: texture
 #include "itexture.h"
-// used: material
 #include "imaterial.h"
 
-// @credits: https://github.com/ValveSoftware/source-sdk-2013/blob/master/sp/src/public/mathlib/lightdesc.h
 enum ELightType : int
 {
 	MATERIAL_LIGHT_DISABLE = 0,
@@ -27,7 +22,7 @@ enum ELightTypeOptimizationFlags
 
 struct LightDesc_t
 {
-	void InitDirectional(const Vector& vecDirection, const Vector& vecColor)
+	void InitDirectional(const Vector &vecDirection, const Vector &vecColor)
 	{
 		this->nType = MATERIAL_LIGHT_DIRECTIONAL;
 		this->vecColor = vecColor;
@@ -52,15 +47,15 @@ struct LightDesc_t
 			flPhiDot = std::cosf(flPhi);
 
 			if (const float flSpread = flThetaDot - flPhiDot; flSpread > 1.0e-10f)
-				// note - this quantity is very sensitive to round off error. the sse reciprocal approximation won't cut it here.
+
 				flOneOverThetaDotMinusPhiDot = 1.0f / flSpread;
 			else
-				// hard falloff instead of divide by zero
+
 				flOneOverThetaDotMinusPhiDot = 1.0f;
 		}
 		else if (nType == MATERIAL_LIGHT_DIRECTIONAL)
 		{
-			// set position to be real far away in the right direction
+
 			vecPosition = vecDirection;
 			vecPosition *= 2.0e6;
 		}
@@ -68,26 +63,26 @@ struct LightDesc_t
 		flRangeSquared = flRange * flRange;
 	}
 
-	ELightType	nType;
-	Vector		vecColor;
-	Vector		vecPosition;
-	Vector		vecDirection;
-	float		flRange;
-	float		flFalloff;
-	float		flAttenuation0;
-	float		flAttenuation1;
-	float		flAttenuation2;
-	float		flTheta;
-	float		flPhi;
-	float		flThetaDot;
-	float		flPhiDot;
-	float		flOneOverThetaDotMinusPhiDot;
+	ELightType nType;
+	Vector vecColor;
+	Vector vecPosition;
+	Vector vecDirection;
+	float flRange;
+	float flFalloff;
+	float flAttenuation0;
+	float flAttenuation1;
+	float flAttenuation2;
+	float flTheta;
+	float flPhi;
+	float flThetaDot;
+	float flPhiDot;
+	float flOneOverThetaDotMinusPhiDot;
 	std::uint32_t fFlags;
+
 protected:
-	float		flRangeSquared;
+	float flRangeSquared;
 };
 
-// @credits: https://github.com/ValveSoftware/source-sdk-2013/blob/master/sp/src/game/client/glow_outline_effect.cpp
 enum EStencilOperation : int
 {
 	STENCILOPERATION_KEEP = 1,
@@ -125,17 +120,16 @@ struct ShaderStencilState_t
 		uTestMask = uWriteMask = 0xFFFFFFFF;
 	}
 
-	bool						bEnable;
-	EStencilOperation			FailOperation;
-	EStencilOperation			ZFailOperation;
-	EStencilOperation			PassOperation;
-	EStencilComparisonFunction	CompareFunction;
-	int							nReferenceValue;
-	std::uint32_t				uTestMask;
-	std::uint32_t				uWriteMask;
+	bool bEnable;
+	EStencilOperation FailOperation;
+	EStencilOperation ZFailOperation;
+	EStencilOperation PassOperation;
+	EStencilComparisonFunction CompareFunction;
+	int nReferenceValue;
+	std::uint32_t uTestMask;
+	std::uint32_t uWriteMask;
 };
 
-// @credits: https://github.com/ValveSoftware/source-sdk-2013/blob/master/sp/src/public/materialsystem/imaterialsystem.h
 class IMatRenderContext : public IRefCounted
 {
 public:
@@ -149,19 +143,19 @@ public:
 		MEM::CallVFunc<void>(this, 3);
 	}
 
-	void BindLocalCubemap(ITexture* pTexture)
+	void BindLocalCubemap(ITexture *pTexture)
 	{
 		MEM::CallVFunc<void>(this, 5, pTexture);
 	}
 
-	void SetRenderTarget(ITexture* pTexture)
+	void SetRenderTarget(ITexture *pTexture)
 	{
 		MEM::CallVFunc<void>(this, 6, pTexture);
 	}
 
-	ITexture* GetRenderTarget()
+	ITexture *GetRenderTarget()
 	{
-		return MEM::CallVFunc<ITexture*>(this, 7);
+		return MEM::CallVFunc<ITexture *>(this, 7);
 	}
 
 	void ClearBuffers(bool bClearColor, bool bClearDepth, bool bClearStencil = false)
@@ -169,7 +163,7 @@ public:
 		MEM::CallVFunc<void>(this, 12, bClearColor, bClearDepth, bClearStencil);
 	}
 
-	void SetLights(int nCount, const LightDesc_t* pLights)
+	void SetLights(int nCount, const LightDesc_t *pLights)
 	{
 		MEM::CallVFunc<void>(this, 17, nCount, pLights);
 	}
@@ -184,7 +178,7 @@ public:
 		MEM::CallVFunc<void>(this, 40, x, y, iWidth, iHeight);
 	}
 
-	void GetViewport(int& x, int& y, int& iWidth, int& iHeight)
+	void GetViewport(int &x, int &y, int &iWidth, int &iHeight)
 	{
 		MEM::CallVFunc<void>(this, 41, std::ref(x), std::ref(y), std::ref(iWidth), std::ref(iHeight));
 	}
@@ -199,7 +193,7 @@ public:
 		MEM::CallVFunc<void>(this, 79, r, g, b, a);
 	}
 
-	void DrawScreenSpaceRectangle(IMaterial* pMaterial, int iDestX, int iDestY, int iWidth, int iHeight, float flTextureX0, float flTextureY0, float flTextureX1, float flTextureY1, int iTextureWidth, int iTextureHeight, void* pClientRenderable = nullptr, int nXDice = 1, int nYDice = 1)
+	void DrawScreenSpaceRectangle(IMaterial *pMaterial, int iDestX, int iDestY, int iWidth, int iHeight, float flTextureX0, float flTextureY0, float flTextureX1, float flTextureY1, int iTextureWidth, int iTextureHeight, void *pClientRenderable = nullptr, int nXDice = 1, int nYDice = 1)
 	{
 		MEM::CallVFunc<void>(this, 114, pMaterial, iDestX, iDestY, iWidth, iHeight, flTextureX0, flTextureY0, flTextureX1, flTextureY1, iTextureWidth, iTextureHeight, pClientRenderable, nXDice, nYDice);
 	}
@@ -214,7 +208,7 @@ public:
 		MEM::CallVFunc<void>(this, 120);
 	}
 
-	void SetLightingOrigin(/*Vector vecLightingOrigin*/float x, float y, float z)
+	void SetLightingOrigin(/*Vector vecLightingOrigin*/ float x, float y, float z)
 	{
 		MEM::CallVFunc<void>(this, 158, x, y, z);
 	}

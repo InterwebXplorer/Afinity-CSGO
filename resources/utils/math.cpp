@@ -1,11 +1,9 @@
 #include "math.h"
-
-// used: modules definitons, convar, globals interfaces
-#include "../core/interfaces.h"
+#include "../sdk/interfaces.h"
 
 bool M::Setup()
 {
-	const void* hVstdLib = MEM::GetModuleBaseHandle(VSTDLIB_DLL);
+	const void *hVstdLib = MEM::GetModuleBaseHandle(VSTDLIB_DLL);
 
 	if (hVstdLib == nullptr)
 		return false;
@@ -33,7 +31,7 @@ bool M::Setup()
 	return true;
 }
 
-void M::VectorAngles(const Vector& vecForward, QAngle& angView)
+void M::VectorAngles(const Vector &vecForward, QAngle &angView)
 {
 	float flPitch, flYaw;
 
@@ -60,7 +58,7 @@ void M::VectorAngles(const Vector& vecForward, QAngle& angView)
 	angView.z = 0.f;
 }
 
-void M::AngleVectors(const QAngle& angView, Vector* pForward, Vector* pRight, Vector* pUp)
+void M::AngleVectors(const QAngle &angView, Vector *pForward, Vector *pRight, Vector *pUp)
 {
 	float sp, sy, sr, cp, cy, cr;
 
@@ -90,7 +88,7 @@ void M::AngleVectors(const QAngle& angView, Vector* pForward, Vector* pRight, Ve
 	}
 }
 
-void M::AngleMatrix(const QAngle& angView, matrix3x4_t& matOutput, const Vector& vecOrigin)
+void M::AngleMatrix(const QAngle &angView, matrix3x4_t &matOutput, const Vector &vecOrigin)
 {
 	float sp, sy, sr, cp, cy, cr;
 
@@ -110,7 +108,7 @@ void M::AngleMatrix(const QAngle& angView, matrix3x4_t& matOutput, const Vector&
 	matOutput.SetOrigin(vecOrigin);
 }
 
-Vector2D M::AnglePixels(const float flSensitivity, const float flPitch, const float flYaw, const QAngle& angBegin, const QAngle& angEnd)
+Vector2D M::AnglePixels(const float flSensitivity, const float flPitch, const float flYaw, const QAngle &angBegin, const QAngle &angEnd)
 {
 	QAngle angDelta = angBegin - angEnd;
 	angDelta.Normalize();
@@ -121,7 +119,7 @@ Vector2D M::AnglePixels(const float flSensitivity, const float flPitch, const fl
 	return Vector2D(flPixelMoveYaw, flPixelMovePitch);
 }
 
-QAngle M::PixelsAngle(const float flSensitivity, const float flPitch, const float flYaw, const Vector2D& vecPixels)
+QAngle M::PixelsAngle(const float flSensitivity, const float flPitch, const float flYaw, const Vector2D &vecPixels)
 {
 	const float flAngleMovePitch = (-vecPixels.x) * (flYaw * flSensitivity);
 	const float flAngleMoveYaw = (vecPixels.y) * (flPitch * flSensitivity);
@@ -129,7 +127,7 @@ QAngle M::PixelsAngle(const float flSensitivity, const float flPitch, const floa
 	return QAngle(flAngleMoveYaw, flAngleMovePitch, 0.f);
 }
 
-QAngle M::CalcAngle(const Vector& vecStart, const Vector& vecEnd)
+QAngle M::CalcAngle(const Vector &vecStart, const Vector &vecEnd)
 {
 	QAngle angView;
 	const Vector vecDelta = vecEnd - vecStart;
@@ -139,20 +137,20 @@ QAngle M::CalcAngle(const Vector& vecStart, const Vector& vecEnd)
 	return angView;
 }
 
-Vector M::VectorTransform(const Vector& vecTransform, const matrix3x4_t& matrix)
+Vector M::VectorTransform(const Vector &vecTransform, const matrix3x4_t &matrix)
 {
 	return Vector(vecTransform.DotProduct(matrix[0]) + matrix[0][3],
-		vecTransform.DotProduct(matrix[1]) + matrix[1][3],
-		vecTransform.DotProduct(matrix[2]) + matrix[2][3]);
+				  vecTransform.DotProduct(matrix[1]) + matrix[1][3],
+				  vecTransform.DotProduct(matrix[2]) + matrix[2][3]);
 }
 
-Vector M::ExtrapolateTick(const Vector& p0, const Vector& v0)
+Vector M::ExtrapolateTick(const Vector &p0, const Vector &v0)
 {
-	// position formula: p0 + v0t
+
 	return p0 + (v0 * I::Globals->flIntervalPerTick);
 }
 
-void M::RotatePoint(const ImVec2& vecIn, const float flAngle, ImVec2* pOutPoint)
+void M::RotatePoint(const ImVec2 &vecIn, const float flAngle, ImVec2 *pOutPoint)
 {
 	if (&vecIn == pOutPoint)
 	{
@@ -168,7 +166,7 @@ void M::RotatePoint(const ImVec2& vecIn, const float flAngle, ImVec2* pOutPoint)
 	pOutPoint->y = vecIn.x * flSin + vecIn.y * flCos;
 }
 
-void M::RotateCenter(const ImVec2& vecCenter, const float flAngle, ImVec2* pOutPoint)
+void M::RotateCenter(const ImVec2 &vecCenter, const float flAngle, ImVec2 *pOutPoint)
 {
 	const float flSin = std::sinf(M_DEG2RAD(flAngle));
 	const float flCos = std::cosf(M_DEG2RAD(flAngle));

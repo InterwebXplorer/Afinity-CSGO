@@ -1,24 +1,13 @@
 #include "md5.h"
 
-// The four core functions - F1 is optimized somewhat
-// #define F1(x, y, z) (x & y | ~x & z)
 #define F1(x, y, z) (z ^ (x & (y ^ z)))
 #define F2(x, y, z) F1(z, x, y)
 #define F3(x, y, z) (x ^ y ^ z)
 #define F4(x, y, z) (y ^ (x | ~z))
 
-// This is the central step in the MD5 algorithm.
 #define MD5STEP(f, w, x, y, z, data, s) \
-        ( w += f(x, y, z) + data,  w = w<<s | w>>(32-s),  w += x )
+	(w += f(x, y, z) + data, w = w << s | w >> (32 - s), w += x)
 
-//-----------------------------------------------------------------------------
-// Purpose: The core of the MD5 algorithm, this alters an existing MD5 hash to
-//  reflect the addition of 16 longwords of new data.  MD5Update blocks
-//  the data and converts bytes into longwords for this routine.
-// Input  : buf[4] - 
-//			in[16] - 
-// Output : static void
-//-----------------------------------------------------------------------------
 static void MD5Transform(unsigned int buf[4], unsigned int const in[16])
 {
 	unsigned int a, b, c, d;
@@ -102,7 +91,7 @@ static void MD5Transform(unsigned int buf[4], unsigned int const in[16])
 	buf[3] += d;
 }
 
-void MD5::Init(MD5Context_t* ctx)
+void MD5::Init(MD5Context_t *ctx)
 {
 	ctx->buf[0] = 0x67452301;
 	ctx->buf[1] = 0xefcdab89;
@@ -113,22 +102,20 @@ void MD5::Init(MD5Context_t* ctx)
 	ctx->bits[1] = 0;
 }
 
-void MD5::Update(MD5Context_t* ctx, unsigned char const* buf, unsigned int len)
+void MD5::Update(MD5Context_t *ctx, unsigned char const *buf, unsigned int len)
 {
 	unsigned int t;
 
-	/* Update bitcount */
 	t = ctx->bits[0];
 	if ((ctx->bits[0] = t + ((unsigned int)len << 3)) < t)
-		ctx->bits[1]++;         /* Carry from low to high */
+		ctx->bits[1]++;
 	ctx->bits[1] += len >> 29;
 
-	t = (t >> 3) & 0x3f;        /* Bytes already in shsInfo->data */
+	t = (t >> 3) & 0x3f;
 
-	/* Handle any leading odd-sized chunks */
 	if (t)
 	{
-		unsigned char* p = (unsigned char*)ctx->in + t;
+		unsigned char *p = (unsigned char *)ctx->in + t;
 
 		t = 64 - t;
 		if (len < t)
@@ -137,93 +124,83 @@ void MD5::Update(MD5Context_t* ctx, unsigned char const* buf, unsigned int len)
 			return;
 		}
 		memcpy(p, buf, t);
-		//byteReverse(ctx->in, 16);
-		MD5Transform(ctx->buf, (unsigned int*)ctx->in);
+
+		MD5Transform(ctx->buf, (unsigned int *)ctx->in);
 		buf += t;
 		len -= t;
 	}
 
-	/* Process data in 64-byte chunks */
 	while (len >= 64)
 	{
 		memcpy(ctx->in, buf, 64);
-		//byteReverse(ctx->in, 16);
-		MD5Transform(ctx->buf, (unsigned int*)ctx->in);
+
+		MD5Transform(ctx->buf, (unsigned int *)ctx->in);
 		buf += 64;
 		len -= 64;
 	}
 
-	/* Handle any remaining bytes of data. */
 	memcpy(ctx->in, buf, len);
 }
 
-void MD5::Final(unsigned char digest[MD5_DIGEST_LENGTH], MD5Context_t* ctx)
+void MD5::Final(unsigned char digest[MD5_DIGEST_LENGTH], MD5Context_t *ctx)
 {
 	unsigned count;
-	unsigned char* p;
+	unsigned char *p;
 
-	/* Compute number of bytes mod 64 */
 	count = (ctx->bits[0] >> 3) & 0x3F;
 
-	/* Set the first char of padding to 0x80.  This is safe since there is
-	   always at least one byte free */
 	p = ctx->in + count;
 	*p++ = 0x80;
 
-	/* Bytes of padding needed to make 64 bytes */
 	count = 64 - 1 - count;
 
-	/* Pad out to 56 mod 64 */
 	if (count < 8)
 	{
-		/* Two lots of padding:  Pad the first block to 64 bytes */
-		memset(p, 0, count);
-		//byteReverse(ctx->in, 16);
-		MD5Transform(ctx->buf, (unsigned int*)ctx->in);
 
-		/* Now fill the next block with 56 bytes */
+		memset(p, 0, count);
+
+		MD5Transform(ctx->buf, (unsigned int *)ctx->in);
+
 		memset(ctx->in, 0, 56);
 	}
 	else
 	{
-		/* Pad block to 56 bytes */
+
 		memset(p, 0, count - 8);
 	}
-	//byteReverse(ctx->in, 14);
 
-	/* Append length in bits and transform */
-	((unsigned int*)ctx->in)[14] = ctx->bits[0];
-	((unsigned int*)ctx->in)[15] = ctx->bits[1];
+	((unsigned int *)ctx->in)[14] = ctx->bits[0];
+	((unsigned int *)ctx->in)[15] = ctx->bits[1];
 
-	MD5Transform(ctx->buf, (unsigned int*)ctx->in);
-	//byteReverse((unsigned char *) ctx->buf, 4);
+	MD5Transform(ctx->buf, (unsigned int *)ctx->in);
+
 	memcpy(digest, ctx->buf, MD5_DIGEST_LENGTH);
-	memset(ctx, 0, sizeof(*ctx));        /* In case it's sensitive */
+	memset(ctx, 0, sizeof(*ctx));
 }
 
 unsigned int MD5::PseudoRandom(unsigned int nSeed)
 {
 	MD5Context_t ctx;
-	unsigned char digest[MD5_DIGEST_LENGTH]; // The MD5 Hash
+	unsigned char digest[MD5_DIGEST_LENGTH];
 	memset(&ctx, 0, sizeof(ctx));
 
 	MD5::Init(&ctx);
-	MD5::Update(&ctx, (unsigned char*)&nSeed, sizeof(nSeed));
+	MD5::Update(&ctx, (unsigned char *)&nSeed, sizeof(nSeed));
 	MD5::Final(digest, &ctx);
 
-	return *(unsigned int*)(digest + 6);	// use 4 middle bytes for random value
+	return *(unsigned int *)(digest + 6);
 }
 
-void MD5::ProcessSingleBuffer(const void* p, int len, MD5Value_t& md5Result)
+void MD5::ProcessSingleBuffer(const void *p, int len, MD5Value_t &md5Result)
 {
 	assert(len >= 0);
 	MD5Context_t ctx;
 	MD5::Init(&ctx);
-	MD5::Update(&ctx, (unsigned char const*)p, len);
+	MD5::Update(&ctx, (unsigned char const *)p, len);
 	MD5::Final(md5Result.bits, &ctx);
 }
 
-bool MD5::Compare(const MD5Value_t& data, const MD5Value_t& compare)
+bool MD5::Compare(const MD5Value_t &data, const MD5Value_t &compare)
 {
 	return memcmp(data.bits, compare.bits, MD5_DIGEST_LENGTH) == 0;
 }

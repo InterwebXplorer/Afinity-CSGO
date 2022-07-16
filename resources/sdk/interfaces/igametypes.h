@@ -13,7 +13,6 @@ enum EGameType : int
 	GAMETYPE_FREEFORALL
 };
 
-// @credits: https://developer.valvesoftware.com/wiki/CSGO_Game_Mode_Commands
 enum EGameMode : int
 {
 	GAMEMODE_UNKNOWN = 0,
@@ -29,7 +28,6 @@ enum EGameMode : int
 };
 #pragma endregion
 
-// @credits: https://github.com/scen/ionlib/blob/master/src/sdk/hl2_csgo/public/matchmaking/igametypes.h
 class IGameTypes
 {
 public:
@@ -43,18 +41,18 @@ public:
 		return MEM::CallVFunc<int>(this, 9);
 	}
 
-	const char* GetCurrentMapName()
+	const char *GetCurrentMapName()
 	{
-		return MEM::CallVFunc<const char*>(this, 10);
+		return MEM::CallVFunc<const char *>(this, 10);
 	}
 
-	const char* GetCurrentGameTypeNameID()
+	const char *GetCurrentGameTypeNameID()
 	{
-		return MEM::CallVFunc<const char*>(this, 11);
+		return MEM::CallVFunc<const char *>(this, 11);
 	}
 
-	const char* GetCurrentGameModeNameID()
+	const char *GetCurrentGameModeNameID()
 	{
-		return MEM::CallVFunc<const char*>(this, 13);
+		return MEM::CallVFunc<const char *>(this, 13);
 	}
 };

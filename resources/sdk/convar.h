@@ -1,44 +1,41 @@
 #pragma once
-// used: winapi includes
-#include "../common.h"
-// used: color
+#include <windows.h>
 #include "datatypes/color.h"
-// used: utlvector
 #include "datatypes/utlvector.h"
 
-using FnCommandCallbackV1_t = void(__cdecl*)();
-using FnChangeCallback_t = void(__cdecl*)(void*, const char*, float);
+using FnCommandCallbackV1_t = void(__cdecl *)();
+using FnChangeCallback_t = void(__cdecl *)(void *, const char *, float);
 class CConVar
 {
 public:
-	const char* GetName()
+	const char *GetName()
 	{
-		return MEM::CallVFunc<const char*>(this, 5);
+		return MEM::CallVFunc<const char *>(this, 5);
 	}
 
-	float GetFloat() // idx @ 11
+	float GetFloat()
 	{
-		std::uint32_t uXored = *reinterpret_cast<std::uint32_t*>(&pParent->flValue) ^ reinterpret_cast<std::uint32_t>(this);
-		return *reinterpret_cast<float*>(&uXored);
+		std::uint32_t uXored = *reinterpret_cast<std::uint32_t *>(&pParent->flValue) ^ reinterpret_cast<std::uint32_t>(this);
+		return *reinterpret_cast<float *>(&uXored);
 	}
 
-	int GetInt() // idx @ 12
+	int GetInt()
 	{
 		return static_cast<int>(pParent->iValue ^ reinterpret_cast<int>(this));
 	}
 
-	bool GetBool() // idx @ 13
+	bool GetBool()
 	{
 		return !!GetInt();
 	}
 
-	const char* GetString() const
+	const char *GetString() const
 	{
-		char const* szValue = pParent->szString;
+		char const *szValue = pParent->szString;
 		return szValue ? szValue : "";
 	}
 
-	void SetValue(const char* szValue)
+	void SetValue(const char *szValue)
 	{
 		return MEM::CallVFunc<void>(this, 14, szValue);
 	}
@@ -59,54 +56,51 @@ public:
 	}
 
 public:
-	std::byte						pad0[0x4];			//0x00
-	CConVar*						pNext;				//0x04
-	bool							bRegistered;		//0x08
-	const char*						szName;				//0x0C
-	const char*						szHelpString;		//0x10
-	int								nFlags;				//0x14
-	FnCommandCallbackV1_t			pCallback;			//0x18
-	CConVar*						pParent;			//0x1C
-	const char*						szDefaultValue;		//0x20
-	char*							szString;			//0x24
-	int								iStringLength;		//0x28
-	float							flValue;			//0x2C
-	int								iValue;				//0x30
-	bool							bHasMin;			//0x34
-	float							flMinValue;			//0x38
-	bool							bHasMax;			//0x3C
-	float							flMaxValue;			//0x40
-	CUtlVector<FnChangeCallback_t>	fnChangeCallbacks;	//0x44
+	std::byte pad0[0x4];
+	CConVar *pNext;
+	bool bRegistered;
+	const char *szName;
+	const char *szHelpString;
+	int nFlags;
+	FnCommandCallbackV1_t pCallback;
+	CConVar *pParent;
+	const char *szDefaultValue;
+	char *szString;
+	int iStringLength;
+	float flValue;
+	int iValue;
+	bool bHasMin;
+	float flMinValue;
+	bool bHasMax;
+	float flMaxValue;
+	CUtlVector<FnChangeCallback_t> fnChangeCallbacks;
 };
 
-class CSpoofedConVar // @credits: markhc
+class CSpoofedConVar
 {
 public:
 	CSpoofedConVar() = default;
-	CSpoofedConVar(const char* szCVar);
-	CSpoofedConVar(CConVar* pCVar);
+	CSpoofedConVar(const char *szCVar);
+	CSpoofedConVar(CConVar *pCVar);
 	~CSpoofedConVar();
 
-	// Check
-	bool	IsSpoofed() const;
-	void	Spoof();
+	bool IsSpoofed() const;
+	void Spoof();
 
-	// Flags
-	void	SetFlags(int iFlags) const;
-	int		GetFlags() const;
+	void SetFlags(int iFlags) const;
+	int GetFlags() const;
 
-	// Set
-	void	SetBool(bool bValue) const;
-	void	SetInt(int iValue) const;
-	void	SetFloat(float flValue) const;
-	void	SetString(const char* szValue) const;
+	void SetBool(bool bValue) const;
+	void SetInt(int iValue) const;
+	void SetFloat(float flValue) const;
+	void SetString(const char *szValue) const;
 
 private:
-	CConVar*	pOriginalCVar = nullptr;
-	CConVar*	pDummyCVar = nullptr;
-	char		szDummyName[128] = { };
-	char		szDummyValue[128] = { };
-	char		szOriginalName[128] = { };
-	char		szOriginalValue[128] = { };
-	int			iOriginalFlags = 0;
+	CConVar *pOriginalCVar = nullptr;
+	CConVar *pDummyCVar = nullptr;
+	char szDummyName[128] = {};
+	char szDummyValue[128] = {};
+	char szOriginalName[128] = {};
+	char szOriginalValue[128] = {};
+	int iOriginalFlags = 0;
 };

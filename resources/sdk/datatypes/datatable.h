@@ -1,6 +1,4 @@
 #pragma once
-// @credits: https://github.com/ValveSoftware/source-sdk-2013/blob/master/sp/src/public/dt_common.h
-// @credits: https://github.com/ValveSoftware/source-sdk-2013/blob/master/sp/src/public/dt_recv.h
 
 enum ESendPropType : int
 {
@@ -20,11 +18,11 @@ struct DataVariant_t
 {
 	union
 	{
-		float	Float;
-		long	Int;
-		char*	String;
-		void*	Data;
-		float	Vector[3];
+		float Float;
+		long Int;
+		char *String;
+		void *Data;
+		float Vector[3];
 		int64_t Int64;
 	};
 
@@ -34,15 +32,15 @@ struct DataVariant_t
 class CRecvProxyData
 {
 public:
-	const RecvProp_t*	pRecvProp;	// the property it's receiving
-	DataVariant_t		Value;		// the value given to you to store
-	int					iElement;	// which array element you're getting
-	int					nObjectID;	// the object being referred to
+	const RecvProp_t *pRecvProp;
+	DataVariant_t Value;
+	int iElement;
+	int nObjectID;
 };
 
-using RecvVarProxyFn = void(__cdecl*)(const CRecvProxyData*, void*, void*);
-using ArrayLengthProxyFn = void(__cdecl*)(void*, int, int);
-using DataTableProxyFn = void(__cdecl*)(const RecvProp_t*, void**, void*, int);
+using RecvVarProxyFn = void(__cdecl *)(const CRecvProxyData *, void *, void *);
+using ArrayLengthProxyFn = void(__cdecl *)(void *, int, int);
+using DataTableProxyFn = void(__cdecl *)(const RecvProp_t *, void **, void *, int);
 
 class CStandartRecvProxies
 {
@@ -55,33 +53,31 @@ public:
 	RecvVarProxyFn pVectorToVector;
 };
 
-// receive data table
 struct RecvTable_t
 {
-	RecvProp_t*		pProps;
-	int				nProps;
-	void*			pDecoder;
-	char*			szNetTableName;
-	bool			bInitialized;
-	bool			bInMainList;
+	RecvProp_t *pProps;
+	int nProps;
+	void *pDecoder;
+	char *szNetTableName;
+	bool bInitialized;
+	bool bInMainList;
 };
 
-// receive prop comes from the receive data table
 struct RecvProp_t
 {
-	char*				szVarName;
-	ESendPropType		iRecvType;
-	int					iFlags;
-	int					nStringBufferSize;
-	bool				bInsideArray;
-	const void*			pExtraData;
-	RecvProp_t*			pArrayProp;
-	ArrayLengthProxyFn* oArrayLengthProxyFn;
-	RecvVarProxyFn		oProxyFn;
-	DataTableProxyFn*	oDataTableProxyFn;
-	RecvTable_t*		pDataTable;
-	int					iOffset;
-	int					iElementStride;
-	int					iElements;
-	const char*			szParentArrayPropName;
+	char *szVarName;
+	ESendPropType iRecvType;
+	int iFlags;
+	int nStringBufferSize;
+	bool bInsideArray;
+	const void *pExtraData;
+	RecvProp_t *pArrayProp;
+	ArrayLengthProxyFn *oArrayLengthProxyFn;
+	RecvVarProxyFn oProxyFn;
+	DataTableProxyFn *oDataTableProxyFn;
+	RecvTable_t *pDataTable;
+	int iOffset;
+	int iElementStride;
+	int iElements;
+	const char *szParentArrayPropName;
 };

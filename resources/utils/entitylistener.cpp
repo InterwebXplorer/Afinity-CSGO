@@ -1,7 +1,5 @@
 #include "entitylistener.h"
-
-// used: cliententitylist interface
-#include "../core/interfaces.h"
+#include "../sdk/interfaces.h"
 
 void CEntityListener::Setup()
 {
@@ -13,7 +11,7 @@ void CEntityListener::Destroy()
 	I::ClientEntityList->RemoveListenerEntity(this);
 }
 
-void CEntityListener::OnEntityCreated(CBaseEntity* pEntity)
+void CEntityListener::OnEntityCreated(CBaseEntity *pEntity)
 {
 	if (pEntity == nullptr)
 		return;
@@ -23,12 +21,11 @@ void CEntityListener::OnEntityCreated(CBaseEntity* pEntity)
 	if (nIndex < 0)
 		return;
 
-	CBaseClient* pClientClass = pEntity->GetClientClass();
+	CBaseClient *pClientClass = pEntity->GetClientClass();
 
 	if (pClientClass == nullptr)
 		return;
 
-	// entity class check
 	switch (pClientClass->nClassID)
 	{
 	case EClassIndex::CCSPlayer:
@@ -39,7 +36,7 @@ void CEntityListener::OnEntityCreated(CBaseEntity* pEntity)
 	}
 }
 
-void CEntityListener::OnEntityDeleted(CBaseEntity* pEntity)
+void CEntityListener::OnEntityDeleted(CBaseEntity *pEntity)
 {
 	if (pEntity == nullptr)
 		return;

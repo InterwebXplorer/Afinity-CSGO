@@ -1,18 +1,15 @@
 #pragma once
-// @credits: https://github.com/ValveSoftware/source-sdk-2013/blob/master/mp/src/public/tier1/bitbuf.h
 
 class bf_write
 {
 public:
 	bf_write() = default;
 
-	// the current buffer
-	unsigned long* pData;
-	int				nDataBytes;
-	int				nDataBits;
+	unsigned long *pData;
+	int nDataBytes;
+	int nDataBits;
 
-	// where we are in the buffer
-	int				iCurrentBit;
+	int iCurrentBit;
 };
 
 class bf_read
@@ -35,24 +32,24 @@ public:
 
 	int ReadByte()
 	{
-		char dValue = *reinterpret_cast<char*>(uBaseAddress + uCurrentOffset);
+		char dValue = *reinterpret_cast<char *>(uBaseAddress + uCurrentOffset);
 		++uCurrentOffset;
 		return dValue;
 	}
 
 	bool ReadBool()
 	{
-		bool bValue = *reinterpret_cast<bool*>(uBaseAddress + uCurrentOffset);
+		bool bValue = *reinterpret_cast<bool *>(uBaseAddress + uCurrentOffset);
 		++uCurrentOffset;
 		return bValue;
 	}
 
-	const char* ReadString()
+	const char *ReadString()
 	{
 		char szBuffer[256];
-		char chLength = *reinterpret_cast<char*>(uBaseAddress + uCurrentOffset);
+		char chLength = *reinterpret_cast<char *>(uBaseAddress + uCurrentOffset);
 		++uCurrentOffset;
-		memcpy(szBuffer, reinterpret_cast<void*>(uBaseAddress + uCurrentOffset), chLength > 255 ? 255 : chLength);
+		memcpy(szBuffer, reinterpret_cast<void *>(uBaseAddress + uCurrentOffset), chLength > 255 ? 255 : chLength);
 		szBuffer[chLength > 255 ? 255 : chLength] = '\0';
 		uCurrentOffset += chLength + 1;
 		return szBuffer;
