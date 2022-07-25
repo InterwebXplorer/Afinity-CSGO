@@ -1,4 +1,3 @@
-//Custom UI elements
 #include "../fmt/color.h"
 #include "xorstr.hpp"
 
@@ -12,47 +11,47 @@ rgba(46, 134, 171, 1)
 
 //rgba(66, 75, 84, 1) charcoal
 
-void ui::BeginGroup(const char* name) { // -------Group-------
+void BeginGroup(const char* name) { // -------Group-------
 
 };
 
-void ui::EndGroup(void) { // [Will be blank]
+void EndGroup(void) { // [Will be blank]
 
 };
 
-bool ui::CheckBox(const char* name, bool value) {
+bool CheckBox(const char* name, bool value) {
 
 };
 
-bool ui::ColorPicker(const char* name, ) {
+bool ColorPicker(const char* name, ) {
 // if right clicked popup copy/paste popup
 
 };
 
-int ui::Slider(const char* name, int min, int max, int value) {
+int Slider(const char* name, int min, int max, int value) {
 
 };
 
-int ui::DoubleSlider(const char* name, int min, int max, int value1, int value2) {
+int DoubleSlider(const char* name, int min, int max, int value1, int value2) {
 
 };
 
-bool ui::DropDown(const char* name, const char* items) {
+bool DropDown(const char* name, const char* items) {
 
 };
 
-bool ui::DropdownMulti() {
+bool DropdownMulti() {
 
 };
 
-bool ui::TextBox() {
+bool TextBox() {
 
 };
 
-bool ui::ListBox() { //list for config/playerlist etc
+bool ListBox() { //list for config/playerlist etc
 
 };
 
-bool ui::KeyBind() { // [-]
+void KeyBind() { // [-]
 //right click always/toggle/hold
 };
