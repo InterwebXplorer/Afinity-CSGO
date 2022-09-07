@@ -180,3 +180,25 @@ void M::RotateCenter(const ImVec2 &vecCenter, const float flAngle, ImVec2 *pOutP
 	pOutPoint->x = x + vecCenter.x;
 	pOutPoint->y = y + vecCenter.y;
 }
+
+/*--------------------Extra Math Shit--------------------*/
+
+void M::RandomIntSet(int number, ...) {
+	
+}
+
+void M::RandomIntRange(int min, int max) {
+
+}
+
+void M::IntAddSubtractRange(int addstart, int addend, int subtractstart, int subtractend, int amount) {
+
+}
+
+void M::IntAddRange(int addstart, int addend, int amount) {
+
+}
+
+void M::IntSubtractRange(int subtractstart, int subtractend, int amount) {
+	
+}

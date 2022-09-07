@@ -1,38 +1,32 @@
+#include "../imgui/imgui.h"
+#include "../imgui/imgui_freetype.h"
+#include "../imgui/imgui_internal.h"
+#include "../imgui/impl/imgui_impl_dx9.h"
+#include "../imgui/impl/imgui_impl_win32.h"
 #include "../fmt/color.h"
 #include "xorstr.hpp"
 
-/* palet 1
-rgba(12, 10, 62, 1)
-rgba(123, 30, 122, 1)
-rgba(179, 63, 98, 1)
-rgba(77, 126, 168, 1)
-rgba(46, 134, 171, 1)
-*/
+void Header(const char* name) { // -------Group-------
+    
+};
 
-//rgba(66, 75, 84, 1) charcoal
-
-void BeginGroup(const char* name) { // -------Group-------
+bool UI::CheckBox(const char* name, bool value) {
 
 };
 
-void EndGroup(void) { // [Will be blank]
-
-};
-
-bool CheckBox(const char* name, bool value) {
-
-};
-
-bool ColorPicker(const char* name, ) {
+bool ColorPicker() {
 // if right clicked popup copy/paste popup
 
+    if (/*Rightclicked*/) {
+
+    }
 };
 
 int Slider(const char* name, int min, int max, int value) {
 
 };
 
-int DoubleSlider(const char* name, int min, int max, int value1, int value2) {
+int DoubleSlider(const char* name, int min, int max, int rangemin, int rangemax) {
 
 };
 
@@ -45,10 +39,6 @@ bool DropdownMulti() {
 };
 
 bool TextBox() {
-
-};
-
-bool ListBox() { //list for config/playerlist etc
 
 };
 

@@ -32,8 +32,6 @@ extern "C" using RandomGaussianFloatFn = float(__cdecl*)(float flMean, float flS
 
 namespace M
 {
-	
-
 	bool	Setup();
 
 	void	VectorAngles(const Vector& vecForward, QAngle& angView);
@@ -63,4 +61,12 @@ namespace M
 	inline RandomFloatExpFn			RandomFloatExp;
 	inline RandomIntFn				RandomInt;
 	inline RandomGaussianFloatFn	RandomGaussianFloat;
+
+	/*--------------------Extra Math Shit--------------------*/
+	
+	void RandomIntSet(int number, ...);
+	void RandomIntRange(int min, int max);
+	void IntAddSubtractRange(int addstart, int addend, int subtractstart, int subtractend, int amount);
+	void IntAddRange(int addstart, int addend, int amount);
+	void IntSubtractRange(int subtractstart, int subtractend, int amount);
 }

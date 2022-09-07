@@ -12,22 +12,25 @@ void misc::autoaccept(const char* sEntry) {
 
 void misc::autopistol(CUserCmd* pCmd, CBaseEntity* pLocal) {
     if (Options.misc_general_autopistol) {
-        if (pLocal->IsAlive() == false)
-            return false;
+        if (!pLocal->IsAlive())
+            return;
 
         CBaseCombatWeapon* pWeapon = pLocal->GetWeapon();
+
+        if (pWeapon == nullptr)
+            return;
         
 	    const short nDefinitionIndex = pWeapon->GetItemDefinitionIndex();
 	    const CCSWeaponData* pWeaponData = I::WeaponSystem->GetWeaponData(nDefinitionIndex);
 
-	    if (pWeapon == nullptr || pWeaponData == nullptr)
-		    return false;
+	    if (pWeaponData == nullptr)
+		    return;
 
         if (pWeaponData->bFullAuto)
-            return false;
+            return;
 
         if (pWeaponData->nWeaponType != WEAPONTYPE_PISTOL)
-            return false;
+            return;
 
 	    if (pLocal->CanShoot(static_cast<CWeaponCSBase*>(pWeapon)) && pCmd->iButtons & IN_ATTACK)
 		    pCmd->iButtons |= IN_ATTACK;
@@ -46,10 +49,10 @@ void misc::preservekillfeed() {
 void misc::autodefuse(CUserCmd* pCmd, CBaseEntity* pLocal) {
     if (Options.misc_general_autodefuse) {
         if (pLocal->IsAlive() == false)
-            return false;
+            return;
 
         if (pLocal->GetTeam() == TEAM_TT)
-            return false;
+            return;
 
         
     }
