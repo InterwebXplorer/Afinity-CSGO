@@ -16,6 +16,7 @@
 <summary>Features of the cheat are as follows:</summary>
 <br>
 - Legit
+  <br>
   - Legit aimbot (Weapon group customisation)
   <br>
   - Triggerbot
@@ -23,6 +24,7 @@
   - Recoil Control System
 <br>
 - Rage
+  <br>
   - Rage aimbot (Weapon group customisation)
   <br>
   - 400ms backtrack
@@ -50,6 +52,7 @@
   - Spasm lock
 <br>
 - Esp
+  <br>
   - Enemy esp
   <br>
   - Team esp
@@ -63,9 +66,11 @@
   - Other esp crap (too much to list)
 <br>
 - Antiaim
+  <br>
   - Legit antiaim
   <br>
   - Rage antiaim
+    <br>
     - Fake angles
     <br>
     - Fakelag
@@ -79,9 +84,11 @@
     - Antibackstab
     <br>  
     - Other fun features
+    <br>
   - Antiaim scripting (Self explanitory)
 <br>
 - Modifier
+  <br>
   - Inventory changer
   <br>
   - Model changer
@@ -89,6 +96,7 @@
   - Fake unboxing (with broadcasting)
 <br>
 - Misc
+  <br>
   - Block bot
   <br>
   - Headstand bot
