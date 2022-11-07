@@ -3,14 +3,12 @@
 #include "../imgui/imgui_internal.h"
 #include "../imgui/impl/imgui_impl_dx9.h"
 #include "../imgui/impl/imgui_impl_win32.h"
-#include "../fmt/color.h"
-#include "xorstr.hpp"
 
 void Header(const char* name) { // -------Group-------
     
 };
 
-bool UI::CheckBox(const char* name, bool value) {
+bool CheckBox(const char* name, bool value) {
 
 };
 
@@ -42,6 +40,6 @@ bool TextBox() {
 
 };
 
-void KeyBind() { // [-]
-//right click always/toggle/hold
+void KeyBind() { // [-] //right click always/toggle/hold
+
 };

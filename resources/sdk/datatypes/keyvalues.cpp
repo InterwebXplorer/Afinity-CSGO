@@ -4,14 +4,14 @@
 CKeyValues::CKeyValues(const char *szKeyName, void *pUnknown1, HKeySymbol hCaseInsensitiveKeyName)
 {
 	using CKeyValuesConstructorFn = void(__thiscall *)(void *, const char *, void *, HKeySymbol);
-	static CKeyValuesConstructorFn oConstructor = reinterpret_cast<CKeyValuesConstructorFn>(MEM::FindPattern(CLIENT_DLL, XorStr("55 8B EC 56 8B F1 33 C0 8B 4D 0C 81")));
+	static CKeyValuesConstructorFn oConstructor = reinterpret_cast<CKeyValuesConstructorFn>(MEM::FindPattern(CLIENT_DLL, "55 8B EC 56 8B F1 33 C0 8B 4D 0C 81"));
 	oConstructor(this, szKeyName, pUnknown1, hCaseInsensitiveKeyName);
 }
 
 CKeyValues::~CKeyValues()
 {
 	using CKeyValuesDestructorFn = void(__thiscall *)(void *, int);
-	static CKeyValuesDestructorFn oDestructor = reinterpret_cast<CKeyValuesDestructorFn>(MEM::FindPattern(CLIENT_DLL, XorStr("56 8B F1 E8 ? ? ? ? 8B 4E 14")));
+	static CKeyValuesDestructorFn oDestructor = reinterpret_cast<CKeyValuesDestructorFn>(MEM::FindPattern(CLIENT_DLL, "56 8B F1 E8 ? ? ? ? 8B 4E 14"));
 	oDestructor(this, 1);
 }
 
@@ -34,7 +34,7 @@ const char *CKeyValues::GetName()
 
 CKeyValues *CKeyValues::FromString(const char *szName, const char *szValue)
 {
-	static auto oFromString = MEM::FindPattern(CLIENT_DLL, XorStr("55 8B EC 81 EC ? ? ? ? 85 D2 53"));
+	static auto oFromString = MEM::FindPattern(CLIENT_DLL, "55 8B EC 81 EC ? ? ? ? 85 D2 53");
 	CKeyValues *pKeyValues = nullptr;
 
 	if (oFromString == 0U)
@@ -56,7 +56,7 @@ CKeyValues *CKeyValues::FromString(const char *szName, const char *szValue)
 void CKeyValues::LoadFromBuffer(char const *szResourceName, const char *szBuffer, void *pFileSystem, const char *szPathID, GetSymbolProcFn pfnEvaluateSymbolProc)
 {
 	using LoadFromBufferFn = void(__thiscall *)(void *, const char *, const char *, void *, const char *, void *, void *);
-	static auto oLoadFromBuffer = reinterpret_cast<LoadFromBufferFn>(MEM::FindPattern(CLIENT_DLL, XorStr("55 8B EC 83 E4 F8 83 EC 34 53 8B 5D 0C 89")));
+	static auto oLoadFromBuffer = reinterpret_cast<LoadFromBufferFn>(MEM::FindPattern(CLIENT_DLL, "55 8B EC 83 E4 F8 83 EC 34 53 8B 5D 0C 89"));
 	assert(oLoadFromBuffer != nullptr);
 
 	oLoadFromBuffer(this, szResourceName, szBuffer, pFileSystem, szPathID, pfnEvaluateSymbolProc, nullptr);
@@ -65,7 +65,7 @@ void CKeyValues::LoadFromBuffer(char const *szResourceName, const char *szBuffer
 bool CKeyValues::LoadFromFile(void *pFileSystem, const char *szResourceName, const char *szPathID, GetSymbolProcFn pfnEvaluateSymbolProc)
 {
 	using LoadFromFileFn = bool(__thiscall *)(void *, void *, const char *, const char *, void *);
-	static auto oLoadFromFile = reinterpret_cast<LoadFromFileFn>(MEM::FindPattern(CLIENT_DLL, XorStr("55 8B EC 83 E4 F8 83 EC 14 53 56 8B 75 08 57 FF")));
+	static auto oLoadFromFile = reinterpret_cast<LoadFromFileFn>(MEM::FindPattern(CLIENT_DLL, "55 8B EC 83 E4 F8 83 EC 14 53 56 8B 75 08 57 FF"));
 	assert(oLoadFromFile != nullptr);
 
 	return oLoadFromFile(this, pFileSystem, szResourceName, szPathID, pfnEvaluateSymbolProc);
@@ -74,7 +74,7 @@ bool CKeyValues::LoadFromFile(void *pFileSystem, const char *szResourceName, con
 CKeyValues *CKeyValues::FindKey(const char *szKeyName, const bool bCreate)
 {
 	using FindKeyFn = CKeyValues *(__thiscall *)(void *, const char *, bool);
-	static auto oFindKey = reinterpret_cast<FindKeyFn>(MEM::FindPattern(CLIENT_DLL, XorStr("55 8B EC 83 EC 1C 53 8B D9 85 DB")));
+	static auto oFindKey = reinterpret_cast<FindKeyFn>(MEM::FindPattern(CLIENT_DLL, "55 8B EC 83 EC 1C 53 8B D9 85 DB"));
 	assert(oFindKey != nullptr);
 
 	return oFindKey(this, szKeyName, bCreate);
@@ -134,7 +134,7 @@ float CKeyValues::GetFloat(const char *szKeyName, const float flDefaultValue)
 const char *CKeyValues::GetString(const char *szKeyName, const char *szDefaultValue)
 {
 	using GetStringFn = const char *(__thiscall *)(void *, const char *, const char *);
-	static auto oGetString = reinterpret_cast<GetStringFn>(MEM::FindPattern(CLIENT_DLL, XorStr("55 8B EC 83 E4 C0 81 EC ? ? ? ? 53 8B 5D 08")));
+	static auto oGetString = reinterpret_cast<GetStringFn>(MEM::FindPattern(CLIENT_DLL, "55 8B EC 83 E4 C0 81 EC ? ? ? ? 53 8B 5D 08"));
 	assert(oGetString != nullptr);
 
 	return oGetString(this, szKeyName, szDefaultValue);
@@ -148,7 +148,7 @@ void CKeyValues::SetString(const char *szKeyName, const char *szStringValue)
 		return;
 
 	using SetStringFn = void(__thiscall *)(void *, const char *);
-	static auto oSetString = reinterpret_cast<SetStringFn>(MEM::FindPattern(CLIENT_DLL, XorStr("55 8B EC A1 ? ? ? ? 53 56 57 8B F9 8B 08 8B 01")));
+	static auto oSetString = reinterpret_cast<SetStringFn>(MEM::FindPattern(CLIENT_DLL, "55 8B EC A1 ? ? ? ? 53 56 57 8B F9 8B 08 8B 01"));
 	assert(oSetString != nullptr);
 
 	oSetString(pSubKey, szStringValue);

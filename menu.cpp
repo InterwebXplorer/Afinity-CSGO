@@ -1,106 +1,121 @@
-#include "resources/utils/ui.h"
 #include "resources/imgui/imgui.h"
 #include "resources/imgui/imgui_freetype.h"
 #include "resources/imgui/imgui_internal.h"
 #include "resources/imgui/impl/imgui_impl_dx9.h"
 #include "resources/imgui/impl/imgui_impl_win32.h"
+#include "resources/utils/ui.h"
+#include "resources/utils/inputsystem.h"
+#include "resources/utils/filelogging.h"
+#include "resources/utils/consolelogging.h"
+#include "resources/sdk/interfaces.h"
+#include "features/features.h"
+#include "options.h"
 #include "config.h"
 #include "menu.h"
 
-void colors() {
+void Menu::Style() {
     ImGuiStyle& style = ImGui::GetStyle();
 
-    style.WindowMinSize = ImVec2(450, 250);
-    style.WindowPadding = ImVec2(10, 10);
-
-    style.Colors[ImGuiCol_WindowBg] = ImColor(16, 16, 16);
-    style.Colors[ImGuiCol_ChildBg] = ImColor(24, 24, 24);
-    style.Colors[ImGuiCol_Text] = ImColor(255, 255, 255);
-
-    style.Colors[ImGuiCol_Header] = ImColor(24, 24, 24);
-    style.Colors[ImGuiCol_HeaderActive] = ImColor(35, 35, 35);
-    style.Colors[ImGuiCol_HeaderHovered] = ImColor(26, 26, 26));
+    style.WindowMinSize = ImVec2(880, 465);
 }
 
-static char* sidebar_tabs[] = {"Legit", "Rage", "Esp", "Antiaim", "Modifier", "Misc"};
-static int sidebar_tab_index = 0;
+void Menu::RenderMenu() {
+    static char* tabs[] = {"Legit", "Rage", "Esp", "Antiaim", "Modifier", "Misc"};
+    static int activetab = 0;
 
-void RenderMenu(bool menuopen, int& activetab) {
     if (menuopen == true) {
         ImGui::Begin("##Afinity", 0, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
-        ImGui::BeginChild("##Sidebar", ImVec2(138, 432), false); {
-            //logo
-            for (int i = 0; i < 6; i++) {
-                if (ImGui::Button(sidebar_tabs[i], ImVec2(128, 40))) {
-                    activetab = i;
+            ImGui::SetCursorPos(ImVec2(10, 10));
+            ImGui::BeginChild("##Logo", ImVec2(142, 44), false, 0); {
+                //redirect to gihub when clicked
+            }
+            ImGui::EndChild();
+            ImGui::SetCursorPos(ImVec2(10, 62));
+            ImGui::BeginChild("##Tabs", ImVec2(142, 340), false, 0); {
+                for (int i = 0; i < 6; i++) {
+                    if (ImGui::Button(tabs[i], ImVec2(142, 44))) {
+                        activetab = i;
+                    }
                 }
             }
-        }
-        ImGui::EndChild();
+            ImGui::EndChild();
+            ImGui::SetCursorPos(ImVec2(10, 401));
+            ImGui::BeginChild("##Info", ImVec2(142, 70), false, 0); {
+                //Steam pfp
+                //Steam username
+                //Cheat version
+                //Config Name
+            }
+            ImGui::EndChild();
         ImGui::End();
     }
 }
 
-void RenderLegitTab() {
-    static char* legit_tab_names[] = {"General", "Triggerbot", "RCS"};
-    static int legit_tab_index = 0;
-    constexpr auto topbarwidth = 716 / 3;
-    
-    ImGui::BeginChild("##Topbar", ImVec2(716, 26), false); {
+if (activetab == 0) {
+    static char* legitsubtabs[] = {"General", "Triggerbot", "RCS"};
+    static int activelegitsubtab = 0;
+
+    ImGui::SetCursorPos(ImVec2(161, 10));
+    ImGui::BeginChild("##SubTabs", ImVec2(708, 44), false, 0); {
         for (int i = 0; i < 3; i++) {
-            if (ImGui::Button(legit_tab_names[i], ImVec2(topbarwidth, 26))) {
-                activetab = i;
+            if (ImGui::Button(legitsubtabs[i], ImVec2(708/3, 26))) {
+                activelegitsubtab = i;
             }
         }
     }
+    ImGui::EndChild();
 
-    if (legit_tab_index == 0) {
-        ImGui::BeginChild("##General", ImVec2(716, 432), false); {
+    if (activelegitsubtab == 0) {
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##General", ImVec2(708, 410), false, 0); {
             ImGui::Columns(2, NULL, false);
-
             ImGui::Text("Unavailable");
         }
         ImGui::EndChild();
     }
-    if (legit_tab_index == 1) {
-        ImGui::BeginChild("##Triggerbot", ImVec2(716, 432), false); {
-            ImGui::Columns(2, NULL, false);
 
+    if (activelegitsubtab == 1) {
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##Triggerbot", ImVec2(708, 410), false, 0); {
+            ImGui::Columns(2, NULL, false);
             ImGui::Text("Unavailable");
         }
         ImGui::EndChild();
     }
-    if (legit_tab_index == 2) {
-        ImGui::BeginChild("##RCS", ImVec2(716, 432), false); {
-            ImGui::Columns(2, NULL, false);
 
+    if (activelegitsubtab == 2) {
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##RCS", ImVec2(708, 410), false, 0); {
+            ImGui::Columns(2, NULL, false);
             ImGui::Text("Unavailable");
         }
         ImGui::EndChild();
     }
 }
 
-void RenderRageTab() {
-    static char* rage_tab_names[] = {"Global", "Default", "Pistol", "Awp", "Scout", "Auto"};
-    static int rage_tab_index = 0;
-    constexpr auto topbarwidth = 716 / 6;
-    
-    ImGui::BeginChild("##Topbar", ImVec2(716, 26), false); {
+if (activetab == 1) {
+    static char* ragesubtabs[] = {"Global", "Default", "Pistol", "Awp", "Scout", "Auto"};
+    static int activeragesubtab = 0;
+
+    ImGui::SetCursorPos(ImVec2(161, 10));
+    ImGui::BeginChild("##SubTabs", ImVec2(708, 44), false, 0); {
+        ImGui::SameLine();
         for (int i = 0; i < 6; i++) {
-            if (ImGui::Button(rage_tab_names[i], ImVec2(topbarwidth, 26))) {
-                activetab = i;
+            if (ImGui::Button(ragesubtabs[i], ImVec2(708/6, 26))) {
+                activeragesubtab = i;
             }
         }
     }
+    ImGui::EndChild();
 
-    if (rage_tab_index == 0) {
+    if (activeragesubtab == 0) {
         const char* safepointhitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
         const char* safepointdelay[] = {"Head", "Chest", "Body", "Arms", "Legs"};
         const char* teleportmode[] = {"Default", "Extended", "Disabled"}
 
-        ImGui::BeginChild("##Global", ImVec2(716, 432), false); {
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##Global", ImVec2(708, 410), false, 0); {
             ImGui::Columns(2, NULL, false);
-
             UI::Checkbox("Enable", Options.rage_enable);
             UI::Checkbox("Safe point", Options.rage_safepoint_enable);
             UI::Checkbox("Force safe point", Options.rage_forcesafepoint);
@@ -142,13 +157,13 @@ void RenderRageTab() {
         ImGui::EndChild();
     }
 
-    if (rage_tab_index == 1) {
+    if (activeragesubtab == 1) {
         const char* defaulthitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
         const char* defaulmultipointthitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
 
-        ImGui::BeginChild("##Default", ImVec2(716, 432), false); {
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##Default", ImVec2(708, 410), false, 0); {
             ImGui::Columns(2, NULL, false);
-
             UI::Slider("Hitchance", Options.rage_default_hitchance, 0, 100);
             UI::Dropdownmulti("Hitboxes", defaulthitboxes[], Options.rage_default_hitboxes);
             UI::Dropdownmulti("Multipoint", defaulmultipointthitboxes[], Options.rage_default_multipoint);
@@ -165,13 +180,13 @@ void RenderRageTab() {
         ImGui::EndChild();
     }
 
-    if (rage_tab_index == 2) {
+    if (activeragesubtab == 2) {
         const char* pistolhitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
         const char* pistolmultipointhitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
 
-        ImGui::BeginChild("##Pistol", ImVec2(716, 432), false); {
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##Pistol", ImVec2(708, 410), false, 0); {
             ImGui::Columns(2, NULL, false);
-
             UI::Slider("Hitchance", Options.rage_pistol_hitchance, 0, 100);
             UI::Dropdownmulti("Hitboxes", pistolhitboxes[], Options.rage_pistol_hitboxes);
             UI::Dropdownmulti("Multipoint", pistolmultipointthitboxes[], Options.rage_pistol_multipoint);
@@ -188,13 +203,13 @@ void RenderRageTab() {
         ImGui::EndChild();
     }
 
-    if (rage_tab_index == 3) {
+    if (activeragesubtab == 3) {
         const char* awphitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
         const char* awpmultipointhitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
 
-        ImGui::BeginChild("##Awp", ImVec2(716, 432), false); {
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##Awp", ImVec2(708, 410), false, 0); {
             ImGui::Columns(2, NULL, false);
-
             UI::Slider("Hitchance", Options.rage_awp_hitchance, 0, 100);
             UI::Dropdownmulti("Hitboxes", awphitboxes[], Options.rage_awp_hitboxes);
             UI::Dropdownmulti("Multipoint", awpmultipointthitboxes[], Options.rage_awp_multipoint);
@@ -211,13 +226,13 @@ void RenderRageTab() {
         ImGui::EndChild();
     }
 
-    if (rage_tab_index == 4) {
+    if (activeragesubtab == 4) {
         const char* scouthitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
         const char* scoutmultipointhitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
-        
-        ImGui::BeginChild("##Scout", ImVec2(716, 432), false); {
-            ImGui::Columns(2, NULL, false);
 
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##Scout", ImVec2(708, 410), false, 0); {
+            ImGui::Columns(2, NULL, false);
             UI::Slider("Hitchance", Options.rage_scout_hitchance, 0, 100);
             UI::Dropdownmulti("Hitboxes", scouthitboxes[], Options.rage_scout_hitboxes);
             UI::Dropdownmulti("Multipoint", scoutmultipointthitboxes[], Options.rage_scout_multipoint);
@@ -234,13 +249,13 @@ void RenderRageTab() {
         ImGui::EndChild();
     }
 
-    if (rage_tab_index == 5) {
+    if (activeragesubtab == 5) {
         const char* autohitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
         const char* automultipointhitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
-        
-        ImGui::BeginChild("##Auto", ImVec2(716, 432), false); {
-            ImGui::Columns(2, NULL, false);
 
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##Auto", ImVec2(708, 410), false, 0); {
+            ImGui::Columns(2, NULL, false);
             UI::Slider("Hitchance", Options.rage_auto_hitchance, 0, 100);
             UI::Dropdownmulti("Hitboxes", autohitboxes[], Options.rage_auto_hitboxes);
             UI::Dropdownmulti("Multipoint", automultipointthitboxes[], Options.rage_auto_multipoint);
@@ -258,28 +273,30 @@ void RenderRageTab() {
     }
 }
 
-void RenderEspTab() {
-    static char* esp_tab_names[] = {"Enemy", "Team", "Local", "Other"};
-    static int esp_tab_index = 0;
-    constexpr auto topbarwidth = 716 / 4;
-    
-    ImGui::BeginChild("##Topbar", ImVec2(716, 26), false); {
+if (activetab == 2) {
+    static char* espsubtabs[] = {"Enemy", "Team", "Local", "Other"};
+    static int activeespsubtab = 0;
+
+    ImGui::SetCursorPos(ImVec2(161, 10));
+    ImGui::BeginChild("##SubTabs", ImVec2(708, 44), false, 0); {
+        ImGui::SameLine();
         for (int i = 0; i < 4; i++) {
-            if (ImGui::Button(esp_tab_names[i], ImVec2(topbarwidth, 26))) {
-                activetab = i;
+            if (ImGui::Button(espsubtabs[i], ImVec2(708/4, 26))) {
+                activeespsubtab = i;
             }
         }
     }
+    ImGui::EndChild();
 
-    if (esp_tab_index == 0) {
+    if (activeespsubtab == 0) {
         const char* boxesp[] = {"Off", "Normal", "Cornered", "3d"};
         const char* snaplines[] = {"Off", "Top", "Left", "Right", "Bottom", "Center"}
         const char* enemyflags[] = {"Target", "Resolve Status", "Money", "Armour", "Utility", "Scope", "Reload", "Exploits", "Ping", "Bomb", "Priority", "Location"};
         const char* chamsmaterial[] = {"", ""}; //TODO: add materials
 
-        ImGui::BeginChild("##Enemy", ImVec2(716, 432), false); {
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##Enemy", ImVec2(708, 410), false, 0); {
             ImGui::Columns(2, NULL, false);
-
             UI::Checkbox("Enable", Options.esp_enemy_enabled);
             ImGui::SameLine();
             UI::KeyBind(Options.esp_enemy_enabledkey);
@@ -336,21 +353,23 @@ void RenderEspTab() {
         ImGui::EndChild();
     }
 
-    if (esp_tab_index == 1) {
-        ImGui::BeginChild("##Team", ImVec2(716, 432), false); {
-            ImGui::Columns(2, NULL, false);
+    if (activeespsubtab == 1) {
+        //const char* eeeee[] = {"", "", ""};
 
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##Team", ImVec2(708, 410), false, 0); {
+            ImGui::Columns(2, NULL, false);
             ImGui::Text("Unavailable");
         }
         ImGui::EndChild();
     }
 
-    if (esp_tab_index == 2) {
+    if (activeespsubtab == 2) {
         const char* boxesp[] = {"Off", "Normal", "Cornered", "3d"};
 
-        ImGui::BeginChild("##Local", ImVec2(716, 432), false); {
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##Local", ImVec2(708, 410), false, 0); {
             ImGui::Columns(2, NULL, false);
-
             UI::Checkbox("Enable", Options.esp_local_enabled);
             ImGui::SameLine();
             UI::KeyBind(Options.esp_local_enabledkey);
@@ -401,11 +420,12 @@ void RenderEspTab() {
             UI::ColorPicker(Options.esp_local_weaponchamscolor);
             UI::Dropdown("Chams material (Weapon)", chamsmaterial[], Options.esp_enemy_weaponchamsmaterial);
             UI::Checkbox("Draw original", Options.esp_local_weaponchamsdraworiginal);
+
         }
         ImGui::EndChild();
     }
 
-    if (esp_tab_index == 3) {
+    if (activeespsubtab == 3) {
         const char* skybox[] = {"", ""};
         const char* removals[] = {"Scope overlay", "Scope lines", "View punch", "Aim punch", "Smoke Effects", "Flash Effects", "Fog", "Post Processing", "Arms", "Weapon"};
         const char* droppedweapons[] = {"Text", "Glow", "Icon"};
@@ -420,9 +440,9 @@ void RenderEspTab() {
         const char* deathsound[] = {"Fail", "Wilhelm"};
         const char* penetrationcrosshair[] = {"Off", "Default", "Circle", "Square"};
 
-        ImGui::BeginChild("##Other", ImVec2(716, 432), false); {
-            ImGui::Columns(2, NULL, false);
-
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##Other", ImVec2(708, 410), false, 0); {
+        ImGui::Columns(2, NULL, false);
             UI::Checkbox("Bomb timer", Options.esp_other_bombtimer); //attach to radar curve
             UI::Checkbox("Bomb chams", Options.esp_other_bombchams);
             ImGui::SameLine();
@@ -518,29 +538,30 @@ void RenderEspTab() {
     }
 }
 
-void RenderAntiAimTab() {
-    static char* antiaim_tab_names[] = {"Legit", "Rage", "Scripting"};
-    static int antiaim_tab_index = 0;
-    constexpr auto topbarwidth = 716 / 3;
-    
-    ImGui::BeginChild("##Topbar", ImVec2(716, 26), false); {
+if (activetab == 3) {
+    static char* antiaimsubtabs[] = {"Legit", "Rage", "Scripting"};
+    static int activeantiaimsubtab = 0;
+
+    ImGui::SetCursorPos(ImVec2(161, 10));
+    ImGui::BeginChild("##SubTabs", ImVec2(708, 44), false, 0); {
         for (int i = 0; i < 3; i++) {
-            if (ImGui::Button(antiaim_tab_names[i], ImVec2(topbarwidth, 26))) {
-                activetab = i;
+            if (ImGui::Button(antiaimsubtabs[i], ImVec2(708/3, 26))) {
+                activeantiaimsubtab = i;
             }
         }
     }
+    ImGui::EndChild();
 
-    if (antiaim_tab_index == 0) {
-        ImGui::BeginChild("##Legit", ImVec2(716, 432), false); {
+    if (activeantiaimsubtab == 0) {
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##Legit", ImVec2(708, 410), false, 0); {
             ImGui::Columns(2, NULL, false);
-
             ImGui::Text("Unavailable");
         }
         ImGui::EndChild();
     }
 
-    if (antiaim_tab_index == 1) {
+    if (activeantiaimsubtab == 1) {
         const char* xaxisanglemode[] = {"Static", "UDZ random", "Fluctuate"};
         const char* xaxisjittermode[] = {"Offset", "Random"};
         const char* yaxisanglemode[] = {"Static", "Spin", "WASD random"};
@@ -550,9 +571,9 @@ void RenderAntiAimTab() {
         const char* fakelagtriggers[] = {"Standing", "Moving", "In air", "On shot", "On peek", "On damage", "On reload"};
         const char* slidewalk[] = {"Off", "Default", "Backwards"};
 
-        ImGui::BeginChild("##Rage", ImVec2(716, 432), false); {
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##Rage", ImVec2(708, 410), false, 0); {
             ImGui::Columns(2, NULL, false);
-
             UI::Header("X-Axis");
                 UI::Checkbox("Enable", Options.antiaim_rage_xenable);
                 UI::Slider("Base angle", Options.antiaim_rage_xbaseangle, -90, 90);
@@ -613,56 +634,56 @@ void RenderAntiAimTab() {
                 ImGui::SameLine();
                 UI::KeyBind();
                 UI::Checkbox("Antibackstab", Options.antiaim_rage_antibackstab);
-
-        } 
+        }
         ImGui::EndChild();
     }
 
-    if (antiaim_tab_index == 2) {
-        ImGui::BeginChild("##Scripting", ImVec2(716, 432), false); {
+    if (activeantiaimsubtab == 2) {
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##Scripting", ImVec2(708, 410), false, 0); {
             ImGui::Columns(2, NULL, false);
-
             ImGui::Text("Unavailable");
         }
         ImGui::EndChild();
     }
 }
 
-void RenderModifierTab() {
-    static char* modifier_tab_names[] = {"Inventory", "Models", "Unboxing"};
-    static int modifier_tab_index = 0;
-    constexpr auto topbarwidth = 716 / 3;
-    
-    ImGui::BeginChild("##Topbar", ImVec2(716, 26), false); {
+if (activetab == 4) {
+    static char* modifiersubtabs[] = {"Inventory", "Models", "Unboxing"};
+    static int activemodifiersubtab = 0;
+
+    ImGui::SetCursorPos(ImVec2(161, 10));
+    ImGui::BeginChild("##SubTabs", ImVec2(708, 44), false, 0); {
         for (int i = 0; i < 3; i++) {
-            if (ImGui::Button(modifier_tab_names[i], ImVec2(topbarwidth, 26))) {
-                activetab = i;
+            if (ImGui::Button(modifiersubtabs[i], ImVec2(708/3, 26))) {
+                activemodifiersubtab = i;
             }
         }
     }
+    ImGui::EndChild();
 
-    if (modifier_tab_index == 0) {
-        ImGui::BeginChild("##Inventory", ImVec2(716, 432), false); {
+    if (activemodifiersubtab == 0) {
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##Inventory", ImVec2(708, 410), false, 0); {
             ImGui::Columns(2, NULL, false);
-
             ImGui::Text("Unavailable");
         }
         ImGui::EndChild();
     }
 
-    if (modifier_tab_index == 1) {
-        ImGui::BeginChild("##Models", ImVec2(716, 432), false); {
+    if (activemodifiersubtab == 1) {
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##Models", ImVec2(708, 410), false, 0); {
             ImGui::Columns(2, NULL, false);
-
             ImGui::Text("Unavailable");
         }
         ImGui::EndChild();
     }
 
-    if (modifier_tab_index == 2) {
-        ImGui::BeginChild("##Unboxing", ImVec2(716, 432), false); {
+    if (activemodifiersubtab == 2) {
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##Unboxing", ImVec2(708, 410), false, 0); {
             ImGui::Columns(2, NULL, false);
-
             ImGui::Text("Unavailable");
             //UI::Checkbox("Broadcast unboxings", Options.modifier_unboxing_broadcast); //people in current game will see unboxing messages
         }
@@ -670,20 +691,21 @@ void RenderModifierTab() {
     }
 }
 
-void RenderMiscTab() {
-    static char* misc_tab_names[] = {"General", "Scripting", "Players", "Console"};
-    static int misc_tab_index = 0;
-    constexpr auto topbarwidth = 716 / 4;
-    
-    ImGui::BeginChild("##Topbar", ImVec2(716, 26), false); {
-        for (int i = 0; i < 4; i++) {
-            if (ImGui::Button(misc_tab_names[i], ImVec2(topbarwidth, 26))) {
-                activetab = i;
+if (activetab == 5) {
+    static char* miscsubtabs[] = {"General", "Scripting", "Players", "Console"};
+    static int activemiscsubtab = 0;
+
+    ImGui::SetCursorPos(ImVec2(161, 10));
+    ImGui::BeginChild("##SubTabs", ImVec2(708, 44), false, 0); {
+        for (int i = 0; i < 3; i++) {
+            if (ImGui::Button(miscsubtabs[i], ImVec2(708/4, 26))) {
+                activemiscsubtab = i;
             }
         }
     }
+    ImGui::EndChild();
 
-    if (misc_tab_index == 0) {
+    if (activemiscsubtab == 0) {
         const char* forceregion[] = {"Off", "Australia", "Austria", "Brazil", "Chile", "Dubai", "France", "Germany", "Hong Kong", "India(Chennai)", "India(Mumbai)", "Japan", "Luxembourg", "The Nether", "Peru", "Phillipines", "Poland", "Singapore", "No Water", "Spain", "Sweden", "United Kingdom", "USA(Atlanta)", "USA(Seattle)", "USA(Chicago)", "USA(Los Angeles)", "USA(Moses Lake)", "USA(Oklahoma)", "USA(Seattle)", "USA(Washington DC)"};
         const char* namechanger[] = {"Off", "Team-Only", "Enemy-Only", "Everyone", "Corrupt", "Custom"};
         const char* informationspammer[] = {"Name", "Rank", "Weapon", "Location", "Health"};
@@ -693,12 +715,12 @@ void RenderMiscTab() {
         const char* buybotother[] = {"Kevlar", "Helmet", "Defuser", "Taser", "Riot Sheild"};
         const char* buybotpriority[] = {"Off", "Primary", "Secondary", "Nades", "Other"};
 
-        ImGui::BeginChild("##", ImVec2(716, 432), false); {
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##General", ImVec2(708, 410), false, 0); {
             ImGui::Columns(2, NULL, false);
-
             UI::Checkbox("Auto-accept", Options.misc_general_autoaccept);
-            UI::Checkbox("Auto-fire", Options.misc_general_autofire);
-            UI::Slider("Delay", Options.misc_general_autofiredelay, 0, 1000);
+            UI::Checkbox("Auto-pistol", Options.misc_general_autopisol);
+            UI::Slider("Delay", Options.misc_general_autopistoldelay, 0, 1000);
             UI::Checkbox("Preserve killfeed", Options.misc_general_preservekillfeed);
             UI::Checkbox("Auto-defuse", Options.misc_general_autodefuse);
             UI::Checkbox("Auto-smoke", Options.misc_general_autosmoke);
@@ -746,37 +768,41 @@ void RenderMiscTab() {
             ImGui::Button("Trigger ban", ImVec2(276, 30), Options.misc_general_triggerban);
             ImGui::Button("Unlock achievements", ImVec2(276, 30), Options.misc_general_unlockachievements);
             ImGui::Button("Unload", ImVec2(276, 30), Options.misc_general_unload);
-        }
-        ImGui::EndChild();
 
-        UI::Header("Configuration");
-        //config list
-        ImGui::BeginListBox();
-    
-        ImGui::EndListBox();
-        UI::Textbox("Name", Options.config_name);
-        ImGui::Button("Create", ImVec2(276, 30), Options.config_create);
-        ImGui::Button("Save", ImVec2(276, 30), Options.config_save);
-        ImGui::Button("Load", ImVec2(276, 30), Options.config_load);
-        ImGui::Button("Delete", ImVec2(276, 30), Options.config_delete);
-        ImGui::Button("Reset", ImVec2(276, 30), Options.config_reset);
-    }
-    if (misc_tab_index == 1) {
-        UI::Text("Unavailable");
-    }
-
-    if (misc_tab_index == 2) { //GOTV = null
-        const char* playerhitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
-        ImGui::BeginChild("##Playerlist", ImVec2(500, 432), false); {
-            UI::Checkbox("Enable", Options.misc_);
-            //player list
+            UI::Header("Configuration");
+            //config list
             ImGui::BeginListBox();
     
             ImGui::EndListBox();
+            UI::Textbox("Name", Options.config_name);
+            ImGui::Button("Create", ImVec2(276, 30), Options.config_create);
+            ImGui::Button("Save", ImVec2(276, 30), Options.config_save);
+            ImGui::Button("Load", ImVec2(276, 30), Options.config_load);
+            ImGui::Button("Delete", ImVec2(276, 30), Options.config_delete);
+            ImGui::Button("Reset", ImVec2(276, 30), Options.config_reset);
         }
         ImGui::EndChild();
+    }
 
-        ImGui::BeginChild("##PlayerlistOptions", ImVec2(216, 432), false); {
+    if (activemiscsubtab == 1) {
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##Scripting", ImVec2(708, 410), false, 0); {
+            ImGui::Columns(2, NULL, false);
+            ImGui::Text("Unavailable");
+        }
+        ImGui::EndChild();
+    }
+
+    if (activemiscsubtab == 2) { //GOTV = null
+        const char* playerhitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
+
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##Players", ImVec2(708, 410), false, 0); {
+            
+            UI::Checkbox("Enable", Options.misc_);
+            //player list
+
+            //options
             UI::Header("Options");
             ImGui::Button("Steal name", ImVec2(276, 30), Options.misc_player_stealname);
             ImGui::Button("Copy clantag", ImVec2(276, 30), Options.misc_player_copyclantag);
@@ -793,7 +819,13 @@ void RenderMiscTab() {
         ImGui::EndChild();
     }
 
-    if (misc_tab_index == 3) {
-        ImGui::Text("Unavailable");
+    if (activemiscsubtab == 3) {
+        ImGui::SetCursorPos(ImVec2(161, 61));
+        ImGui::BeginChild("##Console", ImVec2(708, 410), false, 0); {
+            //text
+
+            //input line
+        }
+        ImGui::EndChild();
     }
 }

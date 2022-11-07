@@ -184,7 +184,10 @@ void M::RotateCenter(const ImVec2 &vecCenter, const float flAngle, ImVec2 *pOutP
 /*--------------------Extra Math Shit--------------------*/
 
 void M::RandomIntSet(int number, ...) {
-	
+	int length = sizeof(number) / sizeof(int);
+	int random = randomnumber[rand() % length];
+
+	return randomnumber();
 }
 
 void M::RandomIntRange(int min, int max) {

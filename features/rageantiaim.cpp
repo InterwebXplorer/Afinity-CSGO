@@ -1,21 +1,22 @@
-//#include "rageaim.h"
-//#include "rageantiaim.h"
-#include "../options.h"
 #include "../resources/sdk/interfaces/iengineclient.h"
 #include "../resources/sdk/interfaces/ienginetrace.h"
 #include "../resources/sdk/interfaces/iglobalvars.h"
 #include "../resources/sdk/interfaces/inetchannel.h"
 #include "../resources/sdk/interfaces/icliententitylist.h"
-#include "../resources/sdk/entity.h"
 #include "../resources/sdk/datatypes/usercmd.h"
+#include "../resources/sdk/datatypes/qangle.h"
+#include "../resources/sdk/entity.h"
 #include "../resources/utils/utils.h"
 #include "../resources/utils/math.h"
+#include "../options.h"
+#include "rageantiaim.h"
+#include "rageaim.h"
 
-void rageantiaim::excecute(CUserCmd* pCmd, CBaseEntity* pLocal, bool& bSendPacket) {
+void antiaim::execute(CUserCmd* pCmd, CBaseEntity* pLocal, bool& bSendPacket) {
     if (!pLocal->IsAlive())
         return;
 
-    if (pLocal->GetFlags() & FL_FROZEN)
+    if (pLocal->GetFlags() & FL_FROZEN) 
         return;
 
     if (pLocal->GetMoveType() == MOVETYPE_LADDER)
@@ -32,19 +33,24 @@ void rageantiaim::excecute(CUserCmd* pCmd, CBaseEntity* pLocal, bool& bSendPacke
     if (pWeapon == nullptr)
         return;
 
-    short nDefinitionIndex = pWeapon->GetItemDefinitionIndex();
-	CCSWeaponData* pWeaponData = I::WeaponSystem->GetWeaponData(nDefinitionIndex);
+    int nDefinitionIndex = pWeapon->GetItemDefinitionIndex();
+    CCSWeaponData* pWeaponData = I::WeaponSystem->GetWeaponData(nDefinitionIndex);
 
     if (pWeaponData == nullptr)
 		return;
 
-    float flServerTime = ;//TODO
+    float flServerTime = ;//TODO (Prediction system)
 
     if (pWeaponData->IsGun() && pLocal->CanShoot(static_cast<CWeaponCSBase*>(pWeapon)) && pCmd->iButtons & IN_ATTACK)
         return;
 
-    else if (pWeaponData->nDefinitionIndex == WEAPON_REVOLVER && pCmd->iButtons & IN_SECOND_ATTACK)
-        return;
+    else if (pWeaponData->nDefinitionIndex == WEAPON_REVOLVER) {
+        if (pCmd->iButtons & IN_ATTACK && pWeapon->GetNextPrimaryAttack() <= flServerTime)
+            return;
+
+        if (pCmd->iButtons & IN_SECOND_ATTACK)
+            return;
+    }
 
     else if (pWeaponData->nWeaponType == WEAPONTYPE_KNIFE) {
         if (pCmd->iButtons & IN_ATTACK && pWeapon->GetNextPrimaryAttack() <= flServerTime)
@@ -55,29 +61,32 @@ void rageantiaim::excecute(CUserCmd* pCmd, CBaseEntity* pLocal, bool& bSendPacke
     }
 
     else if (pWeaponData->nWeaponType == WEAPONTYPE_GRENADE) {
-        auto pGrenade = static_cast<CBaseCSGrenade*>(pWeapon);
+        CBaseCSGrenade* pGrenade = static_cast<CBaseCSGrenade*>(pWeapon);
 
         if (pGrenade == nullptr)
             return;
 
         if (pGrenade->IsPinPulled() && pCmd->iButtons & (IN_ATTACK | IN_SECOND_ATTACK)) {
-            if (pGrenade->GetThrowTime() > 0.f)
+            if (pGrenade->GetThrowTime() > 0.0f)
 				return;
         }   
     }
 
-    xaxis();
-    yaxis();
+    angSentView = pCmd->angViewPoint;
 
+    ///EXECUTE SHIT///
 
     if (Options.misc_general_antiuntrusted) {
-        
+        angSentView.Normalize();
+        angSentView.Clamp();
     }
+
+    pCmd->angViewPoint = angSentView;
 }
 
 //TODO: Speed modifier
 
-int rageantiaim::xaxis() { //jitter overrides base antiaim???
+int rageantiaim::xaxis() {
     if (!Options.antiaim_rage_xenable)
         return;
 
@@ -145,7 +154,7 @@ int rageantiaim::yaxis() {
 
 /*^ done, i think....*/
 
-int rageantiaim::desync(CUserCmd* pCmd) { 
+int rageantiaim::desync(CUserCmd* pCmd, CBaseEntity* pLocal, float flServerTime, bool& bSendPacket) { 
     if (!Options.antiaim_rage_desyncenable)
         return;
 
@@ -165,16 +174,12 @@ int rageantiaim::desync(CUserCmd* pCmd) {
             break;
     }
     return y_desync_side;
+
+
 }
 
-int rageantiaim::freestand(CUserCmd* pCmd) {
+int rageantiaim::freestand(CUserCmd* pCmd, CBaseEntity* pLocal) {
 
-
-    for (int i = 0; i < I::ClientEntityList->GetMaxEntities(); i++) {
-        int pTarget = static_cast<int>(IClientEntityList->GetClientEntity(i));
-    
-    
-    }
 }
 
 /*
@@ -193,45 +198,74 @@ int rageantiaim::freestand(CUserCmd* pCmd) {
 }
 */
 
-void rageantiaim::fakelag(CUserCmd* pCmd) {
+void rageantiaim::fakelag(CUserCmd* pCmd, CBaseEntity* pLocal, float flServerTime, bool& bSendPacket) {
     if (!Options.antiaim_rage_fakelagenable)
         return;
 
-    if (doubletap == true || hideshots == true)
+    if (doubletap == true)
         return;
+
+    if (hideshots == true)
+        return;
+
+    if (fakeduck == true)
+        return;
+
+    if (Options.antiaim_rage_fakelagdormant) {
+
+    }
 
     bool choke = false;
 
     switch (Options.antiaim_rage_fakelagtriggers) {
-        case 1: //standing
+        case 1: if (pLocal->GetVelocity() < 0.0f) //standing
             break;
 
-        case 2: //moving
+        case 2: if (pLocal->GetVelocity() > 0.0f) //moving
             break;
 
-        case 3: //in air
+        case 3: if (!pLocal->GetFlags & FL_ONGROUND) //in air
             break;
 
-        case 4: //on shot
+        case 4: if (pCmd->iButtons & IN_ATTACK || pCmd->iButtons & IN_SECOND_ATTACK) //on shot
             break;
 
-        case 5: //on peek
+        case 5: if () //on peek
             break;
         
-        case 6: //on damage
+        case 6: if (pLocal->GetTakeDamage()) //on damage
             break;
 
         case 7: if (pCmd->iButtons & IN_RELOAD) //reloading
             break;
     }
-    return choke = true;
+    return choke;
 
-    if (Options.antiaim_rage_fakelagdormant) {
+    if (choke == true) {
 
     }
+
+    if (I::ClientState->nChokedCommands > Options.antiaim_rage_fakelagrangemax)
+        bSendPacket = true;
+    else
+        bSendPacket = false;
 }
 
 void rageantiaim::targetdetection(CUserCmd* pCmd, CBaseEntity* pEntity) {
+    if (!Options.antiaim_rage_targetdetection)
+        return;
+
+    IClientEntity* pTarget = nullptr;
+
+    if (pTarget == nullptr)
+        return;
+
+    int Ideal 
+    int 
+
+
+
+
     if (!Options.antiaim_rage_targetdetection)
         return;
 
@@ -360,4 +394,8 @@ void rageantiaim::antibackstab(CBaseEntity* pLocal) { //time to recode
     if (Options.antiaim_rage_antibackstab) {
         
     }
+}
+
+void rageantiaim::micromovement() {
+    
 }

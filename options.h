@@ -1,1 +1,2 @@
-//Cheat variables will be saved here
+#pragma once
+#include "resources/sdk/datatypes/color.h"
