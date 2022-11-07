@@ -2,7 +2,6 @@
 
 <div align="center">
 
-![AUTISM](https://github.com/InterwebXplorer/Afinity-CSGO/blob/main/resources/images/autism.png)
 ![ISSUES](https://img.shields.io/github/issues/InterwebXplorer/Afinity-CSGO?style=for-the-badge)
 ![FORKS](https://img.shields.io/github/forks/InterwebXplorer/Afinity-CSGO?style=for-the-badge)
 ![STARS](https://img.shields.io/github/stars/InterwebXplorer/Afinity-CSGO?style=for-the-badge)
@@ -17,65 +16,115 @@
 <summary>Features of the cheat are as follows:</summary>
 <br>
 - Legit
+  <br>
   - Legit aimbot (Weapon group customisation)
+  <br>
   - Triggerbot
+  <br>
   - Recoil Control System
 <br>
 - Rage
+  <br>
   - Rage aimbot (Weapon group customisation)
+  <br>
   - 400ms backtrack
+  <br>
   - Ocluded/Visable min dmg
+  <br>
   - Multipoint
+  <br>
   - Prediction
+  <br>
   - Safepoint
+  <br>
   - Rage knifebot, Zeusbot
+  <br>
   - Resolver (X,Y,Z axis)
+  <br>
   - Bruteforce
+  <br>
   - Exploits (Doubletap, Hideshots)
+  <br>
   - Rage no recoil
+  <br>
   - No spread
+  <br>
   - Spasm lock
 <br>
 - Esp
+  <br>
   - Enemy esp
+  <br>
   - Team esp
+  <br>
   - Local esp
+  <br>
   - Stream proof esp
+  <br>
   - Oneway, wallbang visualisation
+  <br>
   - Other esp crap (too much to list)
 <br>
 - Antiaim
+  <br>
   - Legit antiaim
+  <br>
   - Rage antiaim
+    <br>
     - Fake angles
+    <br>
     - Fakelag
+    <br>
     - Fakeping
+    <br>  
     - Teleport
+    <br>  
     - Psuedo crimwalk
+    <br>  
     - Antibackstab
+    <br>  
     - Other fun features
-  - Antiaim scripting
+    <br>
+  - Antiaim scripting (Self explanitory)
 <br>
 - Modifier
+  <br>
   - Inventory changer
+  <br>
   - Model changer
+  <br>
   - Fake unboxing (with broadcasting)
 <br>
 - Misc
+  <br>
   - Block bot
+  <br>
   - Headstand bot
+  <br>
   - Region changer
+  <br>
   - Reveal overwatch
+  <br>
   - Anti-untrusted
+  <br>
   - sv_pure bypass
+  <br>
   - Greifing features
+  <br>
   - Namechanger
+  <br>
   - Command spammer
+  <br>
   - Grenade helper
+  <br>
   - Advanced peak assist
+  <br>
   - Other misc features (too much to list)
-  - Scripting
+  <br>
+  - Scripting (Python)
+  <br>
   - Playerlist
+  <br>
   - Console
 <br>
 </details>
@@ -89,6 +138,9 @@
 
 ### Credits
 nlohmann for json library used [https://github.com/nlohmann/json]
+<br>
 TsudaKageyu for minhook [https://github.com/TsudaKageyu/minhook]
+<br>
 ocornut for imgui [https://github.com/ocornut/imgui]
+<br>
 qo0 for the sdk used [https://github.com/rollraw/qo0-base]
