@@ -137,8 +137,6 @@
   - NULL
 
 ### Credits
-nlohmann for json library used [https://github.com/nlohmann/json]
-<br>
 TsudaKageyu for minhook [https://github.com/TsudaKageyu/minhook]
 <br>
 ocornut for imgui [https://github.com/ocornut/imgui]
