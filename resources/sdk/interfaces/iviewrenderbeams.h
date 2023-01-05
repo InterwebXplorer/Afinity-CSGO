@@ -15,8 +15,7 @@
 #define NOISE_DIVISIONS 128
 #pragma endregion
 
-enum EBeamType : unsigned int
-{
+enum EBeamType : unsigned int {
 	FBEAM_STARTENTITY = 0x00000001,
 	FBEAM_ENDENTITY = 0x00000002,
 	FBEAM_FADEIN = 0x00000004,
@@ -36,16 +35,14 @@ enum EBeamType : unsigned int
 	FBEAM_REVERSED = 0x00010000,
 };
 
-struct BeamTrail_t
-{
+struct BeamTrail_t {
 	BeamTrail_t *pNext;
 	float flDie;
 	Vector vecOrigin;
 	Vector vecVelocity;
 };
 
-struct Beam_t
-{
+struct Beam_t {
 	Beam_t() = default;
 
 	virtual const Vector &GetRenderOrigin() = 0;
@@ -107,10 +104,8 @@ struct Beam_t
 	float flHDRColorScale;
 };
 
-struct BeamInfo_t
-{
-	BeamInfo_t()
-	{
+struct BeamInfo_t {
+	BeamInfo_t() {
 		nType = TE_BEAMPOINTS;
 		nSegments = -1;
 		pszModelName = nullptr;
@@ -158,8 +153,7 @@ struct BeamInfo_t
 };
 
 class CBeam;
-class IViewRenderBeams
-{
+class IViewRenderBeams {
 public:
 	virtual void InitBeams() = 0;
 	virtual void ShutdownBeams() = 0;

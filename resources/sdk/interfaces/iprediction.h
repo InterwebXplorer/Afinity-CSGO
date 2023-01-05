@@ -4,8 +4,7 @@
 #include "../datatypes/usercmd.h"
 #include "icliententitylist.h"
 
-class CMoveData
-{
+class CMoveData {
 public:
 	bool bFirstRunOfFunctions : 1;
 	bool bGameCodeMovedPlayer : 1;
@@ -41,8 +40,7 @@ class CBaseEntity;
 class IPhysicsSurfaceProps;
 class CGameTrace;
 enum ESoundLevel;
-class IMoveHelper
-{
+class IMoveHelper {
 public:
 	virtual const char *GetName(void *hEntity) const = 0;
 	virtual void SetHost(CBaseEntity *pHost) = 0;
@@ -59,8 +57,7 @@ public:
 	virtual bool IsWorldEntity(const unsigned long &hEntity) = 0;
 };
 
-class IGameMovement
-{
+class IGameMovement {
 public:
 	virtual ~IGameMovement() {}
 	virtual void ProcessMovement(CBaseEntity *pEntity, CMoveData *pMove) = 0;
@@ -77,8 +74,7 @@ public:
 	virtual void SetupMovementBounds(CMoveData *pMove) = 0;
 };
 
-class IPrediction
-{
+class IPrediction {
 public:
 	std::byte pad0[0x4];
 	std::uintptr_t hLastGround;
@@ -90,8 +86,7 @@ public:
 	int nIncomingPacketNumber;
 	float flLastServerWorldTimeStamp;
 
-	struct Split_t
-	{
+	struct Split_t {
 		bool bIsFirstTimePredicted;
 		std::byte pad0[0x3];
 		int nCommandsPredicted;
@@ -107,33 +102,27 @@ public:
 	Split_t Split[1];
 
 public:
-	void Update(int iStartFrame, bool bValidFrame, int nIncomingAcknowledged, int nOutgoingCommand)
-	{
+	void Update(int iStartFrame, bool bValidFrame, int nIncomingAcknowledged, int nOutgoingCommand) {
 		MEM::CallVFunc<void>(this, 3, iStartFrame, bValidFrame, nIncomingAcknowledged, nOutgoingCommand);
 	}
 
-	void GetLocalViewAngles(QAngle &angView)
-	{
+	void GetLocalViewAngles(QAngle &angView) {
 		MEM::CallVFunc<void>(this, 12, std::ref(angView));
 	}
 
-	void SetLocalViewAngles(QAngle &angView)
-	{
+	void SetLocalViewAngles(QAngle &angView) {
 		MEM::CallVFunc<void>(this, 13, std::ref(angView));
 	}
 
-	void CheckMovingGround(CBaseEntity *pEntity, double dbFrametime)
-	{
+	void CheckMovingGround(CBaseEntity *pEntity, double dbFrametime) {
 		MEM::CallVFunc<void>(this, 18, pEntity, dbFrametime);
 	}
 
-	void SetupMove(CBaseEntity *pEntity, CUserCmd *pCmd, IMoveHelper *pHelper, CMoveData *pMoveData)
-	{
+	void SetupMove(CBaseEntity *pEntity, CUserCmd *pCmd, IMoveHelper *pHelper, CMoveData *pMoveData) {
 		MEM::CallVFunc<void>(this, 20, pEntity, pCmd, pHelper, pMoveData);
 	}
 
-	void FinishMove(CBaseEntity *pEntity, CUserCmd *pCmd, CMoveData *pMoveData)
-	{
+	void FinishMove(CBaseEntity *pEntity, CUserCmd *pCmd, CMoveData *pMoveData) {
 		MEM::CallVFunc<void>(this, 21, pEntity, pCmd, pMoveData);
 	}
 };

@@ -4,41 +4,35 @@
 #include "interfaces.h"
 
 #pragma region entity_baseentity
-CBaseEntity *CBaseEntity::GetLocalPlayer()
-{
+CBaseEntity *CBaseEntity::GetLocalPlayer() {
 	return I::ClientEntityList->Get<CBaseEntity>(I::Engine->GetLocalPlayer());
 }
 
-int CBaseEntity::GetSequenceActivity(int iSequence)
-{
+int CBaseEntity::GetSequenceActivity(int iSequence) {
 	studiohdr_t *pStudioHdr = I::ModelInfo->GetStudioModel(this->GetModel());
 
 	if (pStudioHdr == nullptr)
 		return -1;
 
 	using GetSequenceActivityFn = int(__fastcall *)(void *, void *, int);
-	static auto oGetSequenceActivity = reinterpret_cast<GetSequenceActivityFn>(MEM::FindPattern(CLIENT_DLL, XorStr("55 8B EC 53 8B 5D 08 56 8B F1 83")));
+	static auto oGetSequenceActivity = reinterpret_cast<GetSequenceActivityFn>(MEM::FindPattern(CLIENT_DLL, "55 8B EC 53 8B 5D 08 56 8B F1 83"));
 	assert(oGetSequenceActivity != nullptr);
 
 	return oGetSequenceActivity(this, pStudioHdr, iSequence);
 }
 
-CBaseCombatWeapon *CBaseEntity::GetWeapon()
-{
+CBaseCombatWeapon *CBaseEntity::GetWeapon() {
 	return I::ClientEntityList->Get<CBaseCombatWeapon>(this->GetActiveWeaponHandle());
 }
 
-int CBaseEntity::GetMaxHealth()
-{
-
+int CBaseEntity::GetMaxHealth() {
 	if (I::GameTypes->GetCurrentGameType() == GAMETYPE_FREEFORALL)
 		return 120;
 
 	return 100;
 }
 
-std::optional<Vector> CBaseEntity::GetBonePosition(int iBone)
-{
+std::optional<Vector> CBaseEntity::GetBonePosition(int iBone) {
 	assert(iBone > BONE_INVALID && iBone < MAXSTUDIOBONES);
 
 	std::array<matrix3x4_t, MAXSTUDIOBONES> arrBonesToWorld = {};
@@ -49,14 +43,10 @@ std::optional<Vector> CBaseEntity::GetBonePosition(int iBone)
 	return std::nullopt;
 }
 
-int CBaseEntity::GetBoneByHash(const FNV1A_t uBoneHash) const
-{
-	if (const auto pModel = this->GetModel(); pModel != nullptr)
-	{
-		if (const auto pStudioHdr = I::ModelInfo->GetStudioModel(pModel); pStudioHdr != nullptr)
-		{
-			for (int i = 0; i < pStudioHdr->nBones; i++)
-			{
+int CBaseEntity::GetBoneByHash(const FNV1A_t uBoneHash) const {
+	if (const auto pModel = this->GetModel(); pModel != nullptr) {
+		if (const auto pStudioHdr = I::ModelInfo->GetStudioModel(pModel); pStudioHdr != nullptr) {
+			for (int i = 0; i < pStudioHdr->nBones; i++) {
 				if (const auto pBone = pStudioHdr->GetBone(i); pBone != nullptr && FNV1A::Hash(pBone->GetName()) == uBoneHash)
 					return i;
 			}
@@ -66,21 +56,15 @@ int CBaseEntity::GetBoneByHash(const FNV1A_t uBoneHash) const
 	return BONE_INVALID;
 }
 
-std::optional<Vector> CBaseEntity::GetHitboxPosition(const int iHitbox)
-{
+std::optional<Vector> CBaseEntity::GetHitboxPosition(const int iHitbox) {
 	assert(iHitbox > HITBOX_INVALID && iHitbox < HITBOX_MAX);
 
 	std::array<matrix3x4_t, MAXSTUDIOBONES> arrBonesToWorld = {};
 
-	if (const auto pModel = this->GetModel(); pModel != nullptr)
-	{
-		if (const auto pStudioHdr = I::ModelInfo->GetStudioModel(pModel); pStudioHdr != nullptr)
-		{
-			if (const auto pHitbox = pStudioHdr->GetHitbox(iHitbox, 0); pHitbox != nullptr)
-			{
-				if (this->SetupBones(arrBonesToWorld.data(), arrBonesToWorld.size(), BONE_USED_BY_HITBOX, 0.f))
-				{
-
+	if (const auto pModel = this->GetModel(); pModel != nullptr) {
+		if (const auto pStudioHdr = I::ModelInfo->GetStudioModel(pModel); pStudioHdr != nullptr) {
+			if (const auto pHitbox = pStudioHdr->GetHitbox(iHitbox, 0); pHitbox != nullptr)  {
+				if (this->SetupBones(arrBonesToWorld.data(), arrBonesToWorld.size(), BONE_USED_BY_HITBOX, 0.f)) {
 					const Vector vecMin = M::VectorTransform(pHitbox->vecBBMin, arrBonesToWorld.at(pHitbox->iBone));
 					const Vector vecMax = M::VectorTransform(pHitbox->vecBBMax, arrBonesToWorld.at(pHitbox->iBone));
 
@@ -93,31 +77,24 @@ std::optional<Vector> CBaseEntity::GetHitboxPosition(const int iHitbox)
 	return std::nullopt;
 }
 
-std::optional<Vector> CBaseEntity::GetHitGroupPosition(const int iHitGroup)
-{
+std::optional<Vector> CBaseEntity::GetHitGroupPosition(const int iHitGroup) {
 	assert(iHitGroup >= HITGROUP_GENERIC && iHitGroup <= HITGROUP_GEAR);
 
 	std::array<matrix3x4_t, MAXSTUDIOBONES> arrBonesToWorld = {};
 
-	if (const auto pModel = this->GetModel(); pModel != nullptr)
-	{
-		if (const auto pStudioHdr = I::ModelInfo->GetStudioModel(pModel); pStudioHdr != nullptr)
-		{
-			if (const auto pHitboxSet = pStudioHdr->GetHitboxSet(this->GetHitboxSet()); pHitboxSet != nullptr)
-			{
-				if (this->SetupBones(arrBonesToWorld.data(), arrBonesToWorld.size(), BONE_USED_BY_HITBOX, 0.f))
-				{
+	if (const auto pModel = this->GetModel(); pModel != nullptr) {
+		if (const auto pStudioHdr = I::ModelInfo->GetStudioModel(pModel); pStudioHdr != nullptr) {
+			if (const auto pHitboxSet = pStudioHdr->GetHitboxSet(this->GetHitboxSet()); pHitboxSet != nullptr) {
+				if (this->SetupBones(arrBonesToWorld.data(), arrBonesToWorld.size(), BONE_USED_BY_HITBOX, 0.f)) {
 					mstudiobbox_t *pHitbox = nullptr;
-					for (int i = 0; i < pHitboxSet->nHitboxes; i++)
-					{
+					for (int i = 0; i < pHitboxSet->nHitboxes; i++) {
 						pHitbox = pHitboxSet->GetHitbox(i);
 
 						if (pHitbox->iGroup == iHitGroup)
 							break;
 					}
 
-					if (pHitbox != nullptr)
-					{
+					if (pHitbox != nullptr) {
 
 						const Vector vecMin = M::VectorTransform(pHitbox->vecBBMin, arrBonesToWorld.at(pHitbox->iBone));
 						const Vector vecMax = M::VectorTransform(pHitbox->vecBBMax, arrBonesToWorld.at(pHitbox->iBone));
@@ -132,8 +109,7 @@ std::optional<Vector> CBaseEntity::GetHitGroupPosition(const int iHitGroup)
 	return std::nullopt;
 }
 
-void CBaseEntity::ModifyEyePosition(const CCSGOPlayerAnimState *pAnimState, Vector *vecPosition) const
-{
+void CBaseEntity::ModifyEyePosition(const CCSGOPlayerAnimState *pAnimState, Vector *vecPosition) const {
 
 	if (I::Engine->IsHLTV() || I::Engine->IsPlayingDemo())
 		return;
@@ -148,13 +124,11 @@ void CBaseEntity::ModifyEyePosition(const CCSGOPlayerAnimState *pAnimState, Vect
 	if (!pAnimState->bHitGroundAnimation && pAnimState->flDuckAmount == 0.f && pGroundEntity != nullptr)
 		return;
 
-	if (const auto headPosition = pBaseEntity->GetBonePosition(pBaseEntity->GetBoneByHash(FNV1A::HashConst("head_0"))); headPosition.has_value())
-	{
+	if (const auto headPosition = pBaseEntity->GetBonePosition(pBaseEntity->GetBoneByHash(FNV1A::HashConst("head_0"))); headPosition.has_value()) {
 		Vector vecHead = headPosition.value();
 		vecHead.z += 1.7f;
 
-		if (vecHead.z < vecPosition->z)
-		{
+		if (vecHead.z < vecPosition->z) {
 			float flFactor = 0.f;
 			const float flDelta = std::fabsf(vecPosition->z - vecHead.z);
 			const float flOffset = (flDelta - 4.0f) / 6.0f;
@@ -168,21 +142,19 @@ void CBaseEntity::ModifyEyePosition(const CCSGOPlayerAnimState *pAnimState, Vect
 	}
 }
 
-void CBaseEntity::PostThink()
-{
+void CBaseEntity::PostThink() {
 
 	using PostThinkVPhysicsFn = bool(__thiscall *)(CBaseEntity *);
-	static auto oPostThinkVPhysics = reinterpret_cast<PostThinkVPhysicsFn>(MEM::FindPattern(CLIENT_DLL, XorStr("55 8B EC 83 E4 F8 81 EC ? ? ? ? 53 8B D9 56 57 83 BB")));
+	static auto oPostThinkVPhysics = reinterpret_cast<PostThinkVPhysicsFn>(MEM::FindPattern(CLIENT_DLL, "55 8B EC 83 E4 F8 81 EC ? ? ? ? 53 8B D9 56 57 83 BB"));
 	assert(oPostThinkVPhysics != nullptr);
 
 	using SimulatePlayerSimulatedEntitiesFn = void(__thiscall *)(CBaseEntity *);
-	static auto oSimulatePlayerSimulatedEntities = reinterpret_cast<SimulatePlayerSimulatedEntitiesFn>(MEM::FindPattern(CLIENT_DLL, XorStr("56 8B F1 57 8B BE ? ? ? ? 83 EF 01 78 74")));
+	static auto oSimulatePlayerSimulatedEntities = reinterpret_cast<SimulatePlayerSimulatedEntitiesFn>(MEM::FindPattern(CLIENT_DLL, "56 8B F1 57 8B BE ? ? ? ? 83 EF 01 78 74"));
 	assert(oSimulatePlayerSimulatedEntities != nullptr);
 
 	I::MDLCache->BeginLock();
 
-	if (this->IsAlive())
-	{
+	if (this->IsAlive()) {
 		this->UpdateCollisionBounds();
 
 		if (this->GetFlags() & FL_ONGROUND)
@@ -200,14 +172,13 @@ void CBaseEntity::PostThink()
 	I::MDLCache->EndLock();
 }
 
-bool CBaseEntity::IsEnemy(CBaseEntity *pEntity)
-{
+bool CBaseEntity::IsEnemy(CBaseEntity *pEntity) {
 
 	if (I::GameTypes->GetCurrentGameType() == GAMETYPE_FREEFORALL)
 
 		return (this->GetSurvivalTeam() != pEntity->GetSurvivalTeam());
 
-	static CConVar *mp_teammates_are_enemies = I::ConVar->FindVar(XorStr("mp_teammates_are_enemies"));
+	static CConVar *mp_teammates_are_enemies = I::ConVar->FindVar("mp_teammates_are_enemies");
 
 	if (mp_teammates_are_enemies != nullptr && mp_teammates_are_enemies->GetBool() && this->GetTeam() == pEntity->GetTeam() && this != pEntity)
 		return true;
@@ -218,8 +189,7 @@ bool CBaseEntity::IsEnemy(CBaseEntity *pEntity)
 	return false;
 }
 
-bool CBaseEntity::IsTargetingLocal(CBaseEntity *pLocal)
-{
+bool CBaseEntity::IsTargetingLocal(CBaseEntity *pLocal) {
 	Vector vecForward = {};
 	const QAngle angView = this->GetEyeAngles();
 	M::AngleVectors(angView, &vecForward);
@@ -240,8 +210,7 @@ bool CBaseEntity::IsTargetingLocal(CBaseEntity *pLocal)
 	return false;
 }
 
-bool CBaseEntity::CanShoot(CWeaponCSBase *pBaseWeapon)
-{
+bool CBaseEntity::CanShoot(CWeaponCSBase *pBaseWeapon) {
 	const float flServerTime = TICKS_TO_TIME(this->GetTickBase());
 
 	if (pBaseWeapon->GetAmmo() <= 0)
@@ -266,8 +235,7 @@ bool CBaseEntity::CanShoot(CWeaponCSBase *pBaseWeapon)
 	return true;
 }
 
-bool CBaseEntity::IsVisible(CBaseEntity *pEntity, const Vector &vecEnd, bool bSmokeCheck)
-{
+bool CBaseEntity::IsVisible(CBaseEntity *pEntity, const Vector &vecEnd, bool bSmokeCheck) {
 	const Vector vecStart = this->GetEyePosition(false);
 
 	const Ray_t ray(vecStart, vecEnd);
@@ -284,9 +252,7 @@ bool CBaseEntity::IsVisible(CBaseEntity *pEntity, const Vector &vecEnd, bool bSm
 	return false;
 }
 
-bool CBaseEntity::IsBreakable()
-{
-
+bool CBaseEntity::IsBreakable() {
 	const int iHealth = this->GetHealth();
 
 	if (iHealth < 0 && this->IsMaxHealth() > 0)
@@ -306,33 +272,26 @@ bool CBaseEntity::IsBreakable()
 	if (iHealth > 200)
 		return false;
 
-	if (IMultiplayerPhysics *pPhysicsInterface = dynamic_cast<IMultiplayerPhysics *>(this); pPhysicsInterface != nullptr)
-	{
+	if (IMultiplayerPhysics *pPhysicsInterface = dynamic_cast<IMultiplayerPhysics *>(this); pPhysicsInterface != nullptr) {
 		if (pPhysicsInterface->GetMultiplayerPhysicsMode() != PHYSICS_MULTIPLAYER_SOLID)
 			return false;
 	}
-	else
-	{
-		if (const char *szClassName = this->GetClassname(); !strcmp(szClassName, XorStr("func_breakable")) || !strcmp(szClassName, XorStr("func_breakable_surf")))
-		{
-			if (!strcmp(szClassName, XorStr("func_breakable_surf")))
-			{
+	else {
+		if (const char *szClassName = this->GetClassname(); !strcmp(szClassName, "func_breakable")) || !strcmp(szClassName, "func_breakable_surf") {
+			if (!strcmp(szClassName, "func_breakable_surf")) {
 				CBreakableSurface *pSurface = static_cast<CBreakableSurface *>(this);
 
 				if (pSurface->IsBroken())
 					return false;
 			}
 		}
-		else if (this->PhysicsSolidMaskForEntity() & CONTENTS_PLAYERCLIP)
-		{
+		else if (this->PhysicsSolidMaskForEntity() & CONTENTS_PLAYERCLIP) {
 
 			return false;
 		}
 	}
 
-	if (IBreakableWithPropData *pBreakableInterface = dynamic_cast<IBreakableWithPropData *>(this); pBreakableInterface != nullptr)
-	{
-
+	if (IBreakableWithPropData *pBreakableInterface = dynamic_cast<IBreakableWithPropData *>(this); pBreakableInterface != nullptr) {
 		if (pBreakableInterface->GetDmgModBullet() <= 0.0f)
 			return false;
 	}

@@ -1,23 +1,18 @@
 #include "convar.h"
 #include "interfaces.h"
 
-CSpoofedConVar::CSpoofedConVar(const char *szCVar)
-{
+CSpoofedConVar::CSpoofedConVar(const char *szCVar) {
 	pOriginalCVar = I::ConVar->FindVar(szCVar);
 	Spoof();
 }
 
-CSpoofedConVar::CSpoofedConVar(CConVar *pCVar)
-{
+CSpoofedConVar::CSpoofedConVar(CConVar *pCVar) {
 	pOriginalCVar = pCVar;
 	Spoof();
 }
 
-CSpoofedConVar::~CSpoofedConVar()
-{
-	if (IsSpoofed())
-	{
-
+CSpoofedConVar::~CSpoofedConVar() {
+	if (IsSpoofed()) {
 		SetFlags(iOriginalFlags);
 		SetString(szOriginalValue);
 
@@ -30,16 +25,12 @@ CSpoofedConVar::~CSpoofedConVar()
 	}
 }
 
-bool CSpoofedConVar::IsSpoofed() const
-{
+bool CSpoofedConVar::IsSpoofed() const {
 	return pDummyCVar != nullptr;
 }
 
-void CSpoofedConVar::Spoof()
-{
-	if (!IsSpoofed() && pOriginalCVar != nullptr)
-	{
-
+void CSpoofedConVar::Spoof() {
+	if (!IsSpoofed() && pOriginalCVar != nullptr) {
 		iOriginalFlags = pOriginalCVar->nFlags;
 		strcpy_s(szOriginalName, pOriginalCVar->szName);
 		strcpy_s(szOriginalValue, pOriginalCVar->szDefaultValue);
@@ -63,37 +54,31 @@ void CSpoofedConVar::Spoof()
 	}
 }
 
-void CSpoofedConVar::SetFlags(int nFlags) const
-{
+void CSpoofedConVar::SetFlags(int nFlags) const {
 	if (IsSpoofed())
 		pOriginalCVar->nFlags = nFlags;
 }
 
-int CSpoofedConVar::GetFlags() const
-{
+int CSpoofedConVar::GetFlags() const {
 	return pOriginalCVar->nFlags;
 }
 
-void CSpoofedConVar::SetInt(int iValue) const
-{
+void CSpoofedConVar::SetInt(int iValue) const {
 	if (IsSpoofed())
 		pOriginalCVar->SetValue(iValue);
 }
 
-void CSpoofedConVar::SetBool(bool bValue) const
-{
+void CSpoofedConVar::SetBool(bool bValue) const {
 	if (IsSpoofed())
 		pOriginalCVar->SetValue(bValue);
 }
 
-void CSpoofedConVar::SetFloat(float flValue) const
-{
+void CSpoofedConVar::SetFloat(float flValue) const {
 	if (IsSpoofed())
 		pOriginalCVar->SetValue(flValue);
 }
 
-void CSpoofedConVar::SetString(const char *szValue) const
-{
+void CSpoofedConVar::SetString(const char *szValue) const {
 	if (IsSpoofed())
 		pOriginalCVar->SetValue(szValue);
 }

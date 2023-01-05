@@ -43,17 +43,14 @@
 #include "../sdk/interfaces/iweaponsystem.h"
 #include "../sdk/interfaces/ikeyvaluessystem.h"
 
-class CInterfaceRegister
-{
+class CInterfaceRegister {
 public:
 	InstantiateInterfaceFn pCreateFn;
 	const char *szName;
 	CInterfaceRegister *pNext;
 };
 
-namespace I
-{
-
+namespace I {
 	bool Setup();
 
 	template <typename T>

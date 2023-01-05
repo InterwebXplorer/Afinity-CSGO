@@ -6,8 +6,7 @@
 class INetworkStringTable;
 using StringChangedFn = void(__cdecl *)(void *, INetworkStringTable *, int, char const *, void const *);
 
-class INetworkStringTable
-{
+class INetworkStringTable {
 public:
 	virtual ~INetworkStringTable() {}
 
@@ -30,11 +29,9 @@ public:
 	virtual void SetStringChangedCallback(void *pObject, StringChangedFn changeFunc) = 0;
 };
 
-class INetworkContainer
-{
+class INetworkContainer {
 public:
-	INetworkStringTable *FindTable(const char *szTableName)
-	{
+	INetworkStringTable *FindTable(const char *szTableName) {
 		return MEM::CallVFunc<INetworkStringTable *>(this, 3, szTableName);
 	}
 };

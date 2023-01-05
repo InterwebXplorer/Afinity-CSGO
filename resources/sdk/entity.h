@@ -21,29 +21,25 @@
 #pragma endregion
 
 #pragma region entities_enumerations
-enum EDataUpdateType : int
-{
+enum EDataUpdateType : int {
 	DATA_UPDATE_CREATED = 0,
 	DATA_UPDATE_DATATABLE_CHANGED,
 };
 
-enum ETeamID : int
-{
+enum ETeamID : int {
 	TEAM_UNASSIGNED = 0,
 	TEAM_SPECTATOR,
 	TEAM_TT,
 	TEAM_CT
 };
 
-enum EThinkMethods : int
-{
+enum EThinkMethods : int {
 	THINK_FIRE_ALL_FUNCTIONS = 0,
 	THINK_FIRE_BASE_ONLY,
 	THINK_FIRE_ALL_BUT_BASE,
 };
 
-enum EItemDefinitionIndex : short
-{
+enum EItemDefinitionIndex : short {
 	WEAPON_NONE = 0,
 	WEAPON_DEAGLE = 1,
 	WEAPON_ELITE = 2,
@@ -182,8 +178,7 @@ enum EItemDefinitionIndex : short
 	SPECIAL_AGENT_B_SQUADRON_OFFICER = 5601
 };
 
-enum EWeaponType : int
-{
+enum EWeaponType : int {
 	WEAPONTYPE_KNIFE = 0,
 	WEAPONTYPE_PISTOL = 1,
 	WEAPONTYPE_SUBMACHINEGUN = 2,
@@ -203,8 +198,7 @@ enum EWeaponType : int
 };
 #pragma endregion
 
-class IHandleEntity
-{
+class IHandleEntity {
 public:
 	virtual ~IHandleEntity() {}
 	virtual void SetRefEHandle(const CBaseHandle &hRef) = 0;
@@ -212,8 +206,7 @@ public:
 };
 
 class IClientUnknown;
-class ICollideable
-{
+class ICollideable {
 public:
 	virtual IHandleEntity *GetEntityHandle() = 0;
 	virtual const Vector &OBBMins() const = 0;
@@ -237,8 +230,7 @@ public:
 	virtual void *GetVPhysicsObject() const = 0;
 };
 
-class IClientAlphaProperty
-{
+class IClientAlphaProperty {
 public:
 	virtual IClientUnknown *GetIClientUnknown() = 0;
 	virtual void SetAlphaModulation(std::uint8_t uAlpha) = 0;
@@ -255,8 +247,7 @@ class IClientRenderable;
 class IClientEntity;
 class CBaseEntity;
 class IClientThinkable;
-class IClientUnknown : public IHandleEntity
-{
+class IClientUnknown : public IHandleEntity {
 public:
 	virtual ICollideable *GetCollideable() = 0;
 	virtual IClientNetworkable *GetClientNetworkable() = 0;
@@ -267,16 +258,14 @@ public:
 	virtual IClientAlphaProperty *GetClientAlphaProperty() = 0;
 };
 
-struct RenderableInstance_t
-{
+struct RenderableInstance_t {
 	std::uint8_t uAlpha;
 };
 
 using ClientShadowHandle_t = std::uint16_t;
 using ClientRenderHandle_t = std::uint16_t;
 using ModelInstanceHandle_t = std::uint16_t;
-class IClientRenderable
-{
+class IClientRenderable {
 public:
 	virtual IClientUnknown *GetIClientUnknown() = 0;
 	virtual Vector &GetRenderOrigin() = 0;
@@ -327,8 +316,7 @@ public:
 };
 
 class CBaseClient;
-class IClientNetworkable
-{
+class IClientNetworkable {
 public:
 	virtual IClientUnknown *GetIClientUnknown() = 0;
 	virtual void Release() = 0;
@@ -348,8 +336,7 @@ public:
 
 class CClientThinkHandle;
 using ClientThinkHandle_t = CClientThinkHandle *;
-class IClientThinkable
-{
+class IClientThinkable {
 public:
 	virtual IClientUnknown *GetIClientUnknown() = 0;
 	virtual void ClientThink() = 0;
@@ -358,8 +345,7 @@ public:
 	virtual void Release() = 0;
 };
 
-class IClientEntity : public IClientUnknown, public IClientRenderable, public IClientNetworkable, public IClientThinkable
-{
+class IClientEntity : public IClientUnknown, public IClientRenderable, public IClientNetworkable, public IClientThinkable {
 public:
 	virtual const Vector &GetAbsOrigin() const = 0;
 	virtual const QAngle &GetAbsAngles() const = 0;
@@ -367,34 +353,29 @@ public:
 	virtual bool GetSoundSpatialization(struct SpatializationInfo_t &info) = 0;
 	virtual bool IsBlurred() = 0;
 
-	void SetAbsOrigin(const Vector &vecOrigin)
-	{
+	void SetAbsOrigin(const Vector &vecOrigin) {
 		using SetAbsOriginFn = void(__thiscall *)(void *, const Vector &);
-		static auto oSetAbsOrigin = reinterpret_cast<SetAbsOriginFn>(MEM::FindPattern(CLIENT_DLL, XorStr("55 8B EC 83 E4 F8 51 53 56 57 8B F1 E8")));
+		static auto oSetAbsOrigin = reinterpret_cast<SetAbsOriginFn>(MEM::FindPattern(CLIENT_DLL, "55 8B EC 83 E4 F8 51 53 56 57 8B F1 E8")));
 		oSetAbsOrigin(this, vecOrigin);
 	}
 
-	void SetAbsAngles(const QAngle &angView)
-	{
+	void SetAbsAngles(const QAngle &angView) {
 		using SetAbsAngleFn = void(__thiscall *)(void *, const QAngle &);
-		static auto oSetAbsAngles = reinterpret_cast<SetAbsAngleFn>(MEM::FindPattern(CLIENT_DLL, XorStr("55 8B EC 83 E4 F8 83 EC 64 53 56 57 8B F1 E8")));
+		static auto oSetAbsAngles = reinterpret_cast<SetAbsAngleFn>(MEM::FindPattern(CLIENT_DLL, "55 8B EC 83 E4 F8 83 EC 64 53 56 57 8B F1 E8")));
 		oSetAbsAngles(this, angView);
 	}
 
-	DataMap_t *GetDataDescMap()
-	{
+	DataMap_t *GetDataDescMap() {
 		return MEM::CallVFunc<DataMap_t *>(this, 15);
 	}
 
-	DataMap_t *GetPredictionDescMap()
-	{
+	DataMap_t *GetPredictionDescMap() {
 		return MEM::CallVFunc<DataMap_t *>(this, 17);
 	}
 };
 
 class CWeaponCSBase;
-class CBaseEntity : public IClientEntity
-{
+class CBaseEntity : public IClientEntity {
 public:
 #pragma region DT_BasePlayer
 	N_ADD_PVARIABLE(float, GetFallVelocity, "CBasePlayer->m_flFallVelocity");
@@ -427,21 +408,18 @@ public:
 	N_ADD_PDATAFIELD(int, GetImpulse, this->GetPredictionDescMap(), "m_nImpulse");
 	N_ADD_DATAFIELD(float, GetSurfaceFriction, this->GetPredictionDescMap(), "m_surfaceFriction");
 
-	inline bool IsAlive()
-	{
+	inline bool IsAlive() {
 
 		return (this->GetLifeState() == LIFE_ALIVE);
 	}
 
-	int &GetTakeDamage()
-	{
-		static const std::uintptr_t uTakeDamageOffset = *reinterpret_cast<std::uintptr_t *>(MEM::FindPattern(CLIENT_DLL, XorStr("80 BE ? ? ? ? ? 75 46 8B 86")) + 0x2);
+	int &GetTakeDamage() {
+		static const std::uintptr_t uTakeDamageOffset = *reinterpret_cast<std::uintptr_t *>(MEM::FindPattern(CLIENT_DLL, "80 BE ? ? ? ? ? 75 46 8B 86")) + 0x2);
 		return *reinterpret_cast<int *>(reinterpret_cast<std::uintptr_t>(this) + uTakeDamageOffset);
 	}
 
-	CUserCmd &GetLastCommand()
-	{
-		static const std::uintptr_t uLastCommandOffset = *reinterpret_cast<std::uintptr_t *>(MEM::FindPattern(CLIENT_DLL, XorStr("8D 8E ? ? ? ? 89 5C 24 3C")) + 0x2);
+	CUserCmd &GetLastCommand() {
+		static const std::uintptr_t uLastCommandOffset = *reinterpret_cast<std::uintptr_t *>(MEM::FindPattern(CLIENT_DLL, "8D 8E ? ? ? ? 89 5C 24 3C")) + 0x2);
 		return *reinterpret_cast<CUserCmd *>(reinterpret_cast<std::uintptr_t>(this) + uLastCommandOffset);
 	}
 #pragma endregion
@@ -471,15 +449,11 @@ public:
 	N_ADD_VARIABLE(int, GetSurvivalTeam, "CCSPlayer->m_nSurvivalTeam");
 	N_ADD_VARIABLE_OFFSET(int, IsUsedNewAnimState, "CCSPlayer->m_flLastExoJumpTime", 0x8);
 
-	inline bool IsArmored(const int iHitGroup)
-	{
-
+	inline bool IsArmored(const int iHitGroup) {
 		bool bIsArmored = false;
 
-		if (this->GetArmor() > 0)
-		{
-			switch (iHitGroup)
-			{
+		if (this->GetArmor() > 0) {
+			switch (iHitGroup) {
 			case HITGROUP_GENERIC:
 			case HITGROUP_CHEST:
 			case HITGROUP_STOMACH:
@@ -538,27 +512,23 @@ public:
 	N_ADD_VARIABLE(bool, IsClientSideAnimation, "CBaseAnimating->m_bClientSideAnimation");
 	N_ADD_VARIABLE(float, GetCycle, "CBaseAnimating->m_flCycle");
 
-	[[nodiscard]] std::array<float, MAXSTUDIOPOSEPARAM> &GetPoseParameter()
-	{
+	[[nodiscard]] std::array<float, MAXSTUDIOPOSEPARAM> &GetPoseParameter() {
 		static std::uintptr_t m_flPoseParameter = CNetvarManager::Get().mapProps[FNV1A::HashConst("CBaseAnimating->m_flPoseParameter")].uOffset;
 		return *reinterpret_cast<std::array<float, MAXSTUDIOPOSEPARAM> *>(reinterpret_cast<std::uintptr_t>(this) + m_flPoseParameter);
 	}
 
-	inline void SetPoseAngles(float flYaw, float flPitch)
-	{
+	inline void SetPoseAngles(float flYaw, float flPitch) {
 		auto &arrPose = this->GetPoseParameter();
 		arrPose.at(11U) = (flPitch + 90.f) / 180.f;
 		arrPose.at(2U) = (flYaw + 180.f) / 360.f;
 	}
 
-	[[nodiscard]] CUtlVector<CAnimationLayer> &GetAnimationOverlays()
-	{
-		static const std::uintptr_t uAnimationOverlaysOffset = *reinterpret_cast<std::uintptr_t *>(MEM::FindPattern(CLIENT_DLL, XorStr("8B 89 ? ? ? ? 8D 0C D1")) + 0x2);
+	[[nodiscard]] CUtlVector<CAnimationLayer> &GetAnimationOverlays() {
+		static const std::uintptr_t uAnimationOverlaysOffset = *reinterpret_cast<std::uintptr_t *>(MEM::FindPattern(CLIENT_DLL, "8B 89 ? ? ? ? 8D 0C D1")) + 0x2;
 		return *reinterpret_cast<CUtlVector<CAnimationLayer> *>(reinterpret_cast<std::uintptr_t>(this) + uAnimationOverlaysOffset);
 	}
 
-	[[nodiscard]] inline CAnimationLayer *GetAnimationLayer(const int nLayer)
-	{
+	[[nodiscard]] inline CAnimationLayer *GetAnimationLayer(const int nLayer) {
 		if (nLayer >= 0 && nLayer < MAXOVERLAYS)
 			return &GetAnimationOverlays()[nLayer];
 
@@ -566,44 +536,32 @@ public:
 	}
 #pragma endregion
 
-	int IsMaxHealth()
-	{
-
+	int IsMaxHealth() {
 		return MEM::CallVFunc<int>(this, 123);
 	}
 
-	void Think()
-	{
-
+	void Think() {
 		MEM::CallVFunc<void>(this, 139);
 	}
 
-	const char *GetClassname()
-	{
-
+	const char *GetClassname() {
 		return MEM::CallVFunc<const char *>(this, 143);
 	}
 
-	unsigned int PhysicsSolidMaskForEntity()
-	{
-
+	unsigned int PhysicsSolidMaskForEntity() {
 		return MEM::CallVFunc<unsigned int>(this, 152);
 	}
 
-	bool IsPlayer()
-	{
-
+	bool IsPlayer() {
 		return MEM::CallVFunc<bool>(this, 158);
 	}
 
-	[[nodiscard]] Vector GetEyePosition(bool bShouldCorrect = true)
-	{
+	[[nodiscard]] Vector GetEyePosition(bool bShouldCorrect = true) {
 		Vector vecPosition = {};
 
 		MEM::CallVFunc<void>(this, 169, std::ref(vecPosition));
 
-		if (IsUsedNewAnimState() && bShouldCorrect)
-		{
+		if (IsUsedNewAnimState() && bShouldCorrect) {
 			if (CCSGOPlayerAnimState *pAnimState = this->GetAnimationState(); pAnimState != nullptr)
 				ModifyEyePosition(pAnimState, &vecPosition);
 		}
@@ -611,39 +569,29 @@ public:
 		return vecPosition;
 	}
 
-	void SetSequence(int iSequence)
-	{
-
+	void SetSequence(int iSequence) {
 		MEM::CallVFunc<void>(this, 219, iSequence);
 	}
 
-	void StudioFrameAdvance()
-	{
-
+	void StudioFrameAdvance() {
 		MEM::CallVFunc<void>(this, 220);
 	}
 
-	void UpdateClientSideAnimations()
-	{
-
+	void UpdateClientSideAnimations() {
 		MEM::CallVFunc<void>(this, 224);
 	}
 
-	void PreThink()
-	{
+	void PreThink() {
 		MEM::CallVFunc<void>(this, 318);
 	}
 
-	void UpdateCollisionBounds()
-	{
+	void UpdateCollisionBounds() {
 		MEM::CallVFunc<void>(this, 340);
 	}
 
-	bool PhysicsRunThink(int nThinkMethod)
-	{
-
+	bool PhysicsRunThink(int nThinkMethod) {
 		using PhysicsRunThinkFn = bool(__thiscall *)(void *, int);
-		static auto oPhysicsRunThink = reinterpret_cast<PhysicsRunThinkFn>(MEM::FindPattern(CLIENT_DLL, XorStr("55 8B EC 83 EC 10 53 56 57 8B F9 8B 87")));
+		static auto oPhysicsRunThink = reinterpret_cast<PhysicsRunThinkFn>(MEM::FindPattern(CLIENT_DLL, "55 8B EC 83 EC 10 53 56 57 8B F9 8B 87"));
 		return oPhysicsRunThink(this, nThinkMethod);
 	}
 
@@ -664,8 +612,7 @@ public:
 	bool IsBreakable();
 };
 
-class CCSWeaponData
-{
+class CCSWeaponData {
 public:
 	std::byte pad0[0x14];
 	int iMaxClip1;
@@ -729,10 +676,8 @@ public:
 	float flRecoilMagnitudeVariance[2];
 	int iSpreadSeed;
 
-	bool IsGun() const
-	{
-		switch (this->nWeaponType)
-		{
+	bool IsGun() const {
+		switch (this->nWeaponType) {
 		case WEAPONTYPE_PISTOL:
 		case WEAPONTYPE_SUBMACHINEGUN:
 		case WEAPONTYPE_RIFLE:
@@ -747,21 +692,18 @@ public:
 };
 
 class IRefCounted;
-class CEconItemView
-{
+class CEconItemView {
 public:
 	N_ADD_OFFSET(CUtlVector<IRefCounted *>, GetCustomMaterials, 0x14);
 
-	CUtlVector<CRefCounted *> &GetVisualsDataProcessors()
-	{
+	CUtlVector<CRefCounted *> &GetVisualsDataProcessors() {
 
-		static const std::uintptr_t uVisualsDataProcessorsOffset = *reinterpret_cast<std::uintptr_t *>(MEM::FindPattern(CLIENT_DLL, XorStr("81 C7 ? ? ? ? 8B 4F 0C 8B 57 04 89 4C")) + 0x2);
+		static const std::uintptr_t uVisualsDataProcessorsOffset = *reinterpret_cast<std::uintptr_t *>(MEM::FindPattern(CLIENT_DLL, "81 C7 ? ? ? ? 8B 4F 0C 8B 57 04 89 4C")) + 0x2;
 		return *reinterpret_cast<CUtlVector<CRefCounted *> *>(reinterpret_cast<std::uintptr_t>(this) + uVisualsDataProcessorsOffset);
 	}
 };
 
-class CBaseCombatWeapon : public IClientEntity
-{
+class CBaseCombatWeapon : public IClientEntity {
 public:
 #pragma region DT_BaseCombatWeapon
 	N_ADD_VARIABLE(float, GetNextPrimaryAttack, "CBaseCombatWeapon->m_flNextPrimaryAttack");
@@ -791,29 +733,24 @@ public:
 	N_ADD_PVARIABLE(CEconItemView, GetEconItemView, "CBaseAttributableItem->m_Item");
 #pragma endregion
 
-	void SetModelIndex(int nModelIndex)
-	{
+	void SetModelIndex(int nModelIndex) {
 		MEM::CallVFunc<void>(this, 75, nModelIndex);
 	}
 
-	bool IsWeapon()
-	{
+	bool IsWeapon() {
 		return MEM::CallVFunc<bool>(this, 166);
 	}
 
-	[[nodiscard]] float GetSpread()
-	{
+	[[nodiscard]] float GetSpread() {
 		return MEM::CallVFunc<float>(this, 453);
 	}
 
-	[[nodiscard]] float GetInaccuracy()
-	{
+	[[nodiscard]] float GetInaccuracy() {
 		return MEM::CallVFunc<float>(this, 483);
 	}
 };
 
-class CTEFireBullets
-{
+class CTEFireBullets {
 public:
 	std::byte pad0[0x10];
 	int nPlayer;
@@ -830,8 +767,7 @@ public:
 	int nSoundType;
 };
 
-class CWeaponCSBase : public CBaseCombatWeapon
-{
+class CWeaponCSBase : public CBaseCombatWeapon {
 public:
 #pragma region DT_WeaponCSBaseGun
 	N_ADD_VARIABLE(int, GetZoomLevel, "CWeaponCSBaseGun->m_zoomLevel");
@@ -844,15 +780,13 @@ public:
 	N_ADD_VARIABLE(float, GetFireReadyTime, "CWeaponCSBase->m_flPostponeFireReadyTime");
 #pragma endregion
 
-	CUtlVector<IRefCounted *> &GetCustomMaterials()
-	{
-		static auto uAddress = *reinterpret_cast<std::uintptr_t *>(MEM::FindPattern(CLIENT_DLL, XorStr("83 BE ? ? ? ? ? 7F 67")) + 0x2) - 0xC;
+	CUtlVector<IRefCounted *> &GetCustomMaterials() {
+		static auto uAddress = *reinterpret_cast<std::uintptr_t *>(MEM::FindPattern(CLIENT_DLL, "83 BE ? ? ? ? ? 7F 67")) + 0x2 - 0xC;
 		return *reinterpret_cast<CUtlVector<IRefCounted *> *>(reinterpret_cast<std::uintptr_t>(this) + uAddress);
 	}
 
-	bool &IsCustomMaterialInitialized()
-	{
-		static auto uAddress = *reinterpret_cast<std::uintptr_t *>(MEM::FindPattern(CLIENT_DLL, XorStr("C6 86 ? ? ? ? ? FF 50 04")) + 0x2);
+	bool &IsCustomMaterialInitialized() {
+		static auto uAddress = *reinterpret_cast<std::uintptr_t *>(MEM::FindPattern(CLIENT_DLL, "C6 86 ? ? ? ? ? FF 50 04")) + 0x2;
 		return *reinterpret_cast<bool *>(reinterpret_cast<std::uintptr_t>(this) + uAddress);
 	}
 };
@@ -878,28 +812,23 @@ public:
 	N_ADD_VARIABLE(int, GetEffectTickBegin, "CSmokeGrenadeProjectile->m_nSmokeEffectTickBegin");
 #pragma endregion
 
-	inline float GetMaxTime()
-	{
+	inline float GetMaxTime() {
 		return 18.f;
 	}
 };
 
-class CInferno
-{
+class CInferno {
 public:
 #pragma region DT_Inferno
 	N_ADD_VARIABLE(int, GetEffectTickBegin, "CInferno->m_nFireEffectTickBegin");
 #pragma endregion
 
-	inline float GetMaxTime()
-	{
-
+	inline float GetMaxTime() {
 		return 7.f;
 	}
 };
 
-class CPlantedC4
-{
+class CPlantedC4 {
 public:
 #pragma region DT_PlantedC4
 	N_ADD_VARIABLE(float, GetBlowTime, "CPlantedC4->m_flC4Blow");
@@ -910,20 +839,17 @@ public:
 	N_ADD_VARIABLE(CBaseHandle, GetDefuserHandle, "CPlantedC4->m_hBombDefuser");
 	N_ADD_VARIABLE(bool, IsDefused, "CPlantedC4->m_bBombDefused");
 
-	inline float GetTimer(const float flServerTime)
-	{
+	inline float GetTimer(const float flServerTime) {
 		return std::clamp(this->GetBlowTime() - flServerTime, 0.0f, this->GetTimerLength());
 	}
 
-	inline float GetDefuseTimer(const float flServerTime)
-	{
+	inline float GetDefuseTimer(const float flServerTime) {
 		return std::clamp(this->GetDefuseCountDown() - flServerTime, 0.0f, this->GetDefuseLength());
 	}
 #pragma endregion
 };
 
-class CBaseViewModel
-{
+class CBaseViewModel {
 public:
 #pragma region DT_BaseViewModel
 	N_ADD_VARIABLE(int, GetModelIndex, "CBaseViewModel->m_nModelIndex");
@@ -931,20 +857,17 @@ public:
 	N_ADD_VARIABLE(CBaseHandle, GetWeaponHandle, "CBaseViewModel->m_hWeapon");
 #pragma endregion
 
-	void SendViewModelMatchingSequence(int nSequence)
-	{
+	void SendViewModelMatchingSequence(int nSequence) {
 		MEM::CallVFunc<void>(this, 247, nSequence);
 	}
 
-	void SetWeaponModel(const char *szFileName, CBaseCombatWeapon *pWeapon)
-	{
+	void SetWeaponModel(const char *szFileName, CBaseCombatWeapon *pWeapon) {
 
 		MEM::CallVFunc<void>(this, 248, szFileName, pWeapon);
 	}
 };
 
-class CEnvTonemapController
-{
+class CEnvTonemapController {
 public:
 #pragma region DT_EnvTonemapController
 	N_ADD_VARIABLE(bool, IsUseCustomAutoExposureMin, "CEnvTonemapController->m_bUseCustomAutoExposureMin");
@@ -959,8 +882,7 @@ public:
 #pragma endregion
 };
 
-class CBreakableSurface : public CBaseEntity, public IBreakableWithPropData
-{
+class CBreakableSurface : public CBaseEntity, public IBreakableWithPropData {
 public:
 #pragma region DT_BreakableSurface
 	N_ADD_VARIABLE(bool, IsBroken, "CBreakableSurface->m_bIsBroken");

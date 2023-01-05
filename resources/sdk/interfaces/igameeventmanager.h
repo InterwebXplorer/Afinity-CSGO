@@ -4,8 +4,7 @@
 #define EVENT_DEBUG_ID_INIT 42
 #define EVENT_DEBUG_ID_SHUTDOWN 13
 
-class IGameEvent
-{
+class IGameEvent {
 public:
 	virtual ~IGameEvent() {}
 	virtual const char *GetName() const = 0;
@@ -33,8 +32,7 @@ public:
 	virtual bool ForEventData(void *pEvent) const = 0;
 };
 
-class IGameEventListener2
-{
+class IGameEventListener2 {
 public:
 	virtual ~IGameEventListener2() {}
 	virtual void FireGameEvent(IGameEvent *pEvent) = 0;
@@ -48,8 +46,7 @@ public:
 };
 
 class CSVCMsg_GameEvent;
-class IGameEventManager2
-{
+class IGameEventManager2 {
 public:
 	virtual ~IGameEventManager2() {}
 	virtual int LoadEventsFromFile(const char *szFileName) = 0;

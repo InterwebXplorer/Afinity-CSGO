@@ -3,8 +3,7 @@ using CBaseHandle = std::uintptr_t;
 #include "../datatypes/utlvector.h"
 #include "../entity.h"
 
-class IClientEntityListener
-{
+class IClientEntityListener {
 public:
 	virtual void OnEntityCreated(CBaseEntity *pEntity) {}
 	virtual void OnEntityDeleted(CBaseEntity *pEntity) {}
@@ -14,8 +13,7 @@ class IClientNetworkable;
 class IClientUnknown;
 class IClientEntity;
 
-class IClientEntityList
-{
+class IClientEntityList {
 public:
 	virtual IClientNetworkable *GetClientNetworkable(int nIndex) = 0;
 	virtual IClientNetworkable *GetClientNetworkableFromHandle(CBaseHandle hNetworkable) = 0;
@@ -28,24 +26,20 @@ public:
 	virtual int GetMaxEntities() = 0;
 
 	template <class T = IClientEntity>
-	inline T *Get(const int nIndex)
-	{
+	inline T *Get(const int nIndex) {
 		return static_cast<T *>(GetClientEntity(nIndex));
 	}
 
 	template <class T = IClientEntity>
-	inline T *Get(const CBaseHandle hEntity)
-	{
+	inline T *Get(const CBaseHandle hEntity) {
 		return static_cast<T *>(GetClientEntityFromHandle(hEntity));
 	}
 
-	void AddListenerEntity(IClientEntityListener *pListener)
-	{
+	void AddListenerEntity(IClientEntityListener *pListener) {
 		vecEntityListeners.AddToTail(pListener);
 	}
 
-	void RemoveListenerEntity(IClientEntityListener *pListener)
-	{
+	void RemoveListenerEntity(IClientEntityListener *pListener) {
 		vecEntityListeners.FindAndRemove(pListener);
 	}
 

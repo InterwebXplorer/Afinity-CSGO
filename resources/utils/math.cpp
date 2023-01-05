@@ -183,25 +183,28 @@ void M::RotateCenter(const ImVec2 &vecCenter, const float flAngle, ImVec2 *pOutP
 
 /*--------------------Extra Math Shit--------------------*/
 
-void M::RandomIntSet(int number, ...) {
-	int length = sizeof(number) / sizeof(int);
-	int random = randomnumber[rand() % length];
+template <typename T, typename... Ts>
+T M::RandomIntSet(T first, Ts... rest) {
+    std::vector<T> numbers = {first, rest...};
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(0, numbers.size() - 1);
 
-	return randomnumber();
+    return numbers[dis(gen)];
 }
 
-void M::RandomIntRange(int min, int max) {
+int M::RandomIntRange(int min, int max) {
+	return rand() % (max - min + 1) + min;
+}
+
+int M::IntAddSubtractRange(int addstart, int addend, int subtractstart, int subtractend, int amount) {
 
 }
 
-void M::IntAddSubtractRange(int addstart, int addend, int subtractstart, int subtractend, int amount) {
+int M::IntAddRange(int addstart, int addend, int amount) {
 
 }
 
-void M::IntAddRange(int addstart, int addend, int amount) {
-
-}
-
-void M::IntSubtractRange(int subtractstart, int subtractend, int amount) {
+int M::IntSubtractRange(int subtractstart, int subtractend, int amount) {
 	
 }

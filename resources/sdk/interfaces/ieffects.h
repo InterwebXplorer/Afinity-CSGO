@@ -1,14 +1,12 @@
 #pragma once
 #include "../datatypes/qangle.h"
 
-class IPredictionSystem
-{
+class IPredictionSystem {
 public:
 	virtual ~IPredictionSystem() {}
 };
 
-class IEffects : public IPredictionSystem
-{
+class IEffects : public IPredictionSystem {
 public:
 	virtual void Beam(const Vector &vecStart, const Vector &vecEnd, int nModelIndex,
 					  int nHaloIndex, unsigned char frameStart, unsigned char frameRate,

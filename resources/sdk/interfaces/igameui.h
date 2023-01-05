@@ -1,8 +1,7 @@
 #pragma once
 
 class ECommandMsgBoxSlot;
-class IGameUI
-{
+class IGameUI {
 public:
 	virtual void Initialize(CreateInterfaceFn fnAppFactory) = 0;
 	virtual void PostInit() = 0;

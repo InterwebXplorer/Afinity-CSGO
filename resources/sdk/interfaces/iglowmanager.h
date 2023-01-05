@@ -4,8 +4,7 @@
 #define END_OF_FREE_LIST -1
 #define ENTRY_IN_USE -2
 
-enum EGlowRenderStyle : int
-{
+enum EGlowRenderStyle : int {
 	GLOWRENDERSTYLE_DEFAULT = 0,
 	GLOWRENDERSTYLE_RIMGLOW3D,
 	GLOWRENDERSTYLE_EDGE_HIGHLIGHT,
@@ -13,13 +12,10 @@ enum EGlowRenderStyle : int
 	GLOWRENDERSTYLE_COUNT
 };
 
-class IGlowObjectManager
-{
+class IGlowObjectManager {
 public:
-	struct GlowObject_t
-	{
-		void Set(const Color &colGlow, const int nRenderStyle = GLOWRENDERSTYLE_DEFAULT)
-		{
+	struct GlowObject_t {
+		void Set(const Color &colGlow, const int nRenderStyle = GLOWRENDERSTYLE_DEFAULT) {
 			this->arrColor = colGlow.BaseAlpha();
 			this->flBloomAmount = 1.0f;
 			this->bRenderWhenOccluded = true;
@@ -27,8 +23,7 @@ public:
 			this->nRenderStyle = nRenderStyle;
 		}
 
-		inline bool IsEmpty() const
-		{
+		inline bool IsEmpty() const {
 			return nNextFreeSlot != ENTRY_IN_USE;
 		}
 
@@ -49,8 +44,7 @@ public:
 		int nSplitScreenSlot;
 	};
 
-	struct GlowBoxObject_t
-	{
+	struct GlowBoxObject_t {
 		Vector vecPosition;
 		QAngle angOrientation;
 		Vector vecMins;

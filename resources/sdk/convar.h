@@ -5,53 +5,43 @@
 
 using FnCommandCallbackV1_t = void(__cdecl *)();
 using FnChangeCallback_t = void(__cdecl *)(void *, const char *, float);
-class CConVar
-{
+class CConVar {
 public:
-	const char *GetName()
-	{
+	const char *GetName() {
 		return MEM::CallVFunc<const char *>(this, 5);
 	}
 
-	float GetFloat()
-	{
+	float GetFloat() {
 		std::uint32_t uXored = *reinterpret_cast<std::uint32_t *>(&pParent->flValue) ^ reinterpret_cast<std::uint32_t>(this);
 		return *reinterpret_cast<float *>(&uXored);
 	}
 
-	int GetInt()
-	{
+	int GetInt() {
 		return static_cast<int>(pParent->iValue ^ reinterpret_cast<int>(this));
 	}
 
-	bool GetBool()
-	{
+	bool GetBool() {
 		return !!GetInt();
 	}
 
-	const char *GetString() const
-	{
+	const char *GetString() const {
 		char const *szValue = pParent->szString;
 		return szValue ? szValue : "";
 	}
 
-	void SetValue(const char *szValue)
-	{
+	void SetValue(const char *szValue) {
 		return MEM::CallVFunc<void>(this, 14, szValue);
 	}
 
-	void SetValue(float flValue)
-	{
+	void SetValue(float flValue) {
 		return MEM::CallVFunc<void>(this, 15, flValue);
 	}
 
-	void SetValue(int iValue)
-	{
+	void SetValue(int iValue) {
 		return MEM::CallVFunc<void>(this, 16, iValue);
 	}
 
-	void SetValue(Color colValue)
-	{
+	void SetValue(Color colValue) {
 		return MEM::CallVFunc<void>(this, 17, colValue);
 	}
 
@@ -76,8 +66,7 @@ public:
 	CUtlVector<FnChangeCallback_t> fnChangeCallbacks;
 };
 
-class CSpoofedConVar
-{
+class CSpoofedConVar {
 public:
 	CSpoofedConVar() = default;
 	CSpoofedConVar(const char *szCVar);

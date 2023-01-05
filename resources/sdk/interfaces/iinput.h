@@ -3,8 +3,7 @@
 
 #define MULTIPLAYER_BACKUP 150
 
-class IInput
-{
+class IInput {
 public:
 	std::byte pad0[0xC];
 	bool bTrackIRAvailable;
@@ -18,13 +17,11 @@ public:
 	CUserCmd *pCommands;
 	CVerifiedUserCmd *pVerifiedCommands;
 
-	[[nodiscard]] CUserCmd *GetUserCmd(const int nSequenceNumber) const
-	{
+	[[nodiscard]] CUserCmd *GetUserCmd(const int nSequenceNumber) const {
 		return &pCommands[nSequenceNumber % MULTIPLAYER_BACKUP];
 	}
 
-	[[nodiscard]] CVerifiedUserCmd *GetVerifiedCmd(const int nSequenceNumber) const
-	{
+	[[nodiscard]] CVerifiedUserCmd *GetVerifiedCmd(const int nSequenceNumber) const {
 		return &pVerifiedCommands[nSequenceNumber % MULTIPLAYER_BACKUP];
 	}
 };

@@ -1,22 +1,19 @@
 #pragma once
 #include <array>
 
-enum
-{
+enum {
 	COLOR_R = 0,
 	COLOR_G = 1,
 	COLOR_B = 2,
 	COLOR_A = 3
 };
 
-struct ColorRGBExp32
-{
+struct ColorRGBExp32 {
 	std::uint8_t r, g, b;
 	char exponent;
 };
 
-class Color
-{
+class Color {
 public:
 	Color() = default;
 
@@ -26,51 +23,42 @@ public:
 
 	constexpr Color(float r, float g, float b, float a = 1.0f) : arrColor({static_cast<std::uint8_t>(r * 255.f), static_cast<std::uint8_t>(g * 255.f), static_cast<std::uint8_t>(b * 255.f), static_cast<std::uint8_t>(a * 255.f)}) {}
 
-	void Get(std::uint8_t &r, std::uint8_t &g, std::uint8_t &b, std::uint8_t &a) const
-	{
+	void Get(std::uint8_t &r, std::uint8_t &g, std::uint8_t &b, std::uint8_t &a) const {
 		r = arrColor[COLOR_R];
 		g = arrColor[COLOR_G];
 		b = arrColor[COLOR_B];
 		a = arrColor[COLOR_A];
 	}
 
-	[[nodiscard]] D3DCOLOR GetD3D() const
-	{
+	[[nodiscard]] D3DCOLOR GetD3D() const {
 		return D3DCOLOR_ARGB(arrColor[COLOR_A], arrColor[COLOR_R], arrColor[COLOR_G], arrColor[COLOR_B]);
 	}
 
-	[[nodiscard]] ImU32 GetU32(const float flAlphaMultiplier = 1.0f) const
-	{
+	[[nodiscard]] ImU32 GetU32(const float flAlphaMultiplier = 1.0f) const {
 		return ImGui::GetColorU32(this->GetVec4(flAlphaMultiplier));
 	}
 
-	[[nodiscard]] ImVec4 GetVec4(const float flAlphaMultiplier = 1.0f) const
-	{
+	[[nodiscard]] ImVec4 GetVec4(const float flAlphaMultiplier = 1.0f) const {
 		return ImVec4(this->Base<COLOR_R>(), this->Base<COLOR_G>(), this->Base<COLOR_B>(), this->Base<COLOR_A>() * flAlphaMultiplier);
 	}
 
-	std::uint8_t &operator[](const std::size_t i)
-	{
+	std::uint8_t &operator[](const std::size_t i) {
 		return this->arrColor[i];
 	}
 
-	const std::uint8_t &operator[](const std::size_t i) const
-	{
+	const std::uint8_t &operator[](const std::size_t i) const {
 		return this->arrColor[i];
 	}
 
-	bool operator==(const Color &colSecond) const
-	{
+	bool operator==(const Color &colSecond) const {
 		return this->arrColor == colSecond.arrColor;
 	}
 
-	bool operator!=(const Color &colSecond) const
-	{
+	bool operator!=(const Color &colSecond) const {
 		return !(operator==(colSecond));
 	}
 
-	Color &operator=(const Color &colFrom)
-	{
+	Color &operator=(const Color &colFrom) {
 		arrColor[COLOR_R] = colFrom.arrColor[COLOR_R];
 		arrColor[COLOR_G] = colFrom.arrColor[COLOR_G];
 		arrColor[COLOR_B] = colFrom.arrColor[COLOR_B];
@@ -79,15 +67,13 @@ public:
 	}
 
 	template <std::size_t N>
-	[[nodiscard]] std::uint8_t Get() const
-	{
+	[[nodiscard]] std::uint8_t Get() const {
 		static_assert(N >= COLOR_R && N <= COLOR_A, "given index is out of range");
 		return arrColor[N];
 	}
 
 	template <std::size_t N>
-	[[nodiscard]] Color Set(const std::uint8_t nValue) const
-	{
+	[[nodiscard]] Color Set(const std::uint8_t nValue) const {
 		static_assert(N >= COLOR_R && N <= COLOR_A, "given index is out of range");
 
 		Color colCopy = *this;
@@ -96,8 +82,7 @@ public:
 	}
 
 	template <std::size_t N>
-	[[nodiscard]] Color Multiplier(const float flValue) const
-	{
+	[[nodiscard]] Color Multiplier(const float flValue) const {
 		static_assert(N >= COLOR_R && N <= COLOR_A, "given index is out of range");
 
 		Color colCopy = *this;
@@ -106,8 +91,7 @@ public:
 	}
 
 	template <std::size_t N>
-	[[nodiscard]] Color Divider(const int iValue) const
-	{
+	[[nodiscard]] Color Divider(const int iValue) const {
 		static_assert(N >= COLOR_R && N <= COLOR_A, "given index is out of range");
 
 		Color colCopy = *this;
@@ -116,14 +100,12 @@ public:
 	}
 
 	template <std::size_t N>
-	[[nodiscard]] float Base() const
-	{
+	[[nodiscard]] float Base() const {
 		static_assert(N >= COLOR_R && N <= COLOR_A, "given index is out of range");
 		return arrColor[N] / 255.f;
 	}
 
-	[[nodiscard]] std::array<float, 3U> Base() const
-	{
+	[[nodiscard]] std::array<float, 3U> Base() const {
 		std::array<float, 3U> arrBaseColor = {};
 		arrBaseColor[COLOR_R] = this->Base<COLOR_R>();
 		arrBaseColor[COLOR_G] = this->Base<COLOR_G>();
@@ -131,13 +113,11 @@ public:
 		return arrBaseColor;
 	}
 
-	static Color FromBase3(float arrBase[3])
-	{
+	static Color FromBase3(float arrBase[3]) {
 		return Color(arrBase[0], arrBase[1], arrBase[2]);
 	}
 
-	[[nodiscard]] std::array<float, 4U> BaseAlpha() const
-	{
+	[[nodiscard]] std::array<float, 4U> BaseAlpha() const {
 		std::array<float, 4U> arrBaseColor = {};
 		arrBaseColor[COLOR_R] = this->Base<COLOR_R>();
 		arrBaseColor[COLOR_G] = this->Base<COLOR_G>();
@@ -146,13 +126,11 @@ public:
 		return arrBaseColor;
 	}
 
-	static Color FromBase4(float arrBase[4])
-	{
+	static Color FromBase4(float arrBase[4]) {
 		return Color(arrBase[0], arrBase[1], arrBase[2], arrBase[3]);
 	}
 
-	[[nodiscard]] float Hue() const
-	{
+	[[nodiscard]] float Hue() const {
 		if (arrColor[COLOR_R] == arrColor[COLOR_G] && arrColor[COLOR_G] == arrColor[COLOR_B])
 			return 0.f;
 
@@ -183,8 +161,7 @@ public:
 		return flHue / 360.f;
 	}
 
-	[[nodiscard]] float Saturation() const
-	{
+	[[nodiscard]] float Saturation() const {
 		const float r = this->Base<COLOR_R>();
 		const float g = this->Base<COLOR_G>();
 		const float b = this->Base<COLOR_B>();
@@ -198,8 +175,7 @@ public:
 		return flDelta / flMax;
 	}
 
-	[[nodiscard]] float Brightness() const
-	{
+	[[nodiscard]] float Brightness() const {
 		const float r = this->Base<COLOR_R>();
 		const float g = this->Base<COLOR_G>();
 		const float b = this->Base<COLOR_B>();
@@ -207,8 +183,7 @@ public:
 		return std::max(r, std::max(g, b));
 	}
 
-	static Color FromHSB(float flHue, float flSaturation, float flBrightness, float flAlpha = 1.0f)
-	{
+	static Color FromHSB(float flHue, float flSaturation, float flBrightness, float flAlpha = 1.0f) {
 		const float h = std::fmodf(flHue, 1.0f) / (60.0f / 360.0f);
 		const int i = static_cast<int>(h);
 		const float f = h - static_cast<float>(i);
@@ -218,8 +193,7 @@ public:
 
 		float r = 0.0f, g = 0.0f, b = 0.0f;
 
-		switch (i)
-		{
+		switch (i) {
 		case 0:
 			r = flBrightness, g = t, b = p;
 			break;

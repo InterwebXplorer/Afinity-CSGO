@@ -1,7 +1,6 @@
 #pragma once
 
-class CBaseServer
-{
+class CBaseServer {
 public:
 	char *szNetworkName;
 	void *pTable;
@@ -11,8 +10,7 @@ public:
 };
 
 class CSaveRestoreData;
-class IServerGameDLL
-{
+class IServerGameDLL {
 public:
 	virtual bool DLLInit(CreateInterfaceFn fnEngineFactory, CreateInterfaceFn fnPhysicsFactory, CreateInterfaceFn fnFileSystemFactory, IGlobalVars *pGlobals) = 0;
 	virtual void DLLShutdown() = 0;

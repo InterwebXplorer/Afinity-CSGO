@@ -2,7 +2,7 @@
 #include <directxmath.h>
 #include <windows.h>
 #include <d3d9.h>
-//#include <d3dx9.h>
+#include <d3dx9.h>
 #include "../sdk/datatypes/vector.h"
 #include "../sdk/datatypes/qangle.h"
 #include "../sdk/datatypes/matrix.h"
@@ -64,7 +64,7 @@ namespace M
 
 	/*--------------------Extra Math Shit--------------------*/
 	
-	void RandomIntSet(int number, ...);
+	T M::RandomIntSet(T first, Ts... rest);
 	void RandomIntRange(int min, int max);
 	void IntAddSubtractRange(int addstart, int addend, int subtractstart, int subtractend, int amount);
 	void IntAddRange(int addstart, int addend, int amount);

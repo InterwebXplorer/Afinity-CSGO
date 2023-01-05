@@ -1,13 +1,11 @@
 #pragma once
 
 #pragma region mdlcache_enumerations
-enum
-{
+enum {
 	MDLHANDLE_INVALID = static_cast<MDLHandle_t>(~0)
 };
 
-enum MDLCacheDataType_t : int
-{
+enum MDLCacheDataType_t : int {
 	MDLCACHE_STUDIOHDR = 0,
 	MDLCACHE_STUDIOHWDATA,
 	MDLCACHE_VCOLLIDE,
@@ -17,8 +15,7 @@ enum MDLCacheDataType_t : int
 	MDLCACHE_DECODEDANIMBLOCK,
 };
 
-enum MDLCacheFlush_t : unsigned int
-{
+enum MDLCacheFlush_t : unsigned int {
 	MDLCACHE_FLUSH_STUDIOHDR = 0x01,
 	MDLCACHE_FLUSH_STUDIOHWDATA = 0x02,
 	MDLCACHE_FLUSH_VCOLLIDE = 0x04,
@@ -32,8 +29,7 @@ enum MDLCacheFlush_t : unsigned int
 };
 #pragma endregion
 
-class IMDLCacheNotify
-{
+class IMDLCacheNotify {
 public:
 	virtual void OnDataLoaded(MDLCacheDataType_t nType, MDLHandle_t hModel) = 0;
 	virtual void OnCombinerPreCache(MDLHandle_t hOldHandle, MDLHandle_t hNewHandle) = 0;
@@ -41,8 +37,7 @@ public:
 	virtual bool ShouldSupressLoadWarning(MDLHandle_t hModel) = 0;
 };
 
-class IMDLCache : public IAppSystem
-{
+class IMDLCache : public IAppSystem {
 public:
 	virtual void SetCacheNotify(IMDLCacheNotify *pNotify) = 0;
 	virtual MDLHandle_t FindMDL(const char *szMDLRelativePath) = 0;
@@ -116,17 +111,14 @@ public:
 	virtual void DebugCombinerInfo() = 0;
 };
 
-class CMDLCacheCriticalSection
-{
+class CMDLCacheCriticalSection {
 public:
 	CMDLCacheCriticalSection(IMDLCache *pCache)
-		: pCache(pCache)
-	{
+		: pCache(pCache) {
 		this->pCache->BeginLock();
 	}
 
-	~CMDLCacheCriticalSection()
-	{
+	~CMDLCacheCriticalSection() {
 		this->pCache->EndLock();
 	}
 

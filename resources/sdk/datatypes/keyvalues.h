@@ -8,8 +8,7 @@ using GetSymbolProcFn = bool(__cdecl *)(const char *);
 class CKeyValues
 {
 public:
-	enum EKeyType : int
-	{
+	enum EKeyType : int {
 		TYPE_NONE = 0,
 		TYPE_STRING,
 		TYPE_INT,
@@ -46,8 +45,7 @@ public:
 	void SetInt(const char *szKeyName, const int iValue);
 	void SetUint64(const char *szKeyName, const int nLowValue, const int nHighValue);
 
-	inline void SetBool(const char *szKeyName, const bool bValue)
-	{
+	inline void SetBool(const char *szKeyName, const bool bValue) {
 		SetInt(szKeyName, bValue ? 1 : 0);
 	}
 
@@ -57,8 +55,7 @@ private:
 	char *szValue;
 	wchar_t *wszValue;
 
-	union
-	{
+	union {
 		int iValue;
 		float flValue;
 		void *pValue;

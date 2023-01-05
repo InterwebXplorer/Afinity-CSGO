@@ -1,7 +1,6 @@
 #pragma once
 
-struct VisibleFogVolumeInfo_t
-{
+struct VisibleFogVolumeInfo_t {
 	int iVisibleFogVolume;
 	int iVisibleFogVolumeLeaf;
 	bool bEyeInFogVolume;
@@ -10,8 +9,7 @@ struct VisibleFogVolumeInfo_t
 	IMaterial *pFogVolumeMaterial;
 };
 
-struct ViewPlane_t
-{
+struct ViewPlane_t {
 	ViewPlane_t() = default;
 
 	ViewPlane_t(const Vector &vecNormal, const float flDistance) : vecNormal(vecNormal), flDistance(flDistance) {}
@@ -20,8 +18,7 @@ struct ViewPlane_t
 	float flDistance;
 };
 
-enum
-{
+enum {
 	FRUSTUM_RIGHT = 0,
 	FRUSTUM_LEFT = 1,
 	FRUSTUM_TOP = 2,
@@ -35,33 +32,28 @@ using Frustum_t = ViewPlane_t[FRUSTUM_NUMPLANES];
 
 using LeafIndex_t = std::uint16_t;
 
-enum
-{
+enum {
 	INVALID_LEAF_INDEX = static_cast<LeafIndex_t>(~0)
 };
 
-struct WorldListLeafData_t
-{
+struct WorldListLeafData_t {
 	LeafIndex_t nLeafIndex;
 	std::int16_t sWaterData;
 	std::uint16_t uFirstTranslucentSurface;
 	std::uint16_t uTranslucentSurfaceCount;
 };
 
-struct WorldListInfo_t
-{
+struct WorldListInfo_t {
 	int iViewFogVolume;
 	int iLeafCount;
 	bool bHasWater;
 	WorldListLeafData_t *pLeafDataList;
 };
 
-class IWorldRenderList : public IRefCounted
-{
+class IWorldRenderList : public IRefCounted {
 };
 
-struct VisOverrideData_t
-{
+struct VisOverrideData_t {
 	Vector vecVisOrigin;
 	float flDistToAreaPortalTolerance;
 	Vector vecPortalCorners[4];
@@ -71,13 +63,11 @@ struct VisOverrideData_t
 	float flPortalRadius;
 };
 
-struct ColorVec_t
-{
+struct ColorVec_t {
 	unsigned r, g, b, a;
 };
 
-struct BrushVertex_t
-{
+struct BrushVertex_t {
 	Vector vecPos;
 	Vector vecNormal;
 	Vector vecTangentS;
@@ -89,8 +79,7 @@ private:
 	BrushVertex_t(const BrushVertex_t &src);
 };
 
-class IBrushSurface
-{
+class IBrushSurface {
 public:
 	virtual void ComputeTextureCoordinate(Vector const &worldPos, Vector2D &texCoord) = 0;
 	virtual void ComputeLightmapCoordinate(Vector const &worldPos, Vector2D &lightmapCoord) = 0;
@@ -99,14 +88,12 @@ public:
 	virtual IMaterial *GetMaterial() = 0;
 };
 
-class IBrushRenderer
-{
+class IBrushRenderer {
 public:
 	virtual bool RenderBrushModelSurface(CBaseEntity *pBaseEntity, IBrushSurface *pBrushSurface) = 0;
 };
 
-class IVRenderView
-{
+class IVRenderView {
 public:
 	virtual void DrawBrushModel(CBaseEntity *pBaseEntity, Model_t *pModel, const Vector &vecOrigin, const QAngle &angView, bool bSort) = 0;
 	virtual void DrawIdentityBrushModel(IWorldRenderList *pList, Model_t *pModel) = 0;

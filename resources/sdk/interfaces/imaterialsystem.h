@@ -5,8 +5,7 @@
 using MaterialHandle_t = std::uint16_t;
 
 #pragma region materialsystem_enumerations
-enum ECreateRenderTargetFlags : unsigned int
-{
+enum ECreateRenderTargetFlags : unsigned int {
 	CREATERENDERTARGETFLAGS_HDR = 0x00000001,
 	CREATERENDERTARGETFLAGS_AUTOMIPMAP = 0x00000002,
 	CREATERENDERTARGETFLAGS_UNFILTERABLE_OK = 0x00000004,
@@ -14,8 +13,7 @@ enum ECreateRenderTargetFlags : unsigned int
 	CREATERENDERTARGETFLAGS_TEMP = 0x00000010
 };
 
-enum ETextureFlags : unsigned int
-{
+enum ETextureFlags : unsigned int {
 	TEXTUREFLAGS_POINTSAMPLE = 0x00000001,
 	TEXTUREFLAGS_TRILINEAR = 0x00000002,
 	TEXTUREFLAGS_CLAMPS = 0x00000004,
@@ -50,8 +48,7 @@ enum ETextureFlags : unsigned int
 	TEXTUREFLAGS_UNUSED_80000000 = 0x80000000
 };
 
-enum EClearFlags : unsigned int
-{
+enum EClearFlags : unsigned int {
 	VIEW_CLEAR_COLOR = 0x1,
 	VIEW_CLEAR_DEPTH = 0x2,
 	VIEW_CLEAR_FULL_TARGET = 0x4,
@@ -60,8 +57,7 @@ enum EClearFlags : unsigned int
 	VIEW_CLEAR_STENCIL = 0x20
 };
 
-enum ERenderTargetSizeMode : int
-{
+enum ERenderTargetSizeMode : int {
 	RT_SIZE_NO_CHANGE = 0,
 	RT_SIZE_DEFAULT,
 	RT_SIZE_PICMIP,
@@ -73,8 +69,7 @@ enum ERenderTargetSizeMode : int
 	RT_SIZE_LITERAL
 };
 
-enum EMaterialRenderTargetDepth : unsigned int
-{
+enum EMaterialRenderTargetDepth : unsigned int {
 	MATERIAL_RT_DEPTH_SHARED = 0x0,
 	MATERIAL_RT_DEPTH_SEPARATE = 0x1,
 	MATERIAL_RT_DEPTH_NONE = 0x2,
@@ -82,16 +77,14 @@ enum EMaterialRenderTargetDepth : unsigned int
 };
 #pragma endregion
 
-struct MaterialVideoMode_t
-{
+struct MaterialVideoMode_t {
 	int iWidth;
 	int iHeight;
 	EImageFormat Format;
 	int iRefreshRate;
 };
 
-struct MaterialSystemConfig_t
-{
+struct MaterialSystemConfig_t {
 	MaterialVideoMode_t VideoMode;
 	float flMonitorGamma;
 	float flGammaTVRangeMin;
@@ -137,66 +130,53 @@ struct MaterialSystemConfig_t
 	std::byte pad0[0xC];
 };
 
-class IMaterialSystem
-{
+class IMaterialSystem {
 public:
-	EImageFormat GetBackBufferFormat()
-	{
+	EImageFormat GetBackBufferFormat() {
 		return MEM::CallVFunc<EImageFormat>(this, 36);
 	}
 
-	IMaterial *CreateMaterial(const char *szName, CKeyValues *pKeyValues)
-	{
+	IMaterial *CreateMaterial(const char *szName, CKeyValues *pKeyValues) {
 		return MEM::CallVFunc<IMaterial *>(this, 83, szName, pKeyValues);
 	}
 
-	IMaterial *FindMaterial(char const *szMaterialName, const char *szTextureGroupName = TEXTURE_GROUP_MODEL, bool bComplain = true, const char *pComplainPrefix = nullptr)
-	{
+	IMaterial *FindMaterial(char const *szMaterialName, const char *szTextureGroupName = TEXTURE_GROUP_MODEL, bool bComplain = true, const char *pComplainPrefix = nullptr) {
 		return MEM::CallVFunc<IMaterial *>(this, 84, szMaterialName, szTextureGroupName, bComplain, pComplainPrefix);
 	}
 
-	MaterialHandle_t FirstMaterial()
-	{
+	MaterialHandle_t FirstMaterial() {
 		return MEM::CallVFunc<MaterialHandle_t>(this, 86);
 	}
 
-	MaterialHandle_t NextMaterial(MaterialHandle_t hMaterial)
-	{
+	MaterialHandle_t NextMaterial(MaterialHandle_t hMaterial) {
 		return MEM::CallVFunc<MaterialHandle_t>(this, 87, hMaterial);
 	}
 
-	MaterialHandle_t InvalidMaterial()
-	{
+	MaterialHandle_t InvalidMaterial() {
 		return MEM::CallVFunc<MaterialHandle_t>(this, 88);
 	}
 
-	IMaterial *GetMaterial(MaterialHandle_t hMaterial)
-	{
+	IMaterial *GetMaterial(MaterialHandle_t hMaterial) {
 		return MEM::CallVFunc<IMaterial *>(this, 89, hMaterial);
 	}
 
-	int GetNumMaterials()
-	{
+	int GetNumMaterials() {
 		return MEM::CallVFunc<int>(this, 90);
 	}
 
-	ITexture *FindTexture(char const *szTextureName, const char *szTextureGroupName, bool bComplain = true, int nAdditionalCreationFlags = 0)
-	{
+	ITexture *FindTexture(char const *szTextureName, const char *szTextureGroupName, bool bComplain = true, int nAdditionalCreationFlags = 0) {
 		return MEM::CallVFunc<ITexture *>(this, 91, szTextureName, szTextureGroupName, bComplain, nAdditionalCreationFlags);
 	}
 
-	void BeginRenderTargetAllocation()
-	{
+	void BeginRenderTargetAllocation() {
 		MEM::CallVFunc<void>(this, 94);
 	}
 
-	void EndRenderTargetAllocation()
-	{
+	void EndRenderTargetAllocation() {
 		MEM::CallVFunc<void>(this, 95);
 	}
 
-	void ForceBeginRenderTargetAllocation()
-	{
+	void ForceBeginRenderTargetAllocation() {
 		const bool bOldState = DisableRenderTargetAllocationForever();
 
 		DisableRenderTargetAllocationForever() = false;
@@ -204,8 +184,7 @@ public:
 		DisableRenderTargetAllocationForever() = bOldState;
 	}
 
-	void ForceEndRenderTargetAllocation()
-	{
+	void ForceEndRenderTargetAllocation() {
 		const bool bOldState = DisableRenderTargetAllocationForever();
 
 		DisableRenderTargetAllocationForever() = false;
@@ -213,43 +192,35 @@ public:
 		DisableRenderTargetAllocationForever() = bOldState;
 	}
 
-	ITexture *CreateRenderTargetTexture(int iWidth, int iHeight, ERenderTargetSizeMode sizeMode, EImageFormat format, EMaterialRenderTargetDepth depth = MATERIAL_RT_DEPTH_SHARED)
-	{
+	ITexture *CreateRenderTargetTexture(int iWidth, int iHeight, ERenderTargetSizeMode sizeMode, EImageFormat format, EMaterialRenderTargetDepth depth = MATERIAL_RT_DEPTH_SHARED) {
 		return MEM::CallVFunc<ITexture *>(this, 96, iWidth, iHeight, sizeMode, format, depth);
 	}
 
-	ITexture *CreateNamedRenderTargetTextureEx(const char *szName, int iWidth, int iHeight, ERenderTargetSizeMode sizeMode, EImageFormat format, EMaterialRenderTargetDepth depth = MATERIAL_RT_DEPTH_SHARED, unsigned int fTextureFlags = 0U, unsigned int fRenderTargetFlags = CREATERENDERTARGETFLAGS_HDR)
-	{
+	ITexture *CreateNamedRenderTargetTextureEx(const char *szName, int iWidth, int iHeight, ERenderTargetSizeMode sizeMode, EImageFormat format, EMaterialRenderTargetDepth depth = MATERIAL_RT_DEPTH_SHARED, unsigned int fTextureFlags = 0U, unsigned int fRenderTargetFlags = CREATERENDERTARGETFLAGS_HDR) {
 		return MEM::CallVFunc<ITexture *>(this, 97, szName, iWidth, iHeight, sizeMode, format, depth, fTextureFlags, fRenderTargetFlags);
 	}
 
-	ITexture *CreateNamedRenderTargetTexture(const char *szName, int iWidth, int iHeight, ERenderTargetSizeMode sizeMode, EImageFormat format, EMaterialRenderTargetDepth depth = MATERIAL_RT_DEPTH_SHARED, bool bClampTexCoords = true, bool bAutoMipMap = false)
-	{
+	ITexture *CreateNamedRenderTargetTexture(const char *szName, int iWidth, int iHeight, ERenderTargetSizeMode sizeMode, EImageFormat format, EMaterialRenderTargetDepth depth = MATERIAL_RT_DEPTH_SHARED, bool bClampTexCoords = true, bool bAutoMipMap = false) {
 		return MEM::CallVFunc<ITexture *>(this, 98, szName, iWidth, iHeight, sizeMode, format, depth, bClampTexCoords, bAutoMipMap);
 	}
 
-	ITexture *CreateNamedRenderTargetTextureEx2(const char *szName, int iWidth, int iHeight, ERenderTargetSizeMode sizeMode, EImageFormat format, EMaterialRenderTargetDepth depth = MATERIAL_RT_DEPTH_SHARED, unsigned int fTextureFlags = 0U, unsigned int fRenderTargetFlags = CREATERENDERTARGETFLAGS_HDR)
-	{
+	ITexture *CreateNamedRenderTargetTextureEx2(const char *szName, int iWidth, int iHeight, ERenderTargetSizeMode sizeMode, EImageFormat format, EMaterialRenderTargetDepth depth = MATERIAL_RT_DEPTH_SHARED, unsigned int fTextureFlags = 0U, unsigned int fRenderTargetFlags = CREATERENDERTARGETFLAGS_HDR) {
 		return MEM::CallVFunc<ITexture *>(this, 99, szName, iWidth, iHeight, sizeMode, format, depth, fTextureFlags, fRenderTargetFlags);
 	}
 
-	IMatRenderContext *GetRenderContext()
-	{
+	IMatRenderContext *GetRenderContext() {
 		return MEM::CallVFunc<IMatRenderContext *>(this, 115);
 	}
 
-	void FinishRenderTargetAllocation()
-	{
+	void FinishRenderTargetAllocation() {
 		MEM::CallVFunc<void>(this, 136);
 	}
 
-	void ReEnableRenderTargetAllocation()
-	{
+	void ReEnableRenderTargetAllocation() {
 		MEM::CallVFunc<void>(this, 137);
 	}
 
-	bool &DisableRenderTargetAllocationForever()
-	{
+	bool &DisableRenderTargetAllocationForever() {
 
 		static auto uDisableRenderTargetAllocationForever = *reinterpret_cast<std::uintptr_t *>(MEM::FindPattern(MATERIALSYSTEM_DLL, XorStr("80 B9 ? ? ? ? ? 74 0F")) + 0x2);
 		return *reinterpret_cast<bool *>(reinterpret_cast<std::uintptr_t>(this) + uDisableRenderTargetAllocationForever);
@@ -263,42 +234,36 @@ class CMatRenderContextPtr : public CRefPtr<IMatRenderContext>
 public:
 	CMatRenderContextPtr() = default;
 
-	CMatRenderContextPtr(IMatRenderContext *pInit) : CBaseClass(pInit)
-	{
+	CMatRenderContextPtr(IMatRenderContext *pInit) : CBaseClass(pInit) {
 		if (CBaseClass::pObject != nullptr)
 			CBaseClass::pObject->BeginRender();
 	}
 
-	CMatRenderContextPtr(IMaterialSystem *pFrom) : CBaseClass(pFrom->GetRenderContext())
-	{
+	CMatRenderContextPtr(IMaterialSystem *pFrom) : CBaseClass(pFrom->GetRenderContext()) {
 		if (CBaseClass::pObject != nullptr)
 			CBaseClass::pObject->BeginRender();
 	}
 
-	~CMatRenderContextPtr()
-	{
+	~CMatRenderContextPtr() {
 		if (CBaseClass::pObject != nullptr)
 			CBaseClass::pObject->EndRender();
 	}
 
-	IMatRenderContext *operator=(IMatRenderContext *pSecondContext)
-	{
+	IMatRenderContext *operator=(IMatRenderContext *pSecondContext) {
 		if (pSecondContext != nullptr)
 			pSecondContext->BeginRender();
 
 		return CBaseClass::operator=(pSecondContext);
 	}
 
-	void SafeRelease()
-	{
+	void SafeRelease() {
 		if (CBaseClass::pObject != nullptr)
 			CBaseClass::pObject->EndRender();
 
 		CBaseClass::SafeRelease();
 	}
 
-	void AssignAddReference(IMatRenderContext *pFrom)
-	{
+	void AssignAddReference(IMatRenderContext *pFrom) {
 		if (CBaseClass::pObject)
 			CBaseClass::pObject->EndRender();
 
@@ -306,8 +271,7 @@ public:
 		CBaseClass::pObject->BeginRender();
 	}
 
-	void GetFrom(IMaterialSystem *pFrom)
-	{
+	void GetFrom(IMaterialSystem *pFrom) {
 		AssignAddReference(pFrom->GetRenderContext());
 	}
 

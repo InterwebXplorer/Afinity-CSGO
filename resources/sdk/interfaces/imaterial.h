@@ -5,23 +5,20 @@
 using VertexFormat_t = std::uint64_t;
 
 #pragma region material_enumerations
-enum EPreviewImageRetVal : int
-{
+enum EPreviewImageRetVal : int {
 	MATERIAL_PREVIEW_IMAGE_BAD = 0,
 	MATERIAL_PREVIEW_IMAGE_OK,
 	MATERIAL_NO_PREVIEW_IMAGE,
 };
 
-enum EMaterialPropertyType : int
-{
+enum EMaterialPropertyType : int {
 	MATERIAL_PROPERTY_NEEDS_LIGHTMAP = 0,
 	MATERIAL_PROPERTY_OPACITY,
 	MATERIAL_PROPERTY_REFLECTIVITY,
 	MATERIAL_PROPERTY_NEEDS_BUMPED_LIGHTMAPS
 };
 
-enum EMaterialVarFlags : int
-{
+enum EMaterialVarFlags : int {
 	MATERIAL_VAR_DEBUG = (1 << 0),
 	MATERIAL_VAR_NO_DEBUG_OVERRIDE = (1 << 1),
 	MATERIAL_VAR_NO_DRAW = (1 << 2),
@@ -56,8 +53,7 @@ enum EMaterialVarFlags : int
 	MATERIAL_VAR_VERTEXFOG = (1 << 31)
 };
 
-enum EImageFormat
-{
+enum EImageFormat {
 	IMAGE_FORMAT_UNKNOWN = -1,
 	IMAGE_FORMAT_RGBA8888 = 0,
 	IMAGE_FORMAT_ABGR8888,
@@ -131,52 +127,42 @@ enum EImageFormat
 };
 #pragma endregion
 
-class IMaterialVar
-{
+class IMaterialVar {
 public:
-	ITexture *GetTexture()
-	{
+	ITexture *GetTexture() {
 		return MEM::CallVFunc<ITexture *>(this, 1);
 	}
 
-	void SetFloat(float flValue)
-	{
+	void SetFloat(float flValue) {
 		MEM::CallVFunc<void>(this, 4, flValue);
 	}
 
-	void SetInt(int iValue)
-	{
+	void SetInt(int iValue) {
 		MEM::CallVFunc<void>(this, 5, iValue);
 	}
 
-	void SetString(const char *szValue)
-	{
+	void SetString(const char *szValue) {
 		MEM::CallVFunc<void>(this, 6, szValue);
 	}
 
-	void SetVector(float x, float y)
-	{
+	void SetVector(float x, float y) {
 		MEM::CallVFunc<void>(this, 10, x, y);
 	}
 
-	void SetVector(float x, float y, float z)
-	{
+	void SetVector(float x, float y, float z) {
 		MEM::CallVFunc<void>(this, 11, x, y, z);
 	}
 
-	void SetTexture(ITexture *pTexture)
-	{
+	void SetTexture(ITexture *pTexture) {
 		MEM::CallVFunc<void>(this, 15, pTexture);
 	}
 
-	void SetVectorComponent(float flValue, int iComponent)
-	{
+	void SetVectorComponent(float flValue, int iComponent) {
 		MEM::CallVFunc<void>(this, 26, flValue, iComponent);
 	}
 };
 
-class IMaterial
-{
+class IMaterial {
 public:
 	virtual const char *GetName() const = 0;
 	virtual const char *GetTextureGroupName() const = 0;

@@ -1,8 +1,7 @@
 #pragma once
 
 class OverlayText_t;
-class IVDebugOverlay
-{
+class IVDebugOverlay {
 public:
 	virtual void AddEntityTextOverlay(int iEntityIndex, int iLineOffset, float flDuration, int r, int g, int b, int a, const char *fmt, ...) = 0;
 	virtual void AddBoxOverlay(const Vector &vecOrigin, const Vector &vecAbsMin, const Vector &vecAbsMax, const QAngle &angOrientation, int r, int g, int b, int a, float flDuration) = 0;

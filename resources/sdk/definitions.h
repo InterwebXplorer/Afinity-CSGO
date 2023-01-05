@@ -8,8 +8,7 @@
 #define MAX_WEAPONS 64
 
 #pragma region valve_basetypes
-inline float BitsToFloat(std::uint32_t i)
-{
+inline float BitsToFloat(std::uint32_t i) {
 	union Convertor_t
 	{
 		float fl;
@@ -29,8 +28,7 @@ inline float BitsToFloat(std::uint32_t i)
 #define MAX_AREA_STATE_BYTES 32
 #define MAX_AREA_PORTAL_STATE_BYTES 24
 
-enum ELifeState : int
-{
+enum ELifeState : int {
 	LIFE_ALIVE = 0,
 	LIFE_DYING,
 	LIFE_DEAD,
@@ -38,8 +36,7 @@ enum ELifeState : int
 	LIFE_DISCARDBODY
 };
 
-enum EFlags : int
-{
+enum EFlags : int {
 	FL_ONGROUND = (1 << 0),
 	FL_DUCKING = (1 << 1),
 	FL_ANIMDUCKING = (1 << 2),
@@ -74,8 +71,7 @@ enum EFlags : int
 	FL_UNBLOCKABLE_BY_PLAYER = (1 << 31)
 };
 
-enum EEFlags : int
-{
+enum EEFlags : int {
 	EFL_KILLME = (1 << 0),
 	EFL_DORMANT = (1 << 1),
 	EFL_NOCLIP_ACTIVE = (1 << 2),
@@ -110,8 +106,7 @@ enum EEFlags : int
 	EFL_NO_DAMAGE_FORCES = (1 << 31)
 };
 
-enum EMoveType : int
-{
+enum EMoveType : int {
 	MOVETYPE_NONE = 0,
 	MOVETYPE_ISOMETRIC,
 	MOVETYPE_WALK,
@@ -128,8 +123,7 @@ enum EMoveType : int
 	MOVETYPE_MAX_BITS = 4
 };
 
-enum ESolidType : int
-{
+enum ESolidType : int {
 	SOLID_NONE = 0,
 	SOLID_BSP,
 	SOLID_BBOX,
@@ -140,8 +134,7 @@ enum ESolidType : int
 	SOLID_LAST
 };
 
-enum ESolidFlags : unsigned int
-{
+enum ESolidFlags : unsigned int {
 	FSOLID_CUSTOMRAYTEST = 0x0001,
 	FSOLID_CUSTOMBOXTEST = 0x0002,
 	FSOLID_NOT_SOLID = 0x0004,
@@ -155,8 +148,7 @@ enum ESolidFlags : unsigned int
 	FSOLID_MAX_BITS = 10
 };
 
-enum EEffectFlags : unsigned int
-{
+enum EEffectFlags : unsigned int {
 	EF_BONEMERGE = 0x001,
 	EF_BRIGHTLIGHT = 0x002,
 	EF_DIMLIGHT = 0x004,
@@ -176,8 +168,7 @@ enum EEffectFlags : unsigned int
 	EF_MAX_BITS = 15
 };
 
-enum ECollisionGroup : int
-{
+enum ECollisionGroup : int {
 	COLLISION_GROUP_NONE = 0,
 	COLLISION_GROUP_DEBRIS,
 	COLLISION_GROUP_DEBRIS_TRIGGER,
@@ -211,16 +202,14 @@ enum ECollisionGroup : int
 #define ROUND_TO_TICKS(t) (TICK_INTERVAL * TIME_TO_TICKS(t))
 #define TICK_NEVER_THINK (-1)
 
-enum EMultiplayerPhysicsMode : int
-{
+enum EMultiplayerPhysicsMode : int {
 	PHYSICS_MULTIPLAYER_AUTODETECT = 0,
 	PHYSICS_MULTIPLAYER_SOLID = 1,
 	PHYSICS_MULTIPLAYER_NON_SOLID = 2,
 	PHYSICS_MULTIPLAYER_CLIENTSIDE = 3
 };
 
-enum EHitGroupIndex : int
-{
+enum EHitGroupIndex : int {
 	HITGROUP_GENERIC = 0,
 	HITGROUP_HEAD,
 	HITGROUP_CHEST,
@@ -233,16 +222,14 @@ enum EHitGroupIndex : int
 	HITGROUP_GEAR = 10
 };
 
-enum EDamageType : int
-{
+enum EDamageType : int {
 	DAMAGE_NO = 0,
 	DAMAGE_EVENTS_ONLY,
 	DAMAGE_YES,
 	DAMAGE_AIM
 };
 
-enum EObserverMode : int
-{
+enum EObserverMode : int {
 	OBS_MODE_NONE = 0,
 	OBS_MODE_DEATHCAM,
 	OBS_MODE_FREEZECAM,
@@ -331,8 +318,7 @@ enum EObserverMode : int
 #define CHAR_TEX_WARPSHIELD 'Z'
 #pragma endregion
 
-enum class EClassIndex : int
-{
+enum class EClassIndex : int {
 	CAI_BaseNPC = 0,
 	CAK47,
 	CBaseAnimating,
@@ -619,8 +605,7 @@ enum class EClassIndex : int
 	SporeTrail,
 };
 
-enum EUserMessages : int
-{
+enum EUserMessages : int {
 	CS_UM_VGUIMenu = 1,
 	CS_UM_Geiger = 2,
 	CS_UM_Train = 3,
@@ -687,8 +672,7 @@ enum EUserMessages : int
 	CS_UM_PlayerDecalDigitalSignature = 68
 };
 
-enum EDrawModelFlags : unsigned int
-{
+enum EDrawModelFlags : unsigned int {
 	STUDIO_NONE = 0x00000000,
 	STUDIO_RENDER = 0x00000001,
 	STUDIO_VIEWXFORMATTACHMENTS = 0x00000002,
@@ -708,8 +692,7 @@ enum EDrawModelFlags : unsigned int
 	STUDIO_TRANSPARENCY = 0x80000000
 };
 
-enum EShaderStencilFunc : int
-{
+enum EShaderStencilFunc : int {
 	SHADER_STENCILFUNC_NEVER = 0,
 	SHADER_STENCILFUNC_LESS,
 	SHADER_STENCILFUNC_EQUAL,
@@ -720,8 +703,7 @@ enum EShaderStencilFunc : int
 	SHADER_STENCILFUNC_ALWAYS
 };
 
-enum EShaderStencilOp : int
-{
+enum EShaderStencilOp : int {
 	SHADER_STENCILOP_KEEP = 0,
 	SHADER_STENCILOP_ZERO,
 	SHADER_STENCILOP_SET_TO_REFERENCE,
@@ -732,8 +714,7 @@ enum EShaderStencilOp : int
 	SHADER_STENCILOP_DECREMENT_WRAP,
 };
 
-struct string_t
-{
+struct string_t {
 public:
 	bool operator!() const { return (szValue == nullptr); }
 	bool operator==(const string_t &rhs) const { return (szValue == rhs.szValue); }
@@ -747,8 +728,7 @@ protected:
 };
 
 #pragma region valve_sharedprops
-enum EPropertyDataInteractions : int
-{
+enum EPropertyDataInteractions : int {
 	PROPINTER_PHYSGUN_WORLD_STICK,
 	PROPINTER_PHYSGUN_FIRST_BREAK,
 	PROPINTER_PHYSGUN_FIRST_PAINT,
@@ -769,24 +749,21 @@ enum EPropertyDataInteractions : int
 	PROPINTER_NUM_INTERACTIONS
 };
 
-enum EMultiplayerBreak : int
-{
+enum EMultiplayerBreak : int {
 	MULTIPLAYER_BREAK_DEFAULT,
 	MULTIPLAYER_BREAK_SERVERSIDE,
 	MULTIPLAYER_BREAK_CLIENTSIDE,
 	MULTIPLAYER_BREAK_BOTH
 };
 
-class IMultiplayerPhysics
-{
+class IMultiplayerPhysics {
 public:
 	virtual int GetMultiplayerPhysicsMode() = 0;
 	virtual float GetMass() = 0;
 	virtual bool IsAsleep() = 0;
 };
 
-class IBreakableWithPropData
-{
+class IBreakableWithPropData {
 public:
 	virtual void SetDmgModBullet(float flDmgMod) = 0;
 	virtual void SetDmgModClub(float flDmgMod) = 0;

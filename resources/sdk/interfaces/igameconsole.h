@@ -1,7 +1,6 @@
 #pragma once
 
-class IGameConsole
-{
+class IGameConsole {
 public:
 	virtual ~IGameConsole() {}
 	virtual void Activate() = 0;

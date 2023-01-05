@@ -1,8 +1,7 @@
 #pragma once
 
 #pragma region datamap_enumerations
-enum EFieldTypes : int
-{
+enum EFieldTypes : int {
 	FIELD_VOID = 0,
 	FIELD_FLOAT,
 	FIELD_STRING,
@@ -37,8 +36,7 @@ enum EFieldTypes : int
 	FIELD_TYPECOUNT
 };
 
-enum
-{
+enum {
 	TD_OFFSET_NORMAL = 0,
 	TD_OFFSET_PACKED = 1,
 	TD_OFFSET_COUNT
@@ -46,8 +44,7 @@ enum
 #pragma endregion
 
 struct DataMap_t;
-struct TypeDescription_t
-{
+struct TypeDescription_t {
 public:
 	EFieldTypes iFieldType;
 	const char *szFieldName;
@@ -59,8 +56,7 @@ public:
 	std::byte pad1[0x18];
 };
 
-struct DataMap_t
-{
+struct DataMap_t {
 	TypeDescription_t *pDataDesc;
 	int nDataFields;
 	const char *szDataClassName;

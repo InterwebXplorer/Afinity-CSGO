@@ -5,8 +5,7 @@
 
 #define MAXOVERLAYS 15
 
-enum ESequenceActivity : int
-{
+enum ESequenceActivity : int {
 	ACT_CSGO_NULL = 957,
 	ACT_CSGO_DEFUSE,
 	ACT_CSGO_DEFUSE_WITH_KIT,
@@ -46,8 +45,7 @@ enum ESequenceActivity : int
 
 class matrix3x4a_t;
 class CBaseAnimating;
-class CBoneAccessor
-{
+class CBoneAccessor {
 public:
 	const CBaseAnimating *pAnimating;
 	matrix3x4a_t *matBones;
@@ -55,8 +53,7 @@ public:
 	int nWritableBones;
 };
 
-class CAnimationLayer
-{
+class CAnimationLayer {
 public:
 	float flAnimationTime;
 	float flFadeOut;
@@ -76,13 +73,11 @@ public:
 
 class CBaseEntity;
 class CBaseCombatWeapon;
-class CCSGOPlayerAnimState
-{
+class CCSGOPlayerAnimState {
 public:
-	void Create(CBaseEntity *pEntity)
-	{
+	void Create(CBaseEntity *pEntity) {
 		using CreateAnimationStateFn = void(__thiscall *)(void *, CBaseEntity *);
-		static auto oCreateAnimationState = reinterpret_cast<CreateAnimationStateFn>(MEM::FindPattern(CLIENT_DLL, XorStr("55 8B EC 56 8B F1 B9 ? ? ? ? C7 46")));
+		static auto oCreateAnimationState = reinterpret_cast<CreateAnimationStateFn>(MEM::FindPattern(CLIENT_DLL, "55 8B EC 56 8B F1 B9 ? ? ? ? C7 46"));
 
 		if (oCreateAnimationState == nullptr)
 			return;
@@ -90,10 +85,9 @@ public:
 		oCreateAnimationState(this, pEntity);
 	}
 
-	void Update(QAngle angView)
-	{
+	void Update(QAngle angView) {
 		using UpdateAnimationStateFn = void(__vectorcall *)(void *, void *, float, float, float, void *);
-		static auto oUpdateAnimationState = reinterpret_cast<UpdateAnimationStateFn>(MEM::FindPattern(CLIENT_DLL, XorStr("55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 F3 0F 11 54 24")));
+		static auto oUpdateAnimationState = reinterpret_cast<UpdateAnimationStateFn>(MEM::FindPattern(CLIENT_DLL, "55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 F3 0F 11 54 24"));
 
 		if (oUpdateAnimationState == nullptr)
 			return;
@@ -101,10 +95,9 @@ public:
 		oUpdateAnimationState(this, nullptr, 0.0f, angView.y, angView.x, nullptr);
 	}
 
-	void Reset()
-	{
+	void Reset() {
 		using ResetAnimationStateFn = void(__thiscall *)(void *);
-		static auto oResetAnimationState = reinterpret_cast<ResetAnimationStateFn>(MEM::FindPattern(CLIENT_DLL, XorStr("56 6A 01 68 ? ? ? ? 8B F1")));
+		static auto oResetAnimationState = reinterpret_cast<ResetAnimationStateFn>(MEM::FindPattern(CLIENT_DLL, "56 6A 01 68 ? ? ? ? 8B F1"));
 
 		if (oResetAnimationState == nullptr)
 			return;

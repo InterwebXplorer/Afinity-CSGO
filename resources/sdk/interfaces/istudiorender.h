@@ -1,8 +1,7 @@
 #pragma once
 
 #pragma region studiorender_enumerations
-enum
-{
+enum {
 	STUDIORENDER_DRAW_ENTIRE_MODEL = 0,
 	STUDIORENDER_DRAW_OPAQUE_ONLY = 0x01,
 	STUDIORENDER_DRAW_TRANSLUCENT_ONLY = 0x02,
@@ -19,8 +18,7 @@ enum
 	STUDIORENDER_GENERATE_STATS = 0x8000,
 };
 
-enum EOverrideType : int
-{
+enum EOverrideType : int {
 	OVERRIDE_NORMAL = 0,
 	OVERRIDE_BUILD_SHADOWS,
 	OVERRIDE_DEPTH_WRITE,
@@ -28,8 +26,7 @@ enum EOverrideType : int
 };
 #pragma endregion
 
-struct MaterialLightingState_t
-{
+struct MaterialLightingState_t {
 	Vector vecAmbientCube[6];
 	Vector vecLightingOrigin;
 	int nLocalLightCount;
@@ -38,12 +35,10 @@ struct MaterialLightingState_t
 
 struct DrawModelResults_t;
 struct ColorMeshInfo_t;
-struct StudioDecalHandle_t
-{
+struct StudioDecalHandle_t {
 	int iUnused;
 };
-struct DrawModelInfo_t
-{
+struct DrawModelInfo_t {
 	studiohdr_t *pStudioHdr;
 	studiohwdata_t *pHardwareData;
 	StudioDecalHandle_t hDecals;
@@ -57,21 +52,17 @@ struct DrawModelInfo_t
 	MaterialLightingState_t lightingState;
 };
 
-class IStudioRender
-{
+class IStudioRender {
 public:
-	void SetColorModulation(float const *arrColor)
-	{
+	void SetColorModulation(float const *arrColor) {
 		MEM::CallVFunc<void>(this, 27, arrColor);
 	}
 
-	void SetAlphaModulation(float flAlpha)
-	{
+	void SetAlphaModulation(float flAlpha) {
 		MEM::CallVFunc<void>(this, 28, flAlpha);
 	}
 
-	void ForcedMaterialOverride(IMaterial *pMaterial, EOverrideType nOverrideType = OVERRIDE_NORMAL, int nOverrides = 0)
-	{
+	void ForcedMaterialOverride(IMaterial *pMaterial, EOverrideType nOverrideType = OVERRIDE_NORMAL, int nOverrides = 0) {
 		MEM::CallVFunc<void>(this, 33, pMaterial, nOverrideType, nOverrides);
 	}
 };

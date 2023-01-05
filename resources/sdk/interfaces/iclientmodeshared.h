@@ -12,8 +12,7 @@
 #define SIGNONSTATE_CHANGELEVEL 7
 #pragma endregion
 
-class CViewSetup
-{
+class CViewSetup {
 public:
 	int iX;
 	int iUnscaledX;
@@ -67,8 +66,7 @@ public:
 };
 
 class IHudChat;
-class IClientModeShared
-{
+class IClientModeShared {
 public:
 	std::byte pad0[0x1B];
 	void *pViewport;
@@ -78,8 +76,7 @@ public:
 	int nRootSize[2];
 };
 
-class IAppSystem
-{
+class IAppSystem {
 private:
 	virtual void function0() = 0;
 	virtual void function1() = 0;
@@ -92,8 +89,7 @@ private:
 	virtual void function8() = 0;
 };
 
-class CEventInfo
-{
+class CEventInfo {
 public:
 	short nClassID;
 	float flFireDelay;
@@ -106,8 +102,7 @@ public:
 };
 
 class INetChannel;
-class IClientState
-{
+class IClientState {
 public:
 	std::byte pad0[0x9C];
 	INetChannel *pNetChannel;

@@ -5,11 +5,9 @@
 #define FLOW_INCOMING 1
 #define MAX_FLOWS 2
 
-class INetChannelInfo
-{
+class INetChannelInfo {
 public:
-	enum
-	{
+	enum {
 		GENERIC = 0,
 		LOCALPLAYER,
 		OTHERPLAYERS,
@@ -59,8 +57,7 @@ public:
 	virtual float GetTimeoutSeconds() const = 0;
 };
 
-class INetChannel
-{
+class INetChannel {
 public:
 	std::byte pad0[0x14];
 	bool bProcessingMessages;
@@ -75,19 +72,16 @@ public:
 	int iChokedPackets;
 	std::byte pad2[0x414];
 
-	int SendDatagram(bf_write *pDatagram)
-	{
+	int SendDatagram(bf_write *pDatagram) {
 		return MEM::CallVFunc<int>(this, 46, pDatagram);
 	}
 
-	bool Transmit(bool bOnlyReliable = false)
-	{
+	bool Transmit(bool bOnlyReliable = false) {
 		return MEM::CallVFunc<bool>(this, 49, bOnlyReliable);
 	}
 };
 
-class INetMessage
-{
+class INetMessage {
 public:
 	virtual ~INetMessage() {}
 	virtual void SetNetChannel(void *pNetChannel) = 0;
@@ -104,8 +98,7 @@ public:
 	virtual std::size_t GetSize() const = 0;
 };
 
-class CCLCMsg_Move
-{
+class CCLCMsg_Move {
 private:
 	std::byte pad0[0x8];
 
@@ -115,13 +108,11 @@ public:
 };
 
 template <typename T>
-class CNetMessagePB : public INetMessage, public T
-{
+class CNetMessagePB : public INetMessage, public T {
 };
 using CCLCMsg_Move_t = CNetMessagePB<CCLCMsg_Move>;
 
-class INetChannelHandler
-{
+class INetChannelHandler {
 public:
 	virtual ~INetChannelHandler() {}
 	virtual void ConnectionStart(INetChannel *pChannel) = 0;

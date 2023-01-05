@@ -1,8 +1,7 @@
 #pragma once
 #pragma region enginesound_enumerations
 
-enum
-{
+enum {
 	CHAN_REPLACE = -1,
 	CHAN_AUTO = 0,
 	CHAN_WEAPON = 1,
@@ -16,8 +15,7 @@ enum
 	CHAN_USER_BASE = (CHAN_VOICE_BASE + 128)
 };
 
-enum ESoundLevel : int
-{
+enum ESoundLevel : int {
 	SNDLVL_NONE = 0,
 	SNDLVL_20dB = 20,
 	SNDLVL_25dB = 25,
@@ -55,8 +53,7 @@ enum ESoundLevel : int
 	SNDLVL_180dB = 180,
 };
 
-enum ESoundFlags : int
-{
+enum ESoundFlags : int {
 	SND_NOFLAGS = 0,
 	SND_CHANGE_VOL = (1 << 0),
 	SND_CHANGE_PITCH = (1 << 1),
@@ -117,8 +114,7 @@ enum ESoundFlags : int
 #pragma endregion
 
 using FileNameHandle_t = void *;
-struct SoundInfo_t
-{
+struct SoundInfo_t {
 	int nGuid;
 	FileNameHandle_t hFileName;
 	int nSoundSource;
@@ -139,8 +135,7 @@ struct SoundInfo_t
 };
 
 class CSfxTable;
-struct StartSoundParams_t
-{
+struct StartSoundParams_t {
 	bool bStaticSound;
 	int iUserData;
 	int iSoundSource;
@@ -160,8 +155,7 @@ struct StartSoundParams_t
 	int iInitialStreamPosition;
 };
 
-class IRecipientFilter
-{
+class IRecipientFilter {
 public:
 	virtual ~IRecipientFilter() {}
 
@@ -172,8 +166,7 @@ public:
 	virtual int GetRecipientIndex(int nSlot) const = 0;
 };
 
-class IEngineSound
-{
+class IEngineSound {
 public:
 	virtual bool PrecacheSound(const char *szSample, bool bPreload = false, bool bIsUISound = false) = 0;
 	virtual bool IsSoundPrecached(const char *szSample) = 0;

@@ -6,9 +6,12 @@
 #include "../resources/sdk/datatypes/usercmd.h"
 #include "../resources/sdk/datatypes/qangle.h"
 #include "../resources/sdk/entity.h"
+#include "../resources/sdk/interfaces.h"
 #include "../resources/utils/utils.h"
 #include "../resources/utils/math.h"
+#include "../resources/utils/inputsystem.h"
 #include "../options.h"
+#include "../global.h"
 #include "rageantiaim.h"
 #include "rageaim.h"
 
@@ -30,16 +33,16 @@ void antiaim::execute(CUserCmd* pCmd, CBaseEntity* pLocal, bool& bSendPacket) {
 
     CBaseCombatWeapon* pWeapon = pLocal->GetWeapon();
 
-    if (pWeapon == nullptr)
+    if (!pWeapon)
         return;
 
     int nDefinitionIndex = pWeapon->GetItemDefinitionIndex();
     CCSWeaponData* pWeaponData = I::WeaponSystem->GetWeaponData(nDefinitionIndex);
 
-    if (pWeaponData == nullptr)
+    if (!pWeaponData)
 		return;
 
-    float flServerTime = ;//TODO (Prediction system)
+    float flServerTime = ; //TODO (Prediction system)
 
     if (pWeaponData->IsGun() && pLocal->CanShoot(static_cast<CWeaponCSBase*>(pWeapon)) && pCmd->iButtons & IN_ATTACK)
         return;
@@ -74,7 +77,11 @@ void antiaim::execute(CUserCmd* pCmd, CBaseEntity* pLocal, bool& bSendPacket) {
 
     angSentView = pCmd->angViewPoint;
 
-    ///EXECUTE SHIT///
+    targetdetection();
+    walldetection();
+    desync();
+    xaxis();
+    yaxis();
 
     if (Options.misc_general_antiuntrusted) {
         angSentView.Normalize();
@@ -84,75 +91,59 @@ void antiaim::execute(CUserCmd* pCmd, CBaseEntity* pLocal, bool& bSendPacket) {
     pCmd->angViewPoint = angSentView;
 }
 
-//TODO: Speed modifier
-
-int rageantiaim::xaxis() {
+int rageantiaim::xaxis(CUserCmd* pCmd, CBaseEntity* pLocal) {
     if (!Options.antiaim_rage_xenable)
         return;
 
-    int x_angle = viewangle.x;
-
     switch (Options.antiaim_rage_xanglemode) {
-        case 1: x_angle = Options.antiaim_rage_xbaseangle; //static
+        case 1: angSentView.x = Options.antiaim_rage_xbaseangle; //static
             break;
     
-        case 2: x_angle = M::RandomIntSet(90, 0, -90); //UDZ random
+        case 2: angSentView.x = M::RandomIntSet(90, 0, -90); //UDZ random
             break;
 
-        case 3: x_angle = M::IntAddSubtractRange(90, -90, -90, 90, 1); //fluctuate
+        case 3: angSentView.x = M::IntAddSubtractRange(90, -90, -90, 90, 1); //fluctuate
             break;
     }
-    return x_angle;
 
     if (!Options.antiaim_rage_xjitter_enable)
         return;
 
-    int x_jitter = viewangle.x;
-
     switch (Options.antiaim_rage_xjittermode) {
-        case 1: x_jitter = M::RandomIntSet(Options.antiaim_rage_xjitterrangemin, Options.antiaim_rage_xjitterrangemax) //offset
+        case 1: angSentView.x = M::RandomIntSet(Options.antiaim_rage_xjitterrangemin, Options.antiaim_rage_xjitterrangemax) //offset
             break;
 
-        case 2: x_jitter = M::RandomIntRange(Options.antiaim_rage_xjitterrangemin, Options.antiaim_rage_xjitterrangemax) //random
+        case 2: angSentView.x = M::RandomIntRange(Options.antiaim_rage_xjitterrangemin, Options.antiaim_rage_xjitterrangemax) //random
             break;
     }
-    return x_jitter;
 }
 
-int rageantiaim::yaxis() {
+int rageantiaim::yaxis(CUserCmd* pCmd, CBaseEntity* pLocal) {
     if (!Options.antiaim_rage_yenable)
         return;
 
-    int y_angle = viewangle.y;
-
     switch (Options.antiaim_rage_yanglemode) {
-        case 1: y_angle = Options.antiaim_rage_ybaseangle; //static 
+        case 1: angSentView.y = Options.antiaim_rage_ybaseangle; //static 
             break;
         
-        case 2: y_angle = M::IntAddRange(0, 360, 1); //spin
+        case 2: angSentView.y = M::IntAddRange(0, 360, 1); //spin
             break;
 
-        case 3: y_angle = M::RandomIntSet(0, -90, 180, 90); //WASD random
+        case 3: angSentView.y = M::RandomIntSet(0, -90, 180, 90); //WASD random
             break;
     }
-    return y_angle;
 
     if (!Options.antiaim_rage_yjitter_enable)
         return;
 
-    int y_jitter = viewangle.y;
-
     switch (Options.antiaim_rage_yjittermode) {
-        case 1: y_jitter = M::RandomIntSet(Options.antiaim_rage_yjitterrangemin, Options.antiaim_rage_yjitterrangemax); //offset
+        case 1: angSentView.y = M::RandomIntSet(Options.antiaim_rage_yjitterrangemin, Options.antiaim_rage_yjitterrangemax); //offset
             break;
 
-        case 2: y_jitter = M::RandomIntRange(Options.antiaim_rage_yjitterrangemin, Options.antiaim_rage_yjitterrangemax); //random
+        case 2: angSentView.y = M::RandomIntRange(Options.antiaim_rage_yjitterrangemin, Options.antiaim_rage_yjitterrangemax); //random
             break;
     }
-    return y_jitter;
 }
-
-/*^ done, i think....*/
 
 int rageantiaim::desync(CUserCmd* pCmd, CBaseEntity* pLocal, float flServerTime, bool& bSendPacket) { 
     if (!Options.antiaim_rage_desyncenable)
@@ -173,7 +164,6 @@ int rageantiaim::desync(CUserCmd* pCmd, CBaseEntity* pLocal, float flServerTime,
         case 4: y_desync_side = M::RandomIntSet(Options.antiaim_rage_desyncrangeleft, Options.antiaim_rage_desyncrangeright); //random
             break;
     }
-    return y_desync_side;
 
 
 }
@@ -198,54 +188,76 @@ int rageantiaim::freestand(CUserCmd* pCmd, CBaseEntity* pLocal) {
 }
 */
 
-void rageantiaim::fakelag(CUserCmd* pCmd, CBaseEntity* pLocal, float flServerTime, bool& bSendPacket) {
+void rageantiaim::fakelag(CUserCmd* pCmd, CBaseEntity* pLocal, bool& bSendPacket) {
     if (!Options.antiaim_rage_fakelagenable)
         return;
 
-    if (doubletap == true)
+    if (IGameEvent->FindListener("round_start"))
         return;
 
-    if (hideshots == true)
+    if (Global::doubletap)
         return;
 
-    if (fakeduck == true)
+    if (Global::hideshots)
+        return;
+
+    if (Global::fakeduck)
+        return;
+
+    if (Global::teleport)
         return;
 
     if (Options.antiaim_rage_fakelagdormant) {
+        for (int i = 0; i < I::ClientEntityList->GetMaxEntities(); i++) {
+            CBaseEntity* pEntity = static_cast<int>(IClientEntityList->GetClientEntity(i));
 
+            if (!pEntity->IsEnemy())
+                return;
+        }
     }
 
-    bool choke = false;
+    int maxchokedticks = Options.antiaim_rage_fakelagrangemin;
 
-    switch (Options.antiaim_rage_fakelagtriggers) {
-        case 1: if (pLocal->GetVelocity() < 0.0f) //standing
+    switch (Options.antiaim_rage_maxfakelagtriggers) {
+        case ON_STANDING: 
+                if (pLocal->GetVelocity() < 0.1f)
+                    maxchokedticks = Options.antiaim_rage_fakelagrangemax;
             break;
 
-        case 2: if (pLocal->GetVelocity() > 0.0f) //moving
+        case ON_MOVING: 
+                if (pLocal->GetVelocity() > 0.1f)
+                    maxchokedticks = Options.antiaim_rage_fakelagrangemax;
             break;
 
-        case 3: if (!pLocal->GetFlags & FL_ONGROUND) //in air
+        case ON_INAIR: 
+                if (!pLocal->GetFlags & FL_ONGROUND)
+                    maxchokedticks = Options.antiaim_rage_fakelagrangemax;
             break;
 
-        case 4: if (pCmd->iButtons & IN_ATTACK || pCmd->iButtons & IN_SECOND_ATTACK) //on shot
+        case ON_SHOT: 
+                if (pCmd->iButtons & IN_ATTACK || pCmd->iButtons & IN_SECOND_ATTACK)
+                    maxchokedticks = Options.antiaim_rage_fakelagrangemax;
             break;
 
-        case 5: if () //on peek
+        case ON_PEEK:
+                
             break;
         
-        case 6: if (pLocal->GetTakeDamage()) //on damage
+        case ON_DAMAGE: 
+                if (pLocal->GetTakeDamage())
+                    maxchokedticks = Options.antiaim_rage_fakelagrangemax;
             break;
 
-        case 7: if (pCmd->iButtons & IN_RELOAD) //reloading
+        case ON_RELOAD: 
+                if (pCmd->iButtons & IN_RELOAD)
+                    maxchokedticks = Options.antiaim_rage_fakelagrangemax;
+            break;
+
+        default:
             break;
     }
-    return choke;
 
-    if (choke == true) {
-
-    }
-
-    if (I::ClientState->nChokedCommands > Options.antiaim_rage_fakelagrangemax)
+    if (I::ClientState->nChokedCommands > maxchokedticks)
         bSendPacket = true;
     else
         bSendPacket = false;
@@ -255,17 +267,8 @@ void rageantiaim::targetdetection(CUserCmd* pCmd, CBaseEntity* pEntity) {
     if (!Options.antiaim_rage_targetdetection)
         return;
 
-    IClientEntity* pTarget = nullptr;
 
-    if (pTarget == nullptr)
-        return;
-
-    int Ideal 
-    int 
-
-
-
-
+/*
     if (!Options.antiaim_rage_targetdetection)
         return;
 
@@ -306,62 +309,75 @@ void rageantiaim::targetdetection(CUserCmd* pCmd, CBaseEntity* pEntity) {
             CalcAngle(LocalAngle, TargetAngle, pCmd->angViewPoint);
         }
     }
+*/
 }
 
-void rageantiaim::walldetection(CUserCmd* pCmd, CBaseEntity* pEntity) {
-    if (Options.antiaim_rage_walldetection) {
-        for (int i = 0; i < 360; i = +6.0f;) {
-            
-        }
-    }
+void rageantiaim::walldetection(CBaseEntity* pLocal) {
+    if (!Options.antiaim_rage_walldetection)
+        return;
 }
 
-void rageantiaim::slidewalk() {
-    switch (Options.antiaim_rage_slidewalk) {
-        case 1: pCmd->iButtons ^= IN_FORWARD | IN_BACK | IN_MOVELEFT | IN_MOVERIGHT; //default
-            break;
+void rageantiaim::slidewalk(CUserCmd* pCmd, CBaseEntity* pLocal) {
+    if (!Options.antiaim_rage_slidewalk)
+        return;
 
-        case 2: //backwards
-            break;
-    }
-};
+    if (!pLocal->IsAlive())
+        return;
+
+    if (pLocal->GetMoveType() == MOVETYPE_LADDER)
+        return;
+
+    pCmd->iButtons ^= IN_FORWARD | IN_BACK | IN_MOVELEFT | IN_MOVERIGHT;
+}
 
 void rageantiaim::fakeduck(CUserCmd* pCmd, CBaseEntity* pLocal) {
-    if (Options.antiaim_rage_fakeduck) {
-        static bool fakeduck = false;
+    if (!Options.antiaim_rage_fakeduck)
+        return;
+
+    if (!pLocal->IsAlive())
+        return;
         
-        if (fakeduck == true) {
-            if (pLocal->IsAlive() == false)
-                return;
+    if (IPT::IsKeyDown(Options.antiaim_rage_fakeduckkey)) {
+        pCmd->iButtons |= IN_BULLRUSH;
 
-            pCmd->iButtons |= IN_BULLRUSH;
-
-            if (INetChannel->iChokedPackets <= 7)
-                pCmd->iButtons &= ~IN_DUCK;
-            else 
-                pCmd->iButtons |= IN_DUCK;
-        }
+        if (INetChannel->iChokedPackets <= 7)
+            pCmd->iButtons &= ~IN_DUCK;
+        else 
+            pCmd->iButtons |= IN_DUCK;
     }
 };
 
-void rageantiaim::teleport() { //essentially dt teleport but with autopeek
-    if (Options.antiaim_rage_teleport) {
-        Vector startpos = {0, 0, 0};
-        ImVec2 startposdraw = {0, 0};
+void rageantiaim::teleport(CUserCmd* pCmd) {
+    if (!Options.antiaim_rage_teleport)
+        return;
 
-        if (GetAsyncKeyState(Options.antiaim_rage_teleportkey)) {
-            ImDrawList::AddCircleFilled(startposdraw, 10, ImColor(255, 255, 255, 255), 32);
+    if (IPT::IsKeyDown(Options.antiaim_rage_teleportkey)) {
+        ImDrawList::AddCircleFilled(ImVec2(0, 0), 10, ImColor(255, 255, 255, 255), 32);
 
+        if (I::ClientState->nChokedCommands == 0)
+            Global::bSendPacket == false;
+    }
 
-            //execute teleport
-        }
+    if (IPT::IsKeyReleased(Options.antiaim_rage_teleportkey) || I::ClientState->nChokedCommands == 14) {
+        if (pCmd->iButtons & IN_FORWARD)
+            pCmd->iButtons |= IN_BACK;
+
+        if (pCmd->iButtons & IN_LEFT)
+            pCmd->iButtons |= IN_RIGHT;
+
+        if (pCmd->iButtons & IN_RIGHT)
+            pCmd->iButtons |= IN_LEFT;
+
+        if (pCmd->iButtons & IN_BACK)
+            pCmd->iButtons |= IN_FORWARD;
+
+        Global::bSendPacket == true;
     }
 }
 
 void rageantiaim::psuedocrimwalk() { //essentially dt on/off | charge and release
-    if (Options.antiaim_rage_crimwalk) {
-        
-    }
+    if (!Options.antiaim_rage_crimwalk)
+        return;
 }
 
 /* crimwalk reference
@@ -390,12 +406,7 @@ void Movement::cripwalk() {
 }
 */
 
-void rageantiaim::antibackstab(CBaseEntity* pLocal) { //time to recode
-    if (Options.antiaim_rage_antibackstab) {
-        
-    }
-}
-
-void rageantiaim::micromovement() {
-    
+void rageantiaim::antibackstab(CBaseEntity* pLocal) {
+    if (!Options.antiaim_rage_antibackstab)
+        return;
 }

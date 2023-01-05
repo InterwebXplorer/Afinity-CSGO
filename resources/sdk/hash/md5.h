@@ -5,8 +5,7 @@
 #define MD5_DIGEST_LENGTH 16
 #define MD5_BIT_LENGTH (MD5_DIGEST_LENGTH * sizeof(unsigned char))
 
-typedef struct
-{
+typedef struct {
 	unsigned int buf[4];
 	unsigned int bits[2];
 	unsigned char in[64];
@@ -14,8 +13,7 @@ typedef struct
 
 struct MD5Value_t;
 
-namespace MD5
-{
+namespace MD5 {
 
 	void Init(MD5Context_t *context);
 
@@ -30,17 +28,13 @@ namespace MD5
 	bool Compare(const MD5Value_t &data, const MD5Value_t &compare);
 }
 
-struct MD5Value_t
-{
-	void Zero()
-	{
+struct MD5Value_t {
+	void Zero() {
 		memset(bits, 0, sizeof(bits));
 	};
 
-	bool IsZero() const
-	{
-		for (int i = 0; i < (sizeof(bits) / sizeof(bits[0])); ++i)
-		{
+	bool IsZero() const {
+		for (int i = 0; i < (sizeof(bits) / sizeof(bits[0])); ++i) {
 			if (bits[i] != 0)
 				return false;
 		}
@@ -48,13 +42,11 @@ struct MD5Value_t
 		return true;
 	};
 
-	inline bool operator==(const MD5Value_t &src) const
-	{
+	inline bool operator==(const MD5Value_t &src) const {
 		return MD5::Compare(*this, src);
 	};
 
-	inline bool operator!=(const MD5Value_t &src) const
-	{
+	inline bool operator!=(const MD5Value_t &src) const {
 		return !MD5::Compare(*this, src);
 	};
 

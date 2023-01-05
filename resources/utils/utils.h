@@ -60,4 +60,9 @@ namespace U
 	inline CEventListener EventListener;
 
 	inline CEntityListener EntityListener;
+
+	/*----------------------Extra Shit----------------------*/
+
+	void U::ColorConvertRGBAtoHSV(float r, float g, float b, float a, float& h, float& s, float& v);
+	void U::ColorConvertHSVtoRGBA(float h, float s, float v, float& r, float& g, float& b, float& a);
 }

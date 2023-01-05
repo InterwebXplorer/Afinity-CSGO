@@ -3,8 +3,7 @@
 #define INVALID_KEY_SYMBOL (-1)
 using HKeySymbol = int;
 
-class IKeyValuesSystem
-{
+class IKeyValuesSystem {
 public:
 	virtual void RegisterSizeofKeyValues(int iSize) = 0;
 

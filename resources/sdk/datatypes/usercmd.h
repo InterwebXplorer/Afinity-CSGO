@@ -5,8 +5,7 @@
 
 #pragma region usercmd_enumerations
 
-enum ECommandButtons : int
-{
+enum ECommandButtons : int {
 	IN_ATTACK = (1 << 0),
 	IN_JUMP = (1 << 1),
 	IN_DUCK = (1 << 2),
@@ -38,8 +37,7 @@ enum ECommandButtons : int
 #pragma endregion
 
 #pragma pack(push, 4)
-class CUserCmd
-{
+class CUserCmd {
 public:
 	virtual ~CUserCmd() {}
 	int iCommandNumber;
@@ -60,8 +58,7 @@ public:
 	Vector vecHeadAngles;
 	Vector vecHeadOffset;
 
-	[[nodiscard]] CRC32_t GetChecksum() const
-	{
+	[[nodiscard]] CRC32_t GetChecksum() const {
 		CRC32_t uHashCRC = 0UL;
 
 		CRC32::Init(&uHashCRC);
@@ -86,8 +83,7 @@ public:
 };
 static_assert(sizeof(CUserCmd) == 0x64);
 
-class CVerifiedUserCmd
-{
+class CVerifiedUserCmd {
 public:
 	CUserCmd userCmd;
 	CRC32_t uHashCRC;

@@ -1,10 +1,8 @@
 #pragma once
 
-class IWeaponSystem
-{
+class IWeaponSystem {
 public:
-	CCSWeaponData *GetWeaponData(short nItemDefinitionIndex)
-	{
+	CCSWeaponData *GetWeaponData(short nItemDefinitionIndex) {
 		return MEM::CallVFunc<CCSWeaponData *>(this, 2, nItemDefinitionIndex);
 	}
 };

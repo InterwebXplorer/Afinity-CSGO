@@ -2,8 +2,7 @@
 
 using MemAllocFailHandler_t = std::size_t(__cdecl *)(std::size_t);
 
-class IMemAlloc
-{
+class IMemAlloc {
 public:
 	virtual void *Alloc(std::size_t nSize) = 0;
 	virtual void *Realloc(void *pMemory, std::size_t nSize) = 0;

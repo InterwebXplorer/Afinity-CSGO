@@ -4,8 +4,7 @@ using HSteamPipe = std::int32_t;
 using HSteamUser = std::int32_t;
 using HSteamAPICall = std::int64_t;
 
-enum EAccountType
-{
+enum EAccountType {
 	EAccountTypeInvalid = 0,
 	EAccountTypeIndividual = 1,
 	EAccountTypeMultiseat = 2,
@@ -48,8 +47,7 @@ class ISteamVideo;
 class ISteamParentalSettings;
 class ISteamInput;
 
-struct SteamAPIContext_t
-{
+struct SteamAPIContext_t {
 	ISteamClient *pSteamClient;
 	ISteamUser *pSteamUser;
 	ISteamFriends *pSteamFriends;
@@ -79,8 +77,7 @@ using SteamAPIWarningMessageHook_t = void(__cdecl *)(int, const char *);
 using SteamAPI_PostAPIResultInProcess_t = void(__cdecl *)(HSteamAPICall hCall, void *, std::uint32_t unCallbackSize, int nCallbacks);
 using SteamAPI_CheckCallbackRegistered_t = std::uint32_t(__cdecl *)(int nCallbacks);
 
-class ISteamClient
-{
+class ISteamClient {
 public:
 	virtual HSteamPipe CreateSteamPipe() = 0;
 	virtual bool ReleaseSteamPipe(HSteamPipe hSteamPipe) = 0;

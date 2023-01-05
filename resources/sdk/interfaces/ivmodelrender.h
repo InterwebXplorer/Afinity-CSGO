@@ -1,8 +1,7 @@
 #pragma once
 using ModelInstanceHandle_t = std::uint16_t;
 
-struct ModelRenderInfo_t
-{
+struct ModelRenderInfo_t {
 	Vector vecOrigin;
 	QAngle angAngles;
 	std::byte pad0[0x4];
@@ -19,8 +18,7 @@ struct ModelRenderInfo_t
 	ModelInstanceHandle_t hInstance;
 };
 
-struct RenderableInfo_t
-{
+struct RenderableInfo_t {
 	IClientRenderable *pRenderable;
 	IClientAlphaProperty *pAlphaProperty;
 	int iEnumCount;
@@ -39,8 +37,7 @@ struct RenderableInfo_t
 
 struct studiohwdata_t;
 struct StudioDecalHandle_t;
-struct DrawModelState_t
-{
+struct DrawModelState_t {
 	studiohdr_t *pStudioHdr;
 	studiohwdata_t *pStudioHWData;
 	IClientRenderable *pRenderable;
@@ -50,16 +47,13 @@ struct DrawModelState_t
 	int iLOD;
 };
 
-class IVModelRender
-{
+class IVModelRender {
 public:
-	void ForcedMaterialOverride(IMaterial *pMaterial, EOverrideType overrideType = OVERRIDE_NORMAL, int nOverrides = 0)
-	{
+	void ForcedMaterialOverride(IMaterial *pMaterial, EOverrideType overrideType = OVERRIDE_NORMAL, int nOverrides = 0) {
 		return MEM::CallVFunc<void>(this, 1, pMaterial, overrideType, nOverrides);
 	}
 
-	bool IsForcedMaterialOverride()
-	{
+	bool IsForcedMaterialOverride() {
 		return MEM::CallVFunc<bool>(this, 2);
 	}
 };

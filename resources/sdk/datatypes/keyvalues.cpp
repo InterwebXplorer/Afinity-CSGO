@@ -1,47 +1,39 @@
 #include "keyvalues.h"
 #include "../interfaces.h"
 
-CKeyValues::CKeyValues(const char *szKeyName, void *pUnknown1, HKeySymbol hCaseInsensitiveKeyName)
-{
+CKeyValues::CKeyValues(const char *szKeyName, void *pUnknown1, HKeySymbol hCaseInsensitiveKeyName) {
 	using CKeyValuesConstructorFn = void(__thiscall *)(void *, const char *, void *, HKeySymbol);
 	static CKeyValuesConstructorFn oConstructor = reinterpret_cast<CKeyValuesConstructorFn>(MEM::FindPattern(CLIENT_DLL, "55 8B EC 56 8B F1 33 C0 8B 4D 0C 81"));
 	oConstructor(this, szKeyName, pUnknown1, hCaseInsensitiveKeyName);
 }
 
-CKeyValues::~CKeyValues()
-{
+CKeyValues::~CKeyValues() {
 	using CKeyValuesDestructorFn = void(__thiscall *)(void *, int);
 	static CKeyValuesDestructorFn oDestructor = reinterpret_cast<CKeyValuesDestructorFn>(MEM::FindPattern(CLIENT_DLL, "56 8B F1 E8 ? ? ? ? 8B 4E 14"));
 	oDestructor(this, 1);
 }
 
-void *CKeyValues::operator new(std::size_t nAllocSize)
-{
-
+void *CKeyValues::operator new(std::size_t nAllocSize) {
 	return I::KeyValuesSystem->AllocKeyValuesMemory(nAllocSize);
 }
 
-void CKeyValues::operator delete(void *pMemory)
-{
+void CKeyValues::operator delete(void *pMemory) {
 
 	(void)pMemory;
 }
 
-const char *CKeyValues::GetName()
-{
+const char *CKeyValues::GetName() {
 	return I::KeyValuesSystem->GetStringForSymbol(this->uKeyNameCaseSensitive1 | (this->uKeyNameCaseSensitive2 << 8));
 }
 
-CKeyValues *CKeyValues::FromString(const char *szName, const char *szValue)
-{
+CKeyValues *CKeyValues::FromString(const char *szName, const char *szValue) {
 	static auto oFromString = MEM::FindPattern(CLIENT_DLL, "55 8B EC 81 EC ? ? ? ? 85 D2 53");
 	CKeyValues *pKeyValues = nullptr;
 
 	if (oFromString == 0U)
 		return nullptr;
 
-	__asm
-	{
+	__asm {
 		push 0
 		mov edx, szValue
 		mov ecx, szName
@@ -53,8 +45,7 @@ CKeyValues *CKeyValues::FromString(const char *szName, const char *szValue)
 	return pKeyValues;
 }
 
-void CKeyValues::LoadFromBuffer(char const *szResourceName, const char *szBuffer, void *pFileSystem, const char *szPathID, GetSymbolProcFn pfnEvaluateSymbolProc)
-{
+void CKeyValues::LoadFromBuffer(char const *szResourceName, const char *szBuffer, void *pFileSystem, const char *szPathID, GetSymbolProcFn pfnEvaluateSymbolProc) {
 	using LoadFromBufferFn = void(__thiscall *)(void *, const char *, const char *, void *, const char *, void *, void *);
 	static auto oLoadFromBuffer = reinterpret_cast<LoadFromBufferFn>(MEM::FindPattern(CLIENT_DLL, "55 8B EC 83 E4 F8 83 EC 34 53 8B 5D 0C 89"));
 	assert(oLoadFromBuffer != nullptr);
@@ -62,8 +53,7 @@ void CKeyValues::LoadFromBuffer(char const *szResourceName, const char *szBuffer
 	oLoadFromBuffer(this, szResourceName, szBuffer, pFileSystem, szPathID, pfnEvaluateSymbolProc, nullptr);
 }
 
-bool CKeyValues::LoadFromFile(void *pFileSystem, const char *szResourceName, const char *szPathID, GetSymbolProcFn pfnEvaluateSymbolProc)
-{
+bool CKeyValues::LoadFromFile(void *pFileSystem, const char *szResourceName, const char *szPathID, GetSymbolProcFn pfnEvaluateSymbolProc) {
 	using LoadFromFileFn = bool(__thiscall *)(void *, void *, const char *, const char *, void *);
 	static auto oLoadFromFile = reinterpret_cast<LoadFromFileFn>(MEM::FindPattern(CLIENT_DLL, "55 8B EC 83 E4 F8 83 EC 14 53 56 8B 75 08 57 FF"));
 	assert(oLoadFromFile != nullptr);
@@ -71,8 +61,7 @@ bool CKeyValues::LoadFromFile(void *pFileSystem, const char *szResourceName, con
 	return oLoadFromFile(this, pFileSystem, szResourceName, szPathID, pfnEvaluateSymbolProc);
 }
 
-CKeyValues *CKeyValues::FindKey(const char *szKeyName, const bool bCreate)
-{
+CKeyValues *CKeyValues::FindKey(const char *szKeyName, const bool bCreate) {
 	using FindKeyFn = CKeyValues *(__thiscall *)(void *, const char *, bool);
 	static auto oFindKey = reinterpret_cast<FindKeyFn>(MEM::FindPattern(CLIENT_DLL, "55 8B EC 83 EC 1C 53 8B D9 85 DB"));
 	assert(oFindKey != nullptr);
@@ -80,8 +69,7 @@ CKeyValues *CKeyValues::FindKey(const char *szKeyName, const bool bCreate)
 	return oFindKey(this, szKeyName, bCreate);
 }
 
-int CKeyValues::GetInt(const char *szKeyName, const int iDefaultValue)
-{
+int CKeyValues::GetInt(const char *szKeyName, const int iDefaultValue) {
 	CKeyValues *pSubKey = this->FindKey(szKeyName, false);
 
 	if (pSubKey == nullptr)
@@ -106,15 +94,13 @@ int CKeyValues::GetInt(const char *szKeyName, const int iDefaultValue)
 	return pSubKey->iValue;
 }
 
-float CKeyValues::GetFloat(const char *szKeyName, const float flDefaultValue)
-{
+float CKeyValues::GetFloat(const char *szKeyName, const float flDefaultValue) {
 	CKeyValues *pSubKey = this->FindKey(szKeyName, false);
 
 	if (pSubKey == nullptr)
 		return flDefaultValue;
 
-	switch (pSubKey->iDataType)
-	{
+	switch (pSubKey->iDataType) {
 	case TYPE_STRING:
 		return static_cast<float>(std::atof(pSubKey->szValue));
 	case TYPE_WSTRING:
@@ -131,8 +117,7 @@ float CKeyValues::GetFloat(const char *szKeyName, const float flDefaultValue)
 	}
 }
 
-const char *CKeyValues::GetString(const char *szKeyName, const char *szDefaultValue)
-{
+const char *CKeyValues::GetString(const char *szKeyName, const char *szDefaultValue) {
 	using GetStringFn = const char *(__thiscall *)(void *, const char *, const char *);
 	static auto oGetString = reinterpret_cast<GetStringFn>(MEM::FindPattern(CLIENT_DLL, "55 8B EC 83 E4 C0 81 EC ? ? ? ? 53 8B 5D 08"));
 	assert(oGetString != nullptr);
@@ -140,8 +125,7 @@ const char *CKeyValues::GetString(const char *szKeyName, const char *szDefaultVa
 	return oGetString(this, szKeyName, szDefaultValue);
 }
 
-void CKeyValues::SetString(const char *szKeyName, const char *szStringValue)
-{
+void CKeyValues::SetString(const char *szKeyName, const char *szStringValue) {
 	CKeyValues *pSubKey = FindKey(szKeyName, true);
 
 	if (pSubKey == nullptr)
@@ -154,8 +138,7 @@ void CKeyValues::SetString(const char *szKeyName, const char *szStringValue)
 	oSetString(pSubKey, szStringValue);
 }
 
-void CKeyValues::SetInt(const char *szKeyName, const int iValue)
-{
+void CKeyValues::SetInt(const char *szKeyName, const int iValue) {
 	CKeyValues *pSubKey = FindKey(szKeyName, true);
 
 	if (pSubKey == nullptr)
@@ -165,8 +148,7 @@ void CKeyValues::SetInt(const char *szKeyName, const int iValue)
 	pSubKey->iDataType = TYPE_INT;
 }
 
-void CKeyValues::SetUint64(const char *szKeyName, const int nLowValue, const int nHighValue)
-{
+void CKeyValues::SetUint64(const char *szKeyName, const int nLowValue, const int nHighValue) {
 	CKeyValues *pSubKey = FindKey(szKeyName, true);
 
 	if (pSubKey == nullptr)

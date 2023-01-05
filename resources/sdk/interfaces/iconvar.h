@@ -1,8 +1,7 @@
 #pragma once
 #pragma region convar_enumerations
 
-enum EConVarFlag : int
-{
+enum EConVarFlag : int {
 
 	FCVAR_NONE = 0,
 	FCVAR_UNREGISTERED = (1 << 0),
@@ -41,8 +40,7 @@ using CVarDLLIdentifier_t = int;
 class CConBase;
 class CConVar;
 class CConCmd;
-class IConVar : public IAppSystem
-{
+class IConVar : public IAppSystem {
 public:
 	virtual CVarDLLIdentifier_t AllocateDLLIdentifier() = 0;
 	virtual void RegisterConCommand(CConVar *pCommandBase, int iDefaultValue = 1) = 0;

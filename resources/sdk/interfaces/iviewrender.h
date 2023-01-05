@@ -2,8 +2,7 @@
 #include "ivrenderview.h"
 
 struct vrect_t;
-class IViewRender
-{
+class IViewRender {
 public:
 	virtual void Init() = 0;
 	virtual void LevelInit() = 0;

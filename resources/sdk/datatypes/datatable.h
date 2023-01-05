@@ -1,7 +1,6 @@
 #pragma once
 
-enum ESendPropType : int
-{
+enum ESendPropType : int {
 	DPT_INT = 0,
 	DPT_FLOAT,
 	DPT_VECTOR,
@@ -14,10 +13,8 @@ enum ESendPropType : int
 };
 
 struct RecvProp_t;
-struct DataVariant_t
-{
-	union
-	{
+struct DataVariant_t {
+	union {
 		float Float;
 		long Int;
 		char *String;
@@ -29,8 +26,7 @@ struct DataVariant_t
 	ESendPropType iType;
 };
 
-class CRecvProxyData
-{
+class CRecvProxyData {
 public:
 	const RecvProp_t *pRecvProp;
 	DataVariant_t Value;
@@ -42,8 +38,7 @@ using RecvVarProxyFn = void(__cdecl *)(const CRecvProxyData *, void *, void *);
 using ArrayLengthProxyFn = void(__cdecl *)(void *, int, int);
 using DataTableProxyFn = void(__cdecl *)(const RecvProp_t *, void **, void *, int);
 
-class CStandartRecvProxies
-{
+class CStandartRecvProxies {
 public:
 	RecvVarProxyFn pInt32ToInt8;
 	RecvVarProxyFn pInt32ToInt16;
@@ -53,8 +48,7 @@ public:
 	RecvVarProxyFn pVectorToVector;
 };
 
-struct RecvTable_t
-{
+struct RecvTable_t {
 	RecvProp_t *pProps;
 	int nProps;
 	void *pDecoder;
@@ -63,8 +57,7 @@ struct RecvTable_t
 	bool bInMainList;
 };
 
-struct RecvProp_t
-{
+struct RecvProp_t {
 	char *szVarName;
 	ESendPropType iRecvType;
 	int iFlags;

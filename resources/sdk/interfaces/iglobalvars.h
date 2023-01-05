@@ -1,7 +1,6 @@
 #pragma once
 
-class IGlobalVarsBase
-{
+class IGlobalVarsBase {
 public:
 	float flRealTime;
 	int iFrameCount;
@@ -22,8 +21,7 @@ public:
 	int iTimestampRandomizeWindow;
 };
 
-class IGlobalVars : public IGlobalVarsBase
-{
+class IGlobalVars : public IGlobalVarsBase {
 public:
 	string_t szMapName;
 	string_t szMapGroupName;

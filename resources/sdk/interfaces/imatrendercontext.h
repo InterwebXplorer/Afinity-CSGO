@@ -4,26 +4,22 @@
 #include "itexture.h"
 #include "imaterial.h"
 
-enum ELightType : int
-{
+enum ELightType : int {
 	MATERIAL_LIGHT_DISABLE = 0,
 	MATERIAL_LIGHT_POINT,
 	MATERIAL_LIGHT_DIRECTIONAL,
 	MATERIAL_LIGHT_SPOT
 };
 
-enum ELightTypeOptimizationFlags
-{
+enum ELightTypeOptimizationFlags {
 	LIGHTTYPE_OPTIMIZATIONFLAGS_HAS_ATTENUATION0 = 1,
 	LIGHTTYPE_OPTIMIZATIONFLAGS_HAS_ATTENUATION1 = 2,
 	LIGHTTYPE_OPTIMIZATIONFLAGS_HAS_ATTENUATION2 = 4,
 	LIGHTTYPE_OPTIMIZATIONFLAGS_DERIVED_VALUES_CALCED = 8
 };
 
-struct LightDesc_t
-{
-	void InitDirectional(const Vector &vecDirection, const Vector &vecColor)
-	{
+struct LightDesc_t {
+	void InitDirectional(const Vector &vecDirection, const Vector &vecColor) {
 		this->nType = MATERIAL_LIGHT_DIRECTIONAL;
 		this->vecColor = vecColor;
 		this->vecDirection = vecDirection;
@@ -41,8 +37,7 @@ struct LightDesc_t
 		if (flAttenuation2)
 			fFlags |= LIGHTTYPE_OPTIMIZATIONFLAGS_HAS_ATTENUATION2;
 
-		if (nType == MATERIAL_LIGHT_SPOT)
-		{
+		if (nType == MATERIAL_LIGHT_SPOT) {
 			flThetaDot = std::cosf(flTheta);
 			flPhiDot = std::cosf(flPhi);
 
@@ -53,8 +48,7 @@ struct LightDesc_t
 
 				flOneOverThetaDotMinusPhiDot = 1.0f;
 		}
-		else if (nType == MATERIAL_LIGHT_DIRECTIONAL)
-		{
+		else if (nType == MATERIAL_LIGHT_DIRECTIONAL) {
 
 			vecPosition = vecDirection;
 			vecPosition *= 2.0e6;
@@ -83,8 +77,7 @@ protected:
 	float flRangeSquared;
 };
 
-enum EStencilOperation : int
-{
+enum EStencilOperation : int {
 	STENCILOPERATION_KEEP = 1,
 	STENCILOPERATION_ZERO = 2,
 	STENCILOPERATION_REPLACE = 3,
@@ -96,8 +89,7 @@ enum EStencilOperation : int
 	STENCILOPERATION_FORCE_DWORD = 0x7FFFFFFF
 };
 
-enum EStencilComparisonFunction : int
-{
+enum EStencilComparisonFunction : int {
 	STENCILCOMPARISONFUNCTION_NEVER = 1,
 	STENCILCOMPARISONFUNCTION_LESS = 2,
 	STENCILCOMPARISONFUNCTION_EQUAL = 3,
@@ -109,10 +101,8 @@ enum EStencilComparisonFunction : int
 	STENCILCOMPARISONFUNCTION_FORCE_DWORD = 0x7FFFFFFF
 };
 
-struct ShaderStencilState_t
-{
-	ShaderStencilState_t()
-	{
+struct ShaderStencilState_t {
+	ShaderStencilState_t() {
 		bEnable = false;
 		PassOperation = FailOperation = ZFailOperation = STENCILOPERATION_KEEP;
 		CompareFunction = STENCILCOMPARISONFUNCTION_ALWAYS;
@@ -130,96 +120,77 @@ struct ShaderStencilState_t
 	std::uint32_t uWriteMask;
 };
 
-class IMatRenderContext : public IRefCounted
-{
+class IMatRenderContext : public IRefCounted {
 public:
-	void BeginRender()
-	{
+	void BeginRender() {
 		MEM::CallVFunc<void>(this, 2);
 	}
 
-	void EndRender()
-	{
+	void EndRender() {
 		MEM::CallVFunc<void>(this, 3);
 	}
 
-	void BindLocalCubemap(ITexture *pTexture)
-	{
+	void BindLocalCubemap(ITexture *pTexture) {
 		MEM::CallVFunc<void>(this, 5, pTexture);
 	}
 
-	void SetRenderTarget(ITexture *pTexture)
-	{
+	void SetRenderTarget(ITexture *pTexture) {
 		MEM::CallVFunc<void>(this, 6, pTexture);
 	}
 
-	ITexture *GetRenderTarget()
-	{
+	ITexture *GetRenderTarget() {
 		return MEM::CallVFunc<ITexture *>(this, 7);
 	}
 
-	void ClearBuffers(bool bClearColor, bool bClearDepth, bool bClearStencil = false)
-	{
+	void ClearBuffers(bool bClearColor, bool bClearDepth, bool bClearStencil = false) {
 		MEM::CallVFunc<void>(this, 12, bClearColor, bClearDepth, bClearStencil);
 	}
 
-	void SetLights(int nCount, const LightDesc_t *pLights)
-	{
+	void SetLights(int nCount, const LightDesc_t *pLights) {
 		MEM::CallVFunc<void>(this, 17, nCount, pLights);
 	}
 
-	void SetAmbientLightCube(Vector4D vecCube[6])
-	{
+	void SetAmbientLightCube(Vector4D vecCube[6]) {
 		MEM::CallVFunc<void>(this, 18, vecCube);
 	}
 
-	void Viewport(int x, int y, int iWidth, int iHeight)
-	{
+	void Viewport(int x, int y, int iWidth, int iHeight) {
 		MEM::CallVFunc<void>(this, 40, x, y, iWidth, iHeight);
 	}
 
-	void GetViewport(int &x, int &y, int &iWidth, int &iHeight)
-	{
+	void GetViewport(int &x, int &y, int &iWidth, int &iHeight) {
 		MEM::CallVFunc<void>(this, 41, std::ref(x), std::ref(y), std::ref(iWidth), std::ref(iHeight));
 	}
 
-	void ClearColor3ub(unsigned char r, unsigned char g, unsigned char b)
-	{
+	void ClearColor3ub(unsigned char r, unsigned char g, unsigned char b) {
 		MEM::CallVFunc<void>(this, 78, r, g, b);
 	}
 
-	void ClearColor4ub(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
-	{
+	void ClearColor4ub(unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
 		MEM::CallVFunc<void>(this, 79, r, g, b, a);
 	}
 
-	void DrawScreenSpaceRectangle(IMaterial *pMaterial, int iDestX, int iDestY, int iWidth, int iHeight, float flTextureX0, float flTextureY0, float flTextureX1, float flTextureY1, int iTextureWidth, int iTextureHeight, void *pClientRenderable = nullptr, int nXDice = 1, int nYDice = 1)
-	{
+	void DrawScreenSpaceRectangle(IMaterial *pMaterial, int iDestX, int iDestY, int iWidth, int iHeight, float flTextureX0, float flTextureY0, float flTextureX1, float flTextureY1, int iTextureWidth, int iTextureHeight, void *pClientRenderable = nullptr, int nXDice = 1, int nYDice = 1) {
 		MEM::CallVFunc<void>(this, 114, pMaterial, iDestX, iDestY, iWidth, iHeight, flTextureX0, flTextureY0, flTextureX1, flTextureY1, iTextureWidth, iTextureHeight, pClientRenderable, nXDice, nYDice);
 	}
 
-	void PushRenderTargetAndViewport()
-	{
+	void PushRenderTargetAndViewport() {
 		MEM::CallVFunc<void>(this, 119);
 	}
 
-	void PopRenderTargetAndViewport()
-	{
+	void PopRenderTargetAndViewport() {
 		MEM::CallVFunc<void>(this, 120);
 	}
 
-	void SetLightingOrigin(/*Vector vecLightingOrigin*/ float x, float y, float z)
-	{
+	void SetLightingOrigin(/*Vector vecLightingOrigin*/ float x, float y, float z) {
 		MEM::CallVFunc<void>(this, 158, x, y, z);
 	}
 
-	void SetScissorRect(const int nLeft, const int nTop, const int nRight, const int nBottom, const bool bEnableScissor = true)
-	{
+	void SetScissorRect(const int nLeft, const int nTop, const int nRight, const int nBottom, const bool bEnableScissor = true) {
 		MEM::CallVFunc<void>(this, 159, nLeft, nTop, nRight, nBottom, bEnableScissor);
 	}
 
-	void PopScissorRect()
-	{
+	void PopScissorRect() {
 		MEM::CallVFunc<void>(this, 160);
 	}
 };

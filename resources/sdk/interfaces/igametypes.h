@@ -1,8 +1,7 @@
 #pragma once
 
 #pragma region gametypes_enumerations
-enum EGameType : int
-{
+enum EGameType : int {
 	GAMETYPE_UNKNOWN = -1,
 	GAMETYPE_CLASSIC,
 	GAMETYPE_GUNGAME,
@@ -13,8 +12,7 @@ enum EGameType : int
 	GAMETYPE_FREEFORALL
 };
 
-enum EGameMode : int
-{
+enum EGameMode : int {
 	GAMEMODE_UNKNOWN = 0,
 	GAMEMODE_CASUAL,
 	GAMEMODE_COMPETITIVE,
@@ -28,31 +26,25 @@ enum EGameMode : int
 };
 #pragma endregion
 
-class IGameTypes
-{
+class IGameTypes {
 public:
-	int GetCurrentGameType()
-	{
+	int GetCurrentGameType() {
 		return MEM::CallVFunc<int>(this, 8);
 	}
 
-	int GetCurrentGameMode()
-	{
+	int GetCurrentGameMode() {
 		return MEM::CallVFunc<int>(this, 9);
 	}
 
-	const char *GetCurrentMapName()
-	{
+	const char *GetCurrentMapName() {
 		return MEM::CallVFunc<const char *>(this, 10);
 	}
 
-	const char *GetCurrentGameTypeNameID()
-	{
+	const char *GetCurrentGameTypeNameID() {
 		return MEM::CallVFunc<const char *>(this, 11);
 	}
 
-	const char *GetCurrentGameModeNameID()
-	{
+	const char *GetCurrentGameModeNameID() {
 		return MEM::CallVFunc<const char *>(this, 13);
 	}
 };

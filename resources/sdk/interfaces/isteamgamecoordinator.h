@@ -1,7 +1,6 @@
 #pragma once
 
-enum EGCResults
-{
+enum EGCResults {
 	EGCResultOK = 0,
 	EGCResultNoMessage = 1,
 	EGCResultBufferTooSmall = 2,
@@ -9,8 +8,7 @@ enum EGCResults
 	EGCResultInvalidMessage = 4,
 };
 
-class ISteamGameCoordinator
-{
+class ISteamGameCoordinator {
 public:
 	virtual EGCResults SendMessageGC(std::uint32_t uMsgType, const void *pData, std::uint32_t uData) = 0;
 	virtual bool IsMessageAvailable(std::uint32_t *puMsgSize) = 0;

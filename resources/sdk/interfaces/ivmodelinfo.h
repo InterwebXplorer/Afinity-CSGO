@@ -6,8 +6,7 @@
 #include "ienginetrace.h"
 
 #pragma region modelinfo_enumerations
-enum EBoneIndex : int
-{
+enum EBoneIndex : int {
 	BONE_INVALID = -1,
 	BONE_PELVIS,
 	BONE_LEAN_ROOT,
@@ -95,8 +94,7 @@ enum EBoneIndex : int
 	BONE_PRIMARY_JIGGLE_JNT,
 };
 
-enum EHitboxIndex : int
-{
+enum EHitboxIndex : int {
 	HITBOX_INVALID = -1,
 	HITBOX_HEAD,
 	HITBOX_NECK,
@@ -120,8 +118,7 @@ enum EHitboxIndex : int
 	HITBOX_MAX
 };
 
-enum ERenderFlags : unsigned int
-{
+enum ERenderFlags : unsigned int {
 	RENDER_FLAGS_DISABLE_RENDERING = 0x01,
 	RENDER_FLAGS_HASCHANGED = 0x02,
 	RENDER_FLAGS_ALTERNATE_SORTING = 0x04,
@@ -133,8 +130,7 @@ enum ERenderFlags : unsigned int
 	RENDER_FLAGS_FORCE_OPAQUE_PASS = 0x100,
 };
 
-enum ETranslucencyType : int
-{
+enum ETranslucencyType : int {
 	RENDERABLE_IS_OPAQUE = 0,
 	RENDERABLE_IS_TRANSLUCENT,
 	RENDERABLE_IS_TWO_PASS
@@ -143,8 +139,7 @@ enum ETranslucencyType : int
 
 using MDLHandle_t = std::uint16_t;
 
-struct Model_t
-{
+struct Model_t {
 	std::byte pad0[0x4];
 	char szName[260];
 	int nLoadFlags;
@@ -162,8 +157,7 @@ class IMaterial;
 class CUtlBuffer;
 class IClientRenderable;
 
-class IVModelInfo
-{
+class IVModelInfo {
 public:
 	virtual ~IVModelInfo() {}
 	virtual const Model_t *GetModel(int nModelIndex) const = 0;

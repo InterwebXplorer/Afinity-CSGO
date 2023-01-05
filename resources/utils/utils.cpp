@@ -296,3 +296,81 @@ std::wstring U::MultiByteToUnicode(const std::string_view szAscii)
 	return wszOutput;
 }
 #pragma endregion
+
+/*---------------------Extra Shit---------------------*/
+
+void U::ColorConvertRGBAtoHSV(float r, float g, float b, float a, float& h, float& s, float& v) {
+	if (a == 0)
+		return;
+
+	float r = r / 255 / a;
+	float g = g / 255 / a;
+	float b = b / 255 / a;
+
+	float maxvalue = std::fmax(r, std::fmax(g, b));
+	float minvalue = std::fmin(r, std::fmin(g, b));
+
+	if (maxValue == minValue) {
+        h = 0;
+        s = 0;
+        v = static_cast<int>(std::round(maxValue * 100));
+        return;
+    }
+
+	if (maxValue == r) {
+        h = static_cast<int>(std::round(60 * ((g - b) / (maxValue - minValue))));
+    } else if (maxValue == g) {
+        h = static_cast<int>(std::round(60 * ((b - r) / (maxValue - minValue)) + 120));
+    } else {
+        h = static_cast<int>(std::round(60 * ((r - g) / (maxValue - minValue)) + 240));
+    }
+
+	h = (h + 360) % 360;
+	s = static_cast<int>(std::round(100 * (maxValue - minValue) / maxValue));
+    v = static_cast<int>(std::round(maxValue * 100));
+}
+
+void U::ColorConvertHSVtoRGBA(float h, float s, float v, float& r, float& g, float& b, float& a) {
+	if (s < 0 || s > 100 || v < 0 || v > 100)
+		return;
+
+	float normalizedHue = std::fmod(h, 360) / 60;
+	float chroma = v / 100 * s / 100;
+	float x = chroma * (1 - std::fabs(std::fmod(normalizedHue, 2) - 1));
+
+	if (normalizedHue < 1) {
+        r = chroma;
+        g = x;
+        b = 0;
+    } else if (normalizedHue < 2) {
+        r = x;
+        g = chroma;
+        b = 0;
+    } else if (normalizedHue < 3) {
+        r = 0;
+        g = chroma;
+        b = x;
+    } else if (normalizedHue < 4) {
+        r = 0;
+        g = x;
+        b = chroma;
+    } else if (normalizedHue < 5) {
+        r = x;
+        g = 0;
+        b = chroma;
+    } else if (normalizedHue < 6) {
+        r = chroma;
+        g = 0;
+        b = x;
+    } else {
+        r = 0;
+        g = 0;
+        b = 0;
+    }
+
+	float m = v / 100 - chroma;
+	
+	r = (r + m) * a;
+    g = (g + m) * a;
+    b = (b + m) * a;
+}

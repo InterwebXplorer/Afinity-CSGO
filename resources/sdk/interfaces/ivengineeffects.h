@@ -4,8 +4,7 @@
 struct color32;
 struct Model_t;
 
-enum
-{
+enum {
 	DLIGHT_NO_WORLD_ILLUMINATION = 0x1,
 	DLIGHT_NO_MODEL_ILLUMINATION = 0x2,
 	DLIGHT_ADD_DISPLACEMENT_ALPHA = 0x4,
@@ -13,8 +12,7 @@ enum
 	DLIGHT_DISPLACEMENT_MASK = (DLIGHT_ADD_DISPLACEMENT_ALPHA | DLIGHT_SUBTRACT_DISPLACEMENT_ALPHA)
 };
 
-struct dlight_t
-{
+struct dlight_t {
 	int iFlags;
 	Vector vecOrigin;
 	float flRadius;
@@ -28,24 +26,20 @@ struct dlight_t
 	float flInnerAngle;
 	float flOuterAngle;
 
-	float GetRadius() const
-	{
+	float GetRadius() const {
 		return flRadius;
 	}
 
-	float GetRadiusSquared() const
-	{
+	float GetRadiusSquared() const {
 		return flRadius * flRadius;
 	}
 
-	float IsRadiusGreaterThanZero() const
-	{
+	float IsRadiusGreaterThanZero() const {
 		return flRadius > 0.0f;
 	}
 };
 
-class IVEngineEffects
-{
+class IVEngineEffects {
 public:
 	virtual int Draw_DecalIndexFromName(char *szName) = 0;
 	virtual void DecalShoot(int iTexture, int nEntity, const Model_t *pModel, const Vector &vecModelOrigin, const QAngle &angModelView, const Vector &vecPosition, const Vector *saxis, int iFlags) = 0;

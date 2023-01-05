@@ -1,8 +1,7 @@
 #pragma once
 #include "imaterialsystem.h"
 
-struct surfacephysicsparams_t
-{
+struct surfacephysicsparams_t {
 	float flFriction;
 	float flElasticity;
 	float flDensity;
@@ -10,8 +9,7 @@ struct surfacephysicsparams_t
 	float flDampening;
 };
 
-struct surfaceaudioparams_t
-{
+struct surfaceaudioparams_t {
 	float flReflectivity;
 	float flHardnessFactor;
 	float flRoughnessFactor;
@@ -23,8 +21,7 @@ struct surfaceaudioparams_t
 	float flLowPitchOcclusion;
 };
 
-struct surfacesoundnames_t
-{
+struct surfacesoundnames_t {
 	std::uint16_t uWalkStepLeft;
 	std::uint16_t uWalkStepRight;
 	std::uint16_t uRunStepLeft;
@@ -39,8 +36,7 @@ struct surfacesoundnames_t
 	std::uint16_t uStrainSound;
 };
 
-struct surfacesoundhandles_t
-{
+struct surfacesoundhandles_t {
 	std::uint16_t uWalkStepLeft;
 	std::uint16_t uWalkStepRight;
 	std::uint16_t uRunStepLeft;
@@ -55,8 +51,7 @@ struct surfacesoundhandles_t
 	std::uint16_t uStrainSound;
 };
 
-struct surfacegameprops_t
-{
+struct surfacegameprops_t {
 	float flMaxSpeedFactor;
 	float flJumpFactor;
 	float flPenetrationModifier;
@@ -66,8 +61,7 @@ struct surfacegameprops_t
 	std::byte pad0[0x4];
 };
 
-struct surfacedata_t
-{
+struct surfacedata_t {
 	surfacephysicsparams_t physics;
 	surfaceaudioparams_t audio;
 	surfacesoundnames_t sounds;
@@ -75,8 +69,7 @@ struct surfacedata_t
 	surfacesoundhandles_t soundhandles;
 };
 
-class IPhysicsSurfaceProps
-{
+class IPhysicsSurfaceProps {
 public:
 	virtual ~IPhysicsSurfaceProps() {}
 	virtual int ParseSurfaceData(const char *szFileName, const char *szTextFile) = 0;

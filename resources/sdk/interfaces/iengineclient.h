@@ -3,8 +3,7 @@
 #include "../datatypes/qangle.h"
 
 #pragma region engineclient_enumerations
-enum EClientFrameStage : int
-{
+enum EClientFrameStage : int {
 	FRAME_UNDEFINED = -1,
 	FRAME_START,
 
@@ -22,8 +21,7 @@ enum EClientFrameStage : int
 	FRAME_NET_FULL_FRAME_UPDATE_ON_REMOVE
 };
 
-enum ERenderViewInfo : int
-{
+enum ERenderViewInfo : int {
 	RENDERVIEW_UNSPECIFIED = 0,
 	RENDERVIEW_DRAWVIEWMODEL = (1 << 0),
 	RENDERVIEW_DRAWHUD = (1 << 1),
@@ -31,14 +29,11 @@ enum ERenderViewInfo : int
 };
 #pragma endregion
 
-struct PlayerInfo_t
-{
+struct PlayerInfo_t {
 	std::uint64_t ullVersion = 0ULL;
-	union
-	{
+	union {
 		std::uint64_t ullXuid;
-		struct
-		{
+		struct {
 			std::uint32_t nXuidLow;
 			std::uint32_t nXuidHigh;
 		};
@@ -55,8 +50,7 @@ struct PlayerInfo_t
 	std::uint8_t dFilesDownloaded;
 };
 
-struct AudioState_t
-{
+struct AudioState_t {
 	Vector vecOrigin;
 	QAngle angAngles;
 	bool bIsUnderwater;
@@ -77,146 +71,117 @@ class IAchievementMgr;
 class IMaterial;
 class IMaterialSystem;
 
-class IEngineClient
-{
+class IEngineClient {
 public:
-	void GetScreenSize(int &iWidth, int &iHeight)
-	{
+	void GetScreenSize(int &iWidth, int &iHeight) {
 		MEM::CallVFunc<void>(this, 5, std::ref(iWidth), std::ref(iHeight));
 	}
 
-	bool GetPlayerInfo(int nEntityIndex, PlayerInfo_t *pInfo)
-	{
+	bool GetPlayerInfo(int nEntityIndex, PlayerInfo_t *pInfo) {
 		return MEM::CallVFunc<bool>(this, 8, nEntityIndex, pInfo);
 	}
 
-	int GetPlayerForUserID(int nUserID)
-	{
+	int GetPlayerForUserID(int nUserID) {
 		return MEM::CallVFunc<int>(this, 9, nUserID);
 	}
 
-	bool IsConsoleVisible()
-	{
+	bool IsConsoleVisible() {
 		return MEM::CallVFunc<bool>(this, 11);
 	}
 
-	int GetLocalPlayer()
-	{
+	int GetLocalPlayer() {
 		return MEM::CallVFunc<int>(this, 12);
 	}
 
-	float GetLastTimeStamp()
-	{
+	float GetLastTimeStamp() {
 		return MEM::CallVFunc<float>(this, 14);
 	}
 
-	void GetViewAngles(QAngle &angView)
-	{
+	void GetViewAngles(QAngle &angView) {
 		MEM::CallVFunc<void>(this, 18, std::ref(angView));
 	}
 
-	void SetViewAngles(QAngle &angView)
-	{
+	void SetViewAngles(QAngle &angView) {
 		MEM::CallVFunc<void>(this, 19, std::ref(angView));
 	}
 
-	int GetMaxClients()
-	{
+	int GetMaxClients() {
 		return MEM::CallVFunc<int>(this, 20);
 	}
 
-	bool IsInGame()
-	{
+	bool IsInGame() {
 		return MEM::CallVFunc<bool>(this, 26);
 	}
 
-	bool IsConnected()
-	{
+	bool IsConnected() {
 		return MEM::CallVFunc<bool>(this, 27);
 	}
 
-	bool IsDrawingLoadingImage()
-	{
+	bool IsDrawingLoadingImage() {
 		return MEM::CallVFunc<bool>(this, 28);
 	}
 
-	const ViewMatrix_t &WorldToScreenMatrix()
-	{
+	const ViewMatrix_t &WorldToScreenMatrix() {
 		return MEM::CallVFunc<const ViewMatrix_t &>(this, 37);
 	}
 
-	void *GetBSPTreeQuery()
-	{
+	void *GetBSPTreeQuery() {
 		return MEM::CallVFunc<void *>(this, 43);
 	}
 
-	const char *GetLevelName()
-	{
+	const char *GetLevelName() {
 		return MEM::CallVFunc<const char *>(this, 52);
 	}
 
-	const char *GetLevelNameShort()
-	{
+	const char *GetLevelNameShort() {
 		return MEM::CallVFunc<const char *>(this, 53);
 	}
 
-	INetChannelInfo *GetNetChannelInfo()
-	{
+	INetChannelInfo *GetNetChannelInfo() {
 		return MEM::CallVFunc<INetChannelInfo *>(this, 78);
 	}
 
-	bool IsPlayingDemo()
-	{
+	bool IsPlayingDemo() {
 		return MEM::CallVFunc<bool>(this, 82);
 	}
 
-	bool IsRecordingDemo()
-	{
+	bool IsRecordingDemo() {
 		return MEM::CallVFunc<bool>(this, 83);
 	}
 
-	bool IsPlayingTimeDemo()
-	{
+	bool IsPlayingTimeDemo() {
 		return MEM::CallVFunc<bool>(this, 84);
 	}
 
-	bool IsTakingScreenshot()
-	{
+	bool IsTakingScreenshot() {
 		return MEM::CallVFunc<bool>(this, 92);
 	}
 
-	bool IsHLTV()
-	{
+	bool IsHLTV() {
 		return MEM::CallVFunc<bool>(this, 93);
 	}
 
-	unsigned int GetEngineBuildNumber()
-	{
+	unsigned int GetEngineBuildNumber() {
 		return MEM::CallVFunc<unsigned int>(this, 104);
 	}
 
-	const char *GetProductVersionString()
-	{
+	const char *GetProductVersionString() {
 		return MEM::CallVFunc<const char *>(this, 105);
 	}
 
-	void ExecuteClientCmd(const char *szCmdString)
-	{
+	void ExecuteClientCmd(const char *szCmdString) {
 		MEM::CallVFunc<void>(this, 108, szCmdString);
 	}
 
-	void ClientCmdUnrestricted(const char *szCmdString, bool bFromConsoleOrKeybind = false)
-	{
+	void ClientCmdUnrestricted(const char *szCmdString, bool bFromConsoleOrKeybind = false) {
 		MEM::CallVFunc<void>(this, 114, szCmdString, bFromConsoleOrKeybind);
 	}
 
-	SteamAPIContext_t *GetSteamAPIContext()
-	{
+	SteamAPIContext_t *GetSteamAPIContext() {
 		return MEM::CallVFunc<SteamAPIContext_t *>(this, 185);
 	}
 
-	bool IsVoiceRecording()
-	{
+	bool IsVoiceRecording() {
 		return MEM::CallVFunc<bool>(this, 224);
 	}
 };

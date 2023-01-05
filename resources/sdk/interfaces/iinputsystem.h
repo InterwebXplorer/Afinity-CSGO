@@ -1,8 +1,7 @@
 #pragma once
 
 #pragma region inputsystem_enumerations
-enum EButtonCode : int
-{
+enum EButtonCode : int {
 	BUTTON_CODE_INVALID = -1,
 	BUTTON_CODE_NONE = 0,
 
@@ -133,44 +132,36 @@ enum EButtonCode : int
 	MOUSE_COUNT = MOUSE_LAST - MOUSE_FIRST + 1,
 };
 
-enum EMouseCodeState : int
-{
+enum EMouseCodeState : int {
 	BUTTON_RELEASED = 0,
 	BUTTON_PRESSED,
 	BUTTON_DOUBLECLICKED,
 };
 #pragma endregion
 
-class IInputSystem
-{
+class IInputSystem {
 public:
-	void EnableInput(bool bEnable)
-	{
+	void EnableInput(bool bEnable) {
 		MEM::CallVFunc<void>(this, 11, bEnable);
 	}
 
-	bool IsButtonDown(EButtonCode buttonCode)
-	{
+	bool IsButtonDown(EButtonCode buttonCode) {
 		return MEM::CallVFunc<bool>(this, 15, buttonCode);
 	}
 
-	void ResetInputState()
-	{
+	void ResetInputState() {
 		MEM::CallVFunc<void>(this, 39);
 	}
 
-	const char *ButtonCodeToString(EButtonCode buttonCode)
-	{
+	const char *ButtonCodeToString(EButtonCode buttonCode) {
 		return MEM::CallVFunc<const char *>(this, 40, buttonCode);
 	}
 
-	EButtonCode VirtualKeyToButtonCode(int iVirtualKey)
-	{
+	EButtonCode VirtualKeyToButtonCode(int iVirtualKey) {
 		return MEM::CallVFunc<EButtonCode>(this, 45, iVirtualKey);
 	}
 
-	void GetCursorPosition(int *pX, int *pY)
-	{
+	void GetCursorPosition(int *pX, int *pY) {
 		MEM::CallVFunc<void>(this, 56, pX, pY);
 	}
 };

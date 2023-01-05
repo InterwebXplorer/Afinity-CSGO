@@ -5,8 +5,7 @@
 #define CRC32_XOR_VALUE 0xFFFFFFFFUL
 
 #define NUM_BYTES 256
-constexpr CRC32_t pulCRCTable[NUM_BYTES] =
-	{
+constexpr CRC32_t pulCRCTable[NUM_BYTES] = {
 		0x00000000, 0x77073096, 0xee0e612c, 0x990951ba,
 		0x076dc419, 0x706af48f, 0xe963a535, 0x9e6495a3,
 		0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988,
@@ -72,23 +71,19 @@ constexpr CRC32_t pulCRCTable[NUM_BYTES] =
 		0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94,
 		0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d};
 
-void CRC32::Init(CRC32_t *pulCRC)
-{
+void CRC32::Init(CRC32_t *pulCRC) {
 	*pulCRC = CRC32_INIT_VALUE;
 }
 
-void CRC32::Final(CRC32_t *pulCRC)
-{
+void CRC32::Final(CRC32_t *pulCRC) {
 	*pulCRC ^= CRC32_XOR_VALUE;
 }
 
-CRC32_t CRC32::GetTableEntry(unsigned int nSlot)
-{
+CRC32_t CRC32::GetTableEntry(unsigned int nSlot) {
 	return pulCRCTable[(unsigned char)nSlot];
 }
 
-void CRC32::ProcessBuffer(CRC32_t *pulCRC, const void *pBuffer, int nBuffer)
-{
+void CRC32::ProcessBuffer(CRC32_t *pulCRC, const void *pBuffer, int nBuffer) {
 	CRC32_t ulCrc = *pulCRC;
 	unsigned char *pb = (unsigned char *)pBuffer;
 	unsigned int nFront;
@@ -96,8 +91,7 @@ void CRC32::ProcessBuffer(CRC32_t *pulCRC, const void *pBuffer, int nBuffer)
 
 JustAfew:
 
-	switch (nBuffer)
-	{
+	switch (nBuffer) {
 	case 7:
 		ulCrc = pulCRCTable[*pb++ ^ (unsigned char)ulCrc] ^ (ulCrc >> 8);
 
@@ -132,8 +126,7 @@ JustAfew:
 
 	nFront = ((unsigned int)pb) & 3;
 	nBuffer -= nFront;
-	switch (nFront)
-	{
+	switch (nFront) {
 	case 3:
 		ulCrc = pulCRCTable[*pb++ ^ (unsigned char)ulCrc] ^ (ulCrc >> 8);
 	case 2:
@@ -143,8 +136,7 @@ JustAfew:
 	}
 
 	nMain = nBuffer >> 3;
-	while (nMain--)
-	{
+	while (nMain--) {
 		ulCrc ^= LittleLong(*(CRC32_t *)pb);
 		ulCrc = pulCRCTable[(unsigned char)ulCrc] ^ (ulCrc >> 8);
 		ulCrc = pulCRCTable[(unsigned char)ulCrc] ^ (ulCrc >> 8);
