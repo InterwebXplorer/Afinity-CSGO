@@ -10,11 +10,11 @@
 #include "misc.h"
 #include <Windows.h>
 
-void misc::autoaccept(const char* pSoundEntry) {
+void misc::autoaccept(const char* SoundEntry) {
     if (!Options.misc_general_autoaccept)
         return;
 
-    if (strcmp(pSoundEntry, "UIPanorama.popup_accept_match_beep")) {
+    if (strcmp(SoundEntry, "UIPanorama.popup_accept_match_beep")) {
         U::SetLocalPlayerReady();
 
         FLASHWINFO.cbSize = sizeof(FLASHWINFO);
@@ -25,34 +25,37 @@ void misc::autoaccept(const char* pSoundEntry) {
     }
 }
 
-void misc::autopistol(CUserCmd* pCmd, CBaseEntity* pLocal) {
+void misc::autopistol(CUserCmd* Cmd, CBaseEntity* LocalPlayer) {
     if (!Options.misc_general_autopistol)
         return;
 
     if (!pLocal->IsAlive())
         return;
 
-    CBaseCombatWeapon* pWeapon = pLocal->GetWeapon();
+    CBaseCombatWeapon* ActiveWeapon = LocalPlayer->GetWeapon();
 
-    if (!pWeapon)
+    if (!ActiveWeapon)
         return;
         
-	const short nDefinitionIndex = pWeapon->GetItemDefinitionIndex();
-	const CCSWeaponData* pWeaponData = I::WeaponSystem->GetWeaponData(nDefinitionIndex);
+	const short WeaponDefinitionIndex = ActiveWeapon->GetItemDefinitionIndex();
+	const CCSWeaponData* ActiveWeaponData = I::WeaponSystem->GetWeaponData(WeaponDefinitionIndex);
 
-	if (!pWeaponData)
+	if (!ActiveWeaponData)
 		return;
 
-    if (pWeaponData->bFullAuto)
+    if (ActiveWeaponData->bFullAuto)
         return;
 
-    if (!pWeaponData->nWeaponType == WEAPONTYPE_PISTOL)
+    if (!ActiveWeaponData->nWeaponType == WEAPONTYPE_PISTOL)
         return;
 
-	if (pLocal->CanShoot(static_cast<CWeaponCSBase*>(pWeapon)) && pCmd->iButtons & IN_ATTACK)
-		pCmd->iButtons |= IN_ATTACK;
+    if (ActiveWeapon->GetItemDefinitionIndex() == WEAPON_REVOLVER)
+        return;
+
+	if (LocalPlayer->CanShoot(static_cast<CWeaponCSBase*>(ActiveWeapon)) && Cmd->iButtons & IN_ATTACK)
+		Cmd->iButtons |= IN_ATTACK;
 	else
-		pCmd->iButtons &= ~IN_ATTACK;
+		Cmd->iButtons &= ~IN_ATTACK;
 }
 
 void misc::preservekillfeed() { //TODO
@@ -63,127 +66,201 @@ void misc::preservekillfeed() { //TODO
         return;
 }
 
-void misc::autodefuse(CUserCmd* pCmd, CPlantedC4* pBomb, CBaseEntity* pLocal) {
+void misc::autodefuse(CUserCmd* Cmd, CBaseEntity* LocalPlayer) {
     if (!Options.misc_general_autodefuse)
         return;
         
-    if (!pLocal->IsAlive())
+    if (!LocalPlayer->IsAlive())
         return;
 
-    if (pLocal->GetTeam() == TEAM_TT)
+    if (!LocalPlayer->GetTeam() == TEAM_CT)
         return;
 
-    if (!pBomb->IsPlanted)
-        return; 
+    CPlantedC4* PlantedBomb = nullptr;
+    CBaseEntity* PlantedBombEntity = nullptr;
 
-    for (int i = 0; i < IClientEntityList::GetHighestEntityIndex(); i++) {
-        CBaseEntity* Entity = IClientEntityList::GetClientEntity(i);
+    for (int i = 0; i <= I::ClientEntityList->GetHighestEntityIndex(); i++) {
+        CBaseEntity* Entity = I::ClientEntityList->GetClientEntity(i);
 
         if (!Entity)
             return;
         
-        if (Entity->GetClientClass()->nClassID == EClassIndex::CPlantedC4)
-            pBomb = (CPlantedC4*)Entity;
+        if (Entity->GetClientClass()->nClassID == EClassIndex::CPlantedC4) {
+            PlantedBomb = (CPlantedC4*)Entity;
+            PlantedBombEntity = Entity;
+            break;
+        }
     }
 
-    float RemainingTime = pBomb->GetBlowTime();
-    float DistancetoBomb = pLocal->GetOrigin().DistTo(pBomb->GetOrigin());
-
-    if (pLocal->HasDefuser() && RemainingTime > 5.5f)
+    if (!PlantedBomb)
         return;
 
-    if (!pLocal->HasDefuser() && RemainingTime > 10.5f)
+    if (PlantedBomb->IsDefused())
+        return;
+
+    float RemainingTime = PlantedBomb->GetBlowTime() - (LocalPlayer->GetTickBase() * I::Globals->flIntervalPerTick);
+    float DistancetoBomb = LocalPlayer->GetOrigin().DistTo(PlantedBombEntity->GetOrigin());
+
+    if (LocalPlayer->HasDefuser() && RemainingTime > 5.5f)
+        return;
+
+    if (!LocalPlayer->HasDefuser() && RemainingTime > 10.5f)
         return;
     
     if (DistancetoBomb <= 75.0f)
-        pCmd->iButtons |= IN_USE;
+        Cmd->iButtons |= IN_USE;
 }
 
-void misc::autoextinguishincendiarys() { //DIDNT FUCKING WORK
+void misc::autoextinguishincendiarys(CUserCmd* Cmd, CBaseEntity* LocalPlayer) {
     if (!Options.misc_general_autoextinguishincendiarys)
         return;
     
-    if (!pLocal->IsAlive())
-        return;
-/*
-	CBaseCombatWeapon* pWeapon = pLocal->GetWeapon();
-
-    if (!pWeapon)
-        return;
-
-    int nDefinitionIndex = pWeapon->GetItemDefinitionIndex();
-    CCSWeaponData* pWeaponData = I::WeaponSystem->GetWeaponData(nDefinitionIndex);
-
-    if (!pWeaponData)
+    if (!LocalPlayer->IsAlive())
 		return;
 
-    if (!pWeaponData->nDefinitionIndex == WEAPON_SMOKEGRENADE)
+    for (int i = 0; i <= MAX_WEAPONS; i++) {
+        unsigned int* WeaponsHandle = LocalPlayer->GetWeaponsHandle();
+
+        if (!WeaponsHandle)
+            continue;
+
+        if (WeaponsHandle[i] == -1)
+            continue;
+
+        CBaseCombatWeapon* WeaponEntity = I::ClientEntityList->Get<CBaseCombatWeapon>(WeaponsHandle[i]);
+
+        if (!WeaponEntity)
+            continue;
+
+        if (WeaponEntity->GetItemDefinitionIndex() == WEAPON_SMOKEGRENADE)
+            break;
+    }
+
+    CBaseCSGrenade* Incendiary = nullptr;
+
+    for (int i = 0; i <= I::ClientEntityList->GetHighestEntityIndex(); i++) {
+        IClientEntity* Entity = I::ClientEntityList->GetClientEntity(i);
+
+        if (!Entity)
+            continue;
+
+        if (Entity->GetClientClass()->nClassID == EClassIndex::CInferno) {
+            Incendiary = (CBaseCSGrenade*)Entity;
+            break;
+        }
+    }
+
+    if (!Incendiary)
         return;
+	
+    float DistanceToIncendiary = LocalPlayer->GetAbsOrigin().DistTo(Incendiary->GetAbsOrigin());
+    QAngle IncendiaryViewAngle = Math::CalcAngle(LocalPlayer->GetEyePosition(), Incendiary->GetAbsOrigin());
+    QAngle CurrentViewAngle = LocalPlayer->GetEyeAngles();
 
-    //
+	if (DistanceToIncendiary <= 120.0f) {
+		I::Engine->ExecuteClientCmd("use weapon_smokegrenade");
 
-    for (int i = 0; i < I::ClientEntityList->GetHighestEntityIndex(); i++) {
-        IClientEntity* EntityIndex = I::ClientEntityList->GetClientEntity(i);
+		CBaseCombatWeapon* ActiveWeapon = LocalPlayer->GetWeapon();
 
-        if (!EntityIndex)
-            return;
-        
-        if (EntityIndex->GetClientClass()->CBaseClient::nClassID == EClassIndex::CInferno)
-            pIncendiary = (IClientEntity*)EntityIndex;
-    }
+		if (!ActiveWeapon)
+			return;
 
-    float DistancetoIncendiary = pLocal->GetOrigin().DistTo(pIncendiary->GetAbsOrigin());
-    QAngle AngletoIncendiary = M::CalcAngle(pLocal->GetEyePosition(), pIncendiary->GetAbsOrigin());
+		if (!ActiveWeapon->GetItemDefinitionIndex() = WEAPON_SMOKEGRENADE)
+			return;
 
-    if (DistancetoIncendiary <= 120.0f) {
-		pCmd->iWeaponSelect = pWeapon->GetItemDefinitionIndex();
-        pCmd->angViewPoint += AngletoIncendiary;
-        pCmd->iButtons |= IN_ATTACK;
-		pCmd->angViewPoint -= AngletoIncendiary;
-    }
-*/
+		Cmd->angViewPoint = IncendiaryViewAngle;
+	    Cmd->iButtons |= IN_ATTACK;
+		Cmd->angViewPoint = CurrentViewAngle;
+	}
 }
 
-void misc::fakeping() {
+void misc::fakeping() { //TODO
     if (!Options.misc_general_fakeping)
         return;
 
     //Options.misc_general_fakepingamount
 }
 
-void misc::clantag() {
+void misc::clantag() { //TODO
     if (!Options.misc_general_clantag)
         return;
 }
 
-void misc::blockbot() {
+void misc::blockbot(CBaseEntity* pLocal) { //TODO
     if (!Options.misc_general_blockbot)
         return;
+
+    if (!pLocal->IsAlive())
+        return;
+
+    CBaseEntity* pTarget = nullptr;
+
+    for (int i = 0; i <= I::ClientEntityList->nMaxClients(); i++) {
+        CBaseEntity* pEntity = I::ClientEntityList->GetClientEntity(i);
+
+        if (!pEntity)
+            continue;
+
+        if (!pEntity->IsPlayer())
+            continue;
+
+        if (!pEntity->IsAlive())
+            continue;
+
+        if (pEntity = pLocal)
+            continue;
+
+        if (pEntity->IsEnemy())
+            continue;
+
+        float DistancetoEntity = pLocal->GetAbsOrigin().DistTo(pEntity->GetAbsOrigin());
+
+        if (DistancetoEntity <= 250.0f) {
+            pTarget = pEntity;
+            break;
+        }
+    }
+
+    if (!pTarget)
+        return;
+
+    
+    
 }
 
-void misc::headstandbot() {
+void misc::headstandbot(CBaseEntity* pLocal) { //TODO
     if (!Options.misc_general_headstandbot)
         return;
+
+    if (!pLocal->IsAlive())
+        return;
+
+    
 };
 
-void misc::forceregion() {
+void misc::forceregion() { //TODO
+    switch (Options.misc_general_forceregion) { //switch?
+        case 1: 
+            break;
+    }
+
     std::string ServerLocations[] = {"", "syd", "vie", "gru", "scl", "dxb", "par", "fra", "hkg", "maa", "bom", "tyo", "lux", "ams", "limc", "man", "waw", "sgp", "jnb", "mad", "sto", "lhr", "atl", "eat", "ord", "lax", "mwh", "okc", "sea", "iad"} 
 };
 
-void misc::revealoverwatch() {
+void misc::revealoverwatch() { //TODO
     if (!Options.misc_general_revealoverwatch)
         return;
 };
 
-void misc::revealranks(CUserCmd* pCmd) {
+void misc::revealranks(CUserCmd* Cmd) { 
     if (!Options.misc_general_revealranks)
         return;
 
-    if (pCmd->iButtons & IN_SCORE)
+    if (Cmd->iButtons & IN_SCORE)
         I::Client->DispatchUserMessage(CS_UM_ServerRankRevealAll, 0U, 0, nullptr);
 };
-
-void misc::slowwalk(CUserCmd* pCmd, CBaseEntity* pLocal) {
+ 
+void misc::slowwalk(CUserCmd* Cmd, CBaseEntity* LocalPlayer) { //
     if (!Options.misc_general_slowwalk)
         return;
 
@@ -199,38 +276,111 @@ void misc::slowwalk(CUserCmd* pCmd, CBaseEntity* pLocal) {
     if (!pLocal->GetMoveType() == MOVETYPE_LADDER)
         return;
 
-    //Options.misc_general_slowwalkspeed    
+    CBaseCombatWeapon* ActiveWeapon = LocalPlayer->GetWeapon();
 
+    if (!ActiveWeapon)
+        return;
 
-    if (pCmd->iButtons() & IN_FORWARD) {
+    int WeaponDefinitionIndex = ActiveWeapon->GetItemDefinitionIndex();
+    CCSWeaponData* ActiveWeaponData = I::WeaponSystem->GetWeaponData(WeaponDefinitionIndex);
 
-    }
+    if (!ActiveWeaponData)
+		return;
 
-    if (pCmd->iButtons() & IN_BACK) {
+    float MaxWeaponSpeed = ActiveWeaponData->flMaxSpeed();
+    float CalculateSpeed = MaxWeaponSpeed \ Options.misc_general_slowwalkspeed;
+    
+    Vector Velocity = LocalPlayer->GetVelocity();
+    QAngle Direction;
+    
+    Math::VectorAngles(Velocity, Direction);
+    
+    float Speed = Velocity.Length2D();
 
-    }
+    Direction.y = Cmd-> - Direction.y;
 
-    if (pCmd->iButtons() & IN_LEFT) {
-
-    }
-
-    if (pCmd->iButtons() & IN_RIGHT) {
-
-    }
+    Cmd->flForwardMove = ;
+    Cmd->flSideMove = ;
 };
 
-void misc::infiniteduck(CUserCmd* pCmd, CBaseEntity* pLocal) {
+void misc::infiniteduck(CUserCmd* Cmd, CBaseEntity* LocalPLayer) {
     if (!Options.misc_general_infiniteduck)
         return;
 
-    if (!pLocal->IsAlive())
+    if (!LocalPLayer->IsAlive())
         return;
 
-    pCmd->iButtons & IN_BULLRUSH;
+    Cmd->iButtons & IN_BULLRUSH;
 }
 
-void misc::bunnyhop(CUserCmd* pCmd, CBaseEntity* pLocal) { //Options.misc_general_bhopmiss
+void misc::quickstop() { //TODO
+    if (!Options.misc_general_quickstop)
+        return;
+}
+
+void misc::unlockinventory() { //TODO
+    if (!Options.misc_general_unlockinventory)
+        return;
+}
+
+void misc::namechanger() { //TODO
+    switch (Options.misc_general_namechanger) {
+        case OFF: 
+            break;
+
+        case TEAMONLY:
+            break;
+
+        case ENEMYONLY:
+            break;
+
+        case EVERYONE:
+            break;
+
+        case CORRUPT:
+            break;
+    }
+}
+
+void misc::commandspammer() { //TODO
+   I::Engine->ExecuteClientCmd(Options.misc_general_commandspammer) 
+}
+
+void misc::informationspammer() { //TODO
+    switch (Options.misc_general_informationspammer) {
+        case NAME:
+            break;
+
+        case RANK:
+            break;
+        
+        case WEAPON:
+            break;
+
+        case LOCATION:
+            break;
+
+        case HEALTH:
+            break;
+    }
+}
+
+void misc::grenadehelper() { //TODO
+    if (!Options.misc_general_grenadehelper)
+        return;
+
+    /*
+    OPTION(char, Options.misc_general_grenadehelpervisiblekey, NULL);
+    OPTION(char, Options.misc_general_grenadehelperexecutekey, NULL);
+    OPTION(bool, Options.misc_general_grenadehelpervwge, false);
+    */
+}
+
+void misc::bunnyhop(CUserCmd* pCmd, CBaseEntity* pLocal) { //TODO
     if (!Options.misc_general_bhop)
+        return;
+
+    if (I::ConVar->FindVar("sv_autobunnyhopping"))
         return;
 
     if (!pLocal->IsAlive())
@@ -242,7 +392,7 @@ void misc::bunnyhop(CUserCmd* pCmd, CBaseEntity* pLocal) { //Options.misc_genera
     if (pLocal->GetMoveType() == MOVETYPE_LADDER)
         return;
 
-    if (I::ConVar->FindVar("sv_autobunnyhopping"))
+    if (pLocal->GetMoveType() == MOVETYPE_OBSERVER)
         return;
 
     //Options.misc_general_bhophitchance;
@@ -254,7 +404,24 @@ void misc::bunnyhop(CUserCmd* pCmd, CBaseEntity* pLocal) { //Options.misc_genera
     */
 }
 
-//autostraife
+void misc::autostrafe() { //TODO
+    if (!Options.misc_general_autostrafe)
+        return;
+
+    if (!pLocal->IsAlive())
+        return;
+
+    if (pLocal->GetMoveType() == MOVETYPE_NOCLIP)
+        return;
+
+    if (pLocal->GetMoveType() == MOVETYPE_LADDER)
+        return;  
+
+    if (pLocal->GetFlags() & FL_ONGROUND)
+		return;
+
+    
+}
 
 void misc::aircrouch(CBaseEntity* pLocal, CUserCmd* pCmd) {
     if (Options.misc_general_aircrouch)
@@ -264,12 +431,12 @@ void misc::aircrouch(CBaseEntity* pLocal, CUserCmd* pCmd) {
         return;
 
     if (!pLocal->GetFlags() & FL_ONGROUND)
-        pCmd->iButtons &= ~IN_DUCK;
-    else 
         pCmd->iButtons |= IN_DUCK;
+    else 
+        pCmd->iButtons &= ~IN_DUCK;
 }
 
-void misc::peekassist(CBaseEntity* pLocal, CUserCmd* pCmd) {
+void misc::peekassist(CBaseEntity* pLocal, CUserCmd* pCmd) { //TODO
     if (!Options.misc_general_peekassist)
         return;
 
@@ -283,71 +450,142 @@ void misc::peekassist(CBaseEntity* pLocal, CUserCmd* pCmd) {
     }
 }
 
-void misc::buybot(CUserCmd* pCmd) {
+void misc::buybot() {
     if (!Options.misc_buybot_enable)
         return;
 
     if (!IGameEvent->FindListener("round_start"))
         return;
 
+    switch (Options.misc_buybot_primary) {
+        case OFF:
+            break;
+
+        case AUTO:
+            I::Engine->ExecuteClientCmd("buy g3sg1");
+            WriteToLog("[Generic] Bought autosniper");
+            WriteToConsole("[Generic] Bought autosniper");
+            break;
+
+        case SCOUT:
+            I::Engine->ExecuteClientCmd("buy ssg08");
+            WriteToLog("[Generic] Bought scout");
+            WriteToConsole("[Generic] Bought scout");
+            break;
+
+        case AWP:
+            I::Engine->ExecuteClientCmd("buy awp");
+            WriteToLog("[Generic] Bought awp");
+            WriteToConsole("[Generic] Bought awp");
+            break;
+
+        case AKM4:
+            I::Engine->ExecuteClientCmd("buy ak47");
+            WriteToLog("[Generic] Bought ak/m4");
+            WriteToConsole("[Generic] Bought ak/m4");
+            break;
+    }
+
     switch (Options.misc_buybot_secondary) {
-        case 1: //off
+        case OFF:
             break;
 
-        case 2: IEngineClient->ExecuteClientCmd("buy elite");
+        case DUALBERETTAS: 
+            I::Engine->ExecuteClientCmd("buy elite");
+            WriteToLog("[Generic] Bought dual-berettas");
+            WriteToConsole("[Generic] Bought dual-berettas");
             break;
 
-        case 3: IEngineClient->ExecuteClientCmd("buy p250");
+        case P250: 
+            I::Engine->ExecuteClientCmd("buy p250");
+            WriteToLog("[Generic] Bought p250");
+            WriteToConsole("[Generic] Bought p250");
             break;
 
-        case 4: IEngineClient->ExecuteClientCmd("buy tec9");
+        case FIVE7TEC9: 
+            I::Engine->ExecuteClientCmd("buy tec9");
+            WriteToLog("[Generic] Bought five7/tec9");
+            WriteToConsole("[Generic] Bought five7/tec9");
             break;
 
-        case 5: IEngineClient->ExecuteClientCmd("buy revolver");
+        case DEAGLER8: 
+            I::Engine->ExecuteClientCmd("buy revolver");
+            WriteToLog("[Generic] Bought deagle/r8");
+            WriteToConsole("[Generic] Bought deagle/r8");
             break;
     }
 
     switch (Options.misc_buybot_nades) {
-        case 1: IEngineClient->ExecuteClientCmd("buy smokegrenade");
+        case SMOKE: 
+            I::Engine->ExecuteClientCmd("buy smokegrenade");
+            WriteToLog("[Generic] Bought smoke grenade");
+            WriteToConsole("[Generic] Bought smoke grenade");
             break;
 
-        case 2: IEngineClient->ExecuteClientCmd("buy flashbang");
+        case FLASH: 
+            I::Engine->ExecuteClientCmd("buy flashbang");
+            WriteToLog("[Generic] Bought flashbang");
+            WriteToConsole("[Generic] Bought flashbang");
             break;
 
-        case 3: IEngineClient->ExecuteClientCmd("buy molotov");
+        case INCENDIARY: 
+            I::Engine->ExecuteClientCmd("buy molotov");
+            WriteToLog("[Generic] Bought incendiary");
+            WriteToConsole("[Generic] Bought incendiary");
             break;
 
-        case 4: IEngineClient->ExecuteClientCmd("buy decoy");
+        case DECOY: 
+            I::Engine->ExecuteClientCmd("buy decoy");
+            WriteToLog("[Generic] Bought decoy");
+            WriteToConsole("[Generic] Bought decoy");
             break;
 
-        case 5: IEngineClient->ExecuteClientCmd("buy hegrenade");
+        case HEGRENADE: 
+            I::Engine->ExecuteClientCmd("buy hegrenade");
+            WriteToLog("[Generic] Bought he grenade");
+            WriteToConsole("[Generic] Bought he grenade");
             break;
     }
 
     switch (Options.misc_buybot_other) {
-        case 1: IEngineClient->ExecuteClientCmd("buy vest");
+        case KEVLAR: 
+            I::Engine->ExecuteClientCmd("buy vest");
+            WriteToLog("[Generic] Bought half armour");
+            WriteToConsole("[Generic] Bought half armour");
             break;
 
-        case 2: IEngineClient->ExecuteClientCmd("buy vesthelm");
+        case HELMET: 
+            I::Engine->ExecuteClientCmd("buy vesthelm");
+            WriteToLog("[Generic] Bought full armour");
+            WriteToConsole("[Generic] Bought full armour");
             break;
 
-        case 3: IEngineClient->ExecuteClientCmd("buy defuser");
+        case DEFUSER: 
+            I::Engine->ExecuteClientCmd("buy defuser");
+            WriteToLog("[Generic] Bought defuser");
+            WriteToConsole("[Generic] Bought defuser");
             break;
 
-        case 4: IEngineClient->ExecuteClientCmd("buy taser");
+        case TASER: 
+            I::Engine->ExecuteClientCmd("buy taser");
+            WriteToLog("[Generic] Bought taser");
+            WriteToConsole("[Generic] Bought taser");
             break;
         
-        case 5: IEngineClient->ExecuteClientCmd("buy riotshield");
+        case RIOTSHEILD: 
+            I::Engine->ExecuteClientCmd("buy riotshield");
+            WriteToLog("[Generic] Bought riotsheild");
+            WriteToConsole("[Generic] Bought riotsheild");
             break;
     }
 }
 
-void misc::triggerban(CUserCmd* pCmd) { //untrusted ban goes weeeeeee
+void misc::triggerban(CUserCmd* pCmd) {
     if (!Options.misc_general_triggerban)
         return;
     
-    writetolog("[Warning] Triggering untrusted ban");
-    writetoconsole("[Warning] Triggering untrusted ban");
+    WriteToLog("[Warning] Triggering untrusted ban");
+    WriteToConsole("[Warning] Triggering untrusted ban");
 
     QAngle angSentView = {999.0f, 999.0f, 999.0f};
 
@@ -358,3 +596,7 @@ void misc::unlockachievements() {
     if (!Options.misc_general_unlockachievements)
         return;
 }
+
+/*
+    OPTION(bool, Options.misc_general_unload, false);
+*/

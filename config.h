@@ -1,14 +1,14 @@
 #pragma once
 #include <string>
 
-namespace config {
-    void setup();
-    bool create(std::string& name = "default.afinity");
-    bool save(std::string& name);
-    bool load(std::string& name);
-    bool remove(std::string& name);
-    bool reset(std::string& name);
-    void refresh();
+namespace Config {
+    void Setup();
+    bool Create(std::string& name = "default.afinity");
+    bool Save(std::string& name);
+    bool Load(std::string& name);
+    bool Remove(std::string& name);
+    bool Reset(std::string& name);
+    void Refresh();
     void getconfigfiles();
     std::string getpathtoconfigs();
 }

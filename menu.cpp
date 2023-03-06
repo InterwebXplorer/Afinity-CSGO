@@ -3,7 +3,7 @@
 #include "resources/imgui/imgui_internal.h"
 #include "resources/imgui/impl/imgui_impl_dx9.h"
 #include "resources/imgui/impl/imgui_impl_win32.h"
-#include "resources/utils/ui.h"
+#include "resources/utils/draw.h"
 #include "resources/utils/inputsystem.h"
 #include "resources/utils/filelogging.h"
 #include "resources/utils/consolelogging.h"
@@ -94,7 +94,7 @@ if (activetab == 0) {
 }
 
 if (activetab == 1) {
-    static char* ragesubtabs[] = {"Global", "Default", "Pistol", "Awp", "Scout", "Auto"};
+    static char* ragesubtabs[] = {"Default", "Pistol", "Awp", "Scout", "Auto"};
     static int activeragesubtab = 0;
 
     ImGui::SetCursorPos(ImVec2(161, 10));
@@ -108,68 +108,60 @@ if (activetab == 1) {
     }
     ImGui::EndChild();
 
-    if (activeragesubtab == 0) {
-        const char* safepointhitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
-        const char* safepointdelay[] = {"Head", "Chest", "Body", "Arms", "Legs"};
-        const char* teleportmode[] = {"Normal", "Extended", "Disabled"}
+    const char* safepointhitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
+    const char* safepointdelay[] = {"Head", "Chest", "Body", "Arms", "Legs"};
+    const char* teleportmode[] = {"Normal", "Extended", "Disabled"}
 
-        ImGui::SetCursorPos(ImVec2(161, 61));
-        ImGui::BeginChild("##Global", ImVec2(708, 410), false, 0); {
-            ImGui::Columns(2, NULL, false);
-            UI::Checkbox("Enable", Options.rage_enable);
-            UI::Checkbox("Safe point", Options.rage_safepoint_enable);
-            UI::Checkbox("Force safe point", Options.rage_forcesafepoint);
-            ImGui::SameLine();
-            UI::KeyBind(Options.rage_forcesafepointkey);
-            UI::Dropdownmulti("Safepoint hitboxes", safepointhitboxes[], Options.rage_safepointhitboxes);
-            UI::Dropdownmulti("Safepoint delay conditions", safepointdelay[], Options.rage_safepointdelay);
-            UI::Slider("Maximum delay", Options.rage_safepointmaxdelay, 0, 1000)
-            UI::Checkbox("Silentaim", Options.rage_silentaim);
-            UI::Checkbox("Autofire", Options.rage_autofire);
-            UI::Checkbox("Autoscope", Options.rage_autoscope);
-            UI::Checkbox("Autostop", Options.rage_autostop);
-            UI::Checkbox("Penetration", Options.rage_penetration);
-            UI::Checkbox("Knifebot", Options.rage_knifebot);
-            UI::Checkbox("Zuesbot", Options.rage_zeusbot);
-            UI::Checkbox("Resolver", Options.rage_resolver);
-            UI::Checkbox("X-Axis", Options.rage_resolverx);
-            UI::Checkbox("Z-Axis", Options.rage_resolvery);
-            UI::Checkbox("Bruteforce", Options.rage_bruteforce);
-            ImGui::SameLine();
-            UI::KeyBind(Options.rage_bruteforcekey);
-            UI::Checkbox("Hideshots", Options.rage_hideshots);
-            ImGui::SameLine();
-            UI::KeyBind(Options.rage_hideshotskey);
-            UI::Checkbox("Doubletap", Options.rage_doubletap);
-            ImGui::SameLine();
-            UI::KeyBind(Options.rage_doubletapkey);
-            UI::Checkbox("Instant doubletap", Options.rage_doubletapinstant);
-            UI::Dropdownmulti("Teleport mode", teleportmode[], Options.rage_teleportmode);
-            UI::Checkbox("No recoil", Options.rage_global_norecoil);
-            UI::Checkbox("No spread", Options.rage_global_nospread);
-            UI::Checkbox("Prepare revolver", Options.rage_revolverprep);
-            UI::Checkbox("No scope prediction", Options.rage_noscope);
-            ImGui::Text("Damage override");
-            ImGui::SameLine();
-            UI::KeyBind(Options.rage_damageoverridekey);
-            UI::Checkbox("Spasm lock", Options.rage_spasmlock);
-        }
-        ImGui::EndChild();
+    ImGui::SetCursorPos(ImVec2(161, 61));
+    ImGui::BeginChild("##Global", ImVec2(354, 410), false, 0); {
+        ImGui::Columns(2, NULL, false);
+        UI::Checkbox("Enable", Options.rage_enable);
+        UI::Slider("FOV", Options.rage_fov, 0, 180);
+        UI::Checkbox("Silentaim", Options.rage_silentaim);
+        UI::Checkbox("Autofire", Options.rage_autofire);
+        UI::Checkbox("Autoscope", Options.rage_autoscope);
+        UI::Checkbox("Autostop", Options.rage_autostop);
+        UI::Checkbox("Penetration", Options.rage_penetration);
+        UI::Checkbox("Knifebot", Options.rage_knifebot);
+        UI::Checkbox("Zuesbot", Options.rage_zeusbot);
+        UI::Checkbox("Resolver", Options.rage_resolver);
+        UI::Checkbox("X-Axis", Options.rage_resolverx);
+        UI::Checkbox("Z-Axis", Options.rage_resolverz);
+        UI::Checkbox("Bruteforce", Options.rage_bruteforce);
+        ImGui::SameLine();
+        UI::KeyBind(Options.rage_bruteforcekey, Options.rage_bruteforcekeymode);
+        UI::Slider("Backtrack", Options.rage_backtrack, 0, 400);
+        UI::Checkbox("Hideshots", Options.rage_hideshots);
+        ImGui::SameLine();
+        UI::KeyBind(Options.rage_hideshotskey, Options.rage_hideshotskeymode);
+        UI::Checkbox("Doubletap", Options.rage_doubletap);
+        ImGui::SameLine();
+        UI::KeyBind(Options.rage_doubletapkey, Options.rage_doubletapkeymode);
+        UI::Checkbox("Instant doubletap", Options.rage_doubletapinstant);
+        UI::Dropdownmulti("Teleport mode", teleportmode[], Options.rage_teleportmode);
+        UI::Checkbox("No recoil", Options.rage_global_norecoil);
+        UI::Checkbox("No spread", Options.rage_global_nospread);
+        UI::Checkbox("Prepare revolver", Options.rage_revolverprep);
+        UI::Checkbox("No scope prediction", Options.rage_noscope);
+        UI::Checkbox("Damage override", Options.rage_damageoverride);
+        ImGui::SameLine();
+        UI::KeyBind(Options.rage_damageoverridekey, Options.rage_damageoverridekeymode);
+        UI::Checkbox("Spasm lock", Options.rage_spasmlock);
     }
+    ImGui::EndChild();
 
-    if (activeragesubtab == 1) {
+    if (activeragesubtab == 0) {
         const char* defaulthitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
         const char* defaulmultipointthitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
 
-        ImGui::SetCursorPos(ImVec2(161, 61));
-        ImGui::BeginChild("##Default", ImVec2(708, 410), false, 0); {
+        ImGui::SetCursorPos(ImVec2(515, 61));
+        ImGui::BeginChild("##Default", ImVec2(354, 410), false, 0); {
             ImGui::Columns(2, NULL, false);
             UI::Slider("Hitchance", Options.rage_default_hitchance, 0, 100);
             UI::Dropdownmulti("Hitboxes", defaulthitboxes[], Options.rage_default_hitboxes);
             UI::Dropdownmulti("Multipoint", defaulmultipointthitboxes[], Options.rage_default_multipoint);
             UI::Slider("Min damage(Ocluded)", Options.rage_default_mindmgocluded, 0, 100);
             UI::Slider("Min damage(Visible)", Options.rage_default_mindmgvisible, 0, 100);
-            UI::Slider("Backtrack", Options.rage_default_backtrack, 0, 400);
             UI::Slider("Delay", Options.rage_default_delay, 0, 1000);
             UI::Checkbox("Force body", Options.rage_default_forcebody);
             UI::Checkbox("Force head", Options.rage_default_forcehead);
@@ -180,19 +172,18 @@ if (activetab == 1) {
         ImGui::EndChild();
     }
 
-    if (activeragesubtab == 2) {
+    if (activeragesubtab == 1) {
         const char* pistolhitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
         const char* pistolmultipointhitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
 
-        ImGui::SetCursorPos(ImVec2(161, 61));
-        ImGui::BeginChild("##Pistol", ImVec2(708, 410), false, 0); {
+        ImGui::SetCursorPos(ImVec2(515, 61));
+        ImGui::BeginChild("##Pistol", ImVec2(354, 410), false, 0); {
             ImGui::Columns(2, NULL, false);
             UI::Slider("Hitchance", Options.rage_pistol_hitchance, 0, 100);
             UI::Dropdownmulti("Hitboxes", pistolhitboxes[], Options.rage_pistol_hitboxes);
             UI::Dropdownmulti("Multipoint", pistolmultipointthitboxes[], Options.rage_pistol_multipoint);
             UI::Slider("Min damage(Ocluded)", Options.rage_pistol_mindmgocluded, 0, 100);
             UI::Slider("Min damage(Visible)", Options.rage_pistol_mindmgvisible, 0, 100);
-            UI::Slider("Backtrack", Options.rage_pistol_backtrack, 0, 400);
             UI::Slider("Delay", Options.rage_pistol_delay, 0, 1000);
             UI::Checkbox("Force body", Options.rage_pistol_forcebody);
             UI::Checkbox("Force head", Options.rage_pistol_forcehead);
@@ -203,19 +194,18 @@ if (activetab == 1) {
         ImGui::EndChild();
     }
 
-    if (activeragesubtab == 3) {
+    if (activeragesubtab == 2) {
         const char* awphitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
         const char* awpmultipointhitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
 
-        ImGui::SetCursorPos(ImVec2(161, 61));
-        ImGui::BeginChild("##Awp", ImVec2(708, 410), false, 0); {
+        ImGui::SetCursorPos(ImVec2(515, 61));
+        ImGui::BeginChild("##Awp", ImVec2(354, 410), false, 0); {
             ImGui::Columns(2, NULL, false);
             UI::Slider("Hitchance", Options.rage_awp_hitchance, 0, 100);
             UI::Dropdownmulti("Hitboxes", awphitboxes[], Options.rage_awp_hitboxes);
             UI::Dropdownmulti("Multipoint", awpmultipointthitboxes[], Options.rage_awp_multipoint);
             UI::Slider("Min damage(Ocluded)", Options.rage_awp_mindmgocluded, 0, 100);
             UI::Slider("Min damage(Visible)", Options.rage_awp_mindmgvisible, 0, 100);
-            UI::Slider("Backtrack", Options.rage_awp_backtrack, 0, 400);
             UI::Slider("Delay", Options.rage_awp_delay, 0, 1000);
             UI::Checkbox("Force body", Options.rage_awp_forcebody);
             UI::Checkbox("Force head", Options.rage_awp_forcehead);
@@ -226,19 +216,18 @@ if (activetab == 1) {
         ImGui::EndChild();
     }
 
-    if (activeragesubtab == 4) {
+    if (activeragesubtab == 3) {
         const char* scouthitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
         const char* scoutmultipointhitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
 
-        ImGui::SetCursorPos(ImVec2(161, 61));
-        ImGui::BeginChild("##Scout", ImVec2(708, 410), false, 0); {
+        ImGui::SetCursorPos(ImVec2(515, 61));
+        ImGui::BeginChild("##Scout", ImVec2(354, 410), false, 0); {
             ImGui::Columns(2, NULL, false);
             UI::Slider("Hitchance", Options.rage_scout_hitchance, 0, 100);
             UI::Dropdownmulti("Hitboxes", scouthitboxes[], Options.rage_scout_hitboxes);
             UI::Dropdownmulti("Multipoint", scoutmultipointthitboxes[], Options.rage_scout_multipoint);
             UI::Slider("Min damage(Ocluded)", Options.rage_scout_mindmgocluded, 0, 100);
             UI::Slider("Min damage(Visible)", Options.rage_scout_mindmgvisible, 0, 100);
-            UI::Slider("Backtrack", Options.rage_scout_backtrack, 0, 400);
             UI::Slider("Delay", Options.rage_scout_delay, 0, 1000);
             UI::Checkbox("Force body", Options.rage_scout_forcebody);
             UI::Checkbox("Force head", Options.rage_scout_forcehead);
@@ -249,19 +238,18 @@ if (activetab == 1) {
         ImGui::EndChild();
     }
 
-    if (activeragesubtab == 5) {
+    if (activeragesubtab == 4) {
         const char* autohitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
         const char* automultipointhitboxes[] = {"Head", "Chest", "Body", "Arms", "Legs"};
 
-        ImGui::SetCursorPos(ImVec2(161, 61));
-        ImGui::BeginChild("##Auto", ImVec2(708, 410), false, 0); {
+        ImGui::SetCursorPos(ImVec2(515, 61));
+        ImGui::BeginChild("##Auto", ImVec2(354, 410), false, 0); {
             ImGui::Columns(2, NULL, false);
             UI::Slider("Hitchance", Options.rage_auto_hitchance, 0, 100);
             UI::Dropdownmulti("Hitboxes", autohitboxes[], Options.rage_auto_hitboxes);
             UI::Dropdownmulti("Multipoint", automultipointthitboxes[], Options.rage_auto_multipoint);
             UI::Slider("Min damage(Ocluded)", Options.rage_auto_mindmgocluded, 0, 100);
             UI::Slider("Min damage(Visible)", Options.rage_auto_mindmgvisible, 0, 100);
-            UI::Slider("Backtrack", Options.rage_auto_backtrack, 0, 400);
             UI::Slider("Delay", Options.rage_auto_delay, 0, 1000);
             UI::Checkbox("Force body", Options.rage_auto_forcebody);
             UI::Checkbox("Force head", Options.rage_auto_forcehead);
@@ -299,7 +287,7 @@ if (activetab == 2) {
             ImGui::Columns(2, NULL, false);
             UI::Checkbox("Enable", Options.esp_enemy_enabled);
             ImGui::SameLine();
-            UI::KeyBind(Options.esp_enemy_enabledkey);
+            UI::KeyBind(Options.esp_enemy_enabledkey, Options.esp_enemy_enabledkeymode);
             UI::Dropdown("Box", boxesp[], Options.esp_enemy_box);
             ImGui::SameLine();
             UI::ColorPicker(Options.esp_enemy_boxcolor);
@@ -373,7 +361,7 @@ if (activetab == 2) {
             ImGui::Columns(2, NULL, false);
             UI::Checkbox("Enable", Options.esp_local_enabled);
             ImGui::SameLine();
-            UI::KeyBind(Options.esp_local_enabledkey);
+            UI::KeyBind(Options.esp_local_enabledkey, Options.esp_local_enabledkeymode);
             UI::Checkbox("Flat", Options.esp_local_flat);
             UI::Dropdown("Box", boxesp[], Options.esp_local_box);
             ImGui::SameLine();
@@ -427,7 +415,7 @@ if (activetab == 2) {
         const char* skybox[] = {"", ""};
         const char* removals[] = {"Scope overlay", "Scope zoom", "View punch", "Aim punch", "Smoke Effects", "Flash Effects", "Fog", "Post Processing", "Arms", "Weapon"};
         const char* droppedweapons[] = {"Text", "Glow", "Icon"};
-        const char* bombflags[] = {"State", "Timer"};
+        const char* bombflags[] = {"State", "Timer", "Location"};
         const char* weaponflags[] = {"Icon", "Text", "Distance", "Ammo"};
         const char* chamsmaterial[] = {"", ""};
         const char* hitsound[] = { "Off", "Ahhh", "Anime moan", "Bell", "Flick", "Metalic", "Minecraft", "Roblox"};
@@ -465,7 +453,7 @@ if (activetab == 2) {
             UI::Dropdownmulti("Removals", removals[], Options.esp_other_removals);
             UI::Checkbox("Third person", Options.esp_other_thirdperson);
             ImGui::SameLine();
-            UI::KeyBind(Options.esp_other_thirdpersonkey);
+            UI::KeyBind(Options.esp_other_thirdpersonkey, Options.esp_other_thirdpersonkeymode);
             UI::Slider("Distance", Options.esp_other_thirdpersondistance, 0, 300); 
             UI::Checkbox("On death", Options.esp_other_thirdpersonondeath);
             UI::Checkbox("Disable on nade", Options.esp_other_thirdpersondisablenade);
@@ -474,9 +462,9 @@ if (activetab == 2) {
             UI::Checkbox("OOF arrows", Options.esp_other_oofarrows);
             ImGui::SameLine();
             UI::ColorPicker(Options.esp_other_oofarrowscolor);
-            UI::Checkbox("Molotov tracer", Options.esp_other_molotovtracer);
+            UI::Checkbox("Incendiary tracer", Options.esp_other_incendiarytracer);
             ImGui::SameLine();
-            UI::ColorPicker(Options.esp_other_molotovtracercolor);
+            UI::ColorPicker(Options.esp_other_incendiarytracercolor);
             UI::Checkbox("Smoke tracer", Options.esp_other_smoketracer);
             ImGui::SameLine();
             UI::ColorPicker(Options.esp_other_smoketracercolor);
@@ -489,9 +477,9 @@ if (activetab == 2) {
             UI::Checkbox("Decoy tracer", Options.esp_other_decoytracer);
             ImGui::SameLine();
             UI::ColorPicker(Options.esp_other_decoytracercolor);
-            UI::Checkbox("Molotov spread", Options.esp_other_molotovspread);
+            UI::Checkbox("Incendiary spread", Options.esp_other_incendiaryspread);
             ImGui::SameLine();
-            UI::ColorPicker(Options.esp_other_molotovspreadcolor);
+            UI::ColorPicker(Options.esp_other_incendiaryspreadcolor);
             UI::Checkbox("Smoke spread", Options.esp_other_smokespread);
             ImGui::SameLine();
             UI::ColorPicker(Options.esp_other_smokespreadcolor);
@@ -502,6 +490,8 @@ if (activetab == 2) {
             UI::ColorPicker(Options.esp_other_droppedweaponchamscolor);
             UI::Dropdown("Chams material", chamsmaterial[], Options.esp_other_droppedweaponchamsmaterial);
             UI::Checkbox("Glow", Options.esp_other_droppedweaponglow);
+            ImGui::SameLine();
+            UI::ColorPicker(Options.esp_other_droppedweaponglowcolor);
 
             //TODO: add crates for dangerzone
 
@@ -512,11 +502,11 @@ if (activetab == 2) {
             UI::Dropdown("Killsound", killsound[], Options.esp_other_killsound);
             UI::Dropdown("Killanouncer", killanouncer[], Options.esp_other_killanouncer);
             UI::Dropdown("Deathsound", deathsound[], Options.esp_other_deathsound);
-            UI::Checkbox("Grenade prediction", Options.esp_other_grenadeprediction);
+            UI::Checkbox("Grenade prediction", Options.esp_other_localgrenadeprediction);
             ImGui::SameLine();
-            UI::ColorPicker(Options.esp_other_grenadepredictiontrailcolor);
+            UI::ColorPicker(Options.esp_other_localgrenadepredictiontrailcolor);
             ImGui::SameLine(); 
-            UI::ColorPicker(Options.esp_other_grenadepredictionbouncecolor);
+            UI::ColorPicker(Options.esp_other_localgrenadepredictionbouncecolor);
             UI::Checkbox("Enemy grenade prediction", Options.esp_other_enemygrenadeprediction);
             ImGui::SameLine();
             UI::ColorPicker(Options.esp_other_enemygrenadepredictiontrailcolor);
@@ -525,7 +515,7 @@ if (activetab == 2) {
             UI::Checkbox("Watermark", Options.esp_other_watermark);
             UI::Checkbox("visualise oneway/wallbang locations", Options.esp_other_visualiseoneway);
             ImGui::SameLine();
-            UI::KeyBind(Options.esp_other_visualiseonewaykey);
+            UI::KeyBind(Options.esp_other_visualiseonewaykey, Options.esp_other_visualiseonewaykeymode);
             UI::Checkbox("Hitmarker", Options.esp_other_hitmarker);
         }
         ImGui::EndChild();
@@ -608,19 +598,16 @@ if (activetab == 3) {
             UI::Header("Other");
                 UI::Checkbox("Invert", Options.antiaim_rage_invert);
                 ImGui::SameLine();
-                UI::KeyBind(Options.antiaim_rage_invertkey);
+                UI::KeyBind(Options.antiaim_rage_invertkey, Options.antiaim_rage_invertkeymode);
                 UI::Checkbox("Target detection", Options.antiaim_rage_targetdetection);
                 UI::Checkbox("Wall detection", Options.antiaim_rage_walldetection);
                 UI::Checkbox("Slidewalk", Options.antiaim_rage_slidewalk);
                 UI::Checkbox("Fakeduck", Options.antiaim_rage_fakeduck);
                 ImGui::SameLine();
-                UI::KeyBind(Options.antiaim_rage_fakeduckkey);
-                UI::Checkbox("Teleport", Options.antiaim_rage_teleport);
-                ImGui::SameLine();
-                UI::KeyBind(Options.antiaim_rage_teleportkey);
+                UI::KeyBind(Options.antiaim_rage_fakeduckkey, Options.antiaim_rage_fakeduckkeymode);
                 UI::Checkbox("Psuedo crimwalk", Options.antiaim_rage_crimwalk);
                 ImGui::SameLine();
-                UI::KeyBind(Options.antiaim_rage_crimwalkkey);
+                UI::KeyBind(Options.antiaim_rage_crimwalkkey, Options.antiaim_rage_crimwalkkeymode);
                 UI::Checkbox("Antibackstab", Options.antiaim_rage_antibackstab);
         }
         ImGui::EndChild();
@@ -699,7 +686,7 @@ if (activetab == 5) {
         const char* informationspammer[] = {"Name", "Rank", "Weapon", "Location", "Health"};
         const char* buybotprimary[] = {"Off", "Auto", "Scout", "AWP", "Ak/M4"};
         const char* buybotsecondary[] = {"Off", "Dual-Berettas", "P250", "Five7/Tec9", "Deagle/R8"};
-        const char* buybotnades[] = {"Smoke", "Flash", "Molotov", "Decoy", "HE Grenade"};
+        const char* buybotnades[] = {"Smoke", "Flash", "Incendiary", "Decoy", "HE Grenade"};
         const char* buybotother[] = {"Kevlar", "Helmet", "Defuser", "Taser", "Riot Sheild"};
 
         ImGui::SetCursorPos(ImVec2(161, 61));
@@ -716,10 +703,10 @@ if (activetab == 5) {
             UI::Checkbox("Clantag", Options.misc_general_clantag);
             UI::Checkbox("Block bot", Options.misc_general_blockbot);
             ImGui::SameLine();
-            UI::KeyBind(Options.misc_general_blockbotkey);
+            UI::KeyBind(Options.misc_general_blockbotkey, Options.misc_general_blockbotkeymode);
             UI::Checkbox("Headstand bot", Options.misc_general_headstandbot);
             ImGui::SameLine();
-            UI::KeyBind(Options.misc_general_headstandbotkey);
+            UI::KeyBind(Options.misc_general_headstandbotkey, Options.misc_general_headstandbotkeymode);
             UI::Dropdown("Force region", forceregion[], Options.misc_general_forceregion);
             UI::Checkbox("Reveal overwatch", Options.misc_general_revealoverwatch);
             UI::Checkbox("Reveal ranks", Options.misc_general_revealranks);
@@ -735,9 +722,9 @@ if (activetab == 5) {
             UI::Dropdown("Information spammer", informationspammer[], Options.misc_general_informationspammer);
             UI::Checkbox("Grenade helper", Options.misc_general_grenadehelper);
             ImGui::SameLine();
-            UI::KeyBind(Options.misc_general_grenadehelpervisiblekey);
+            UI::KeyBind(Options.misc_general_grenadehelpervisiblekey, Options.misc_general_grenadehelpervisiblekeymode);
             ImGui::SameLine();
-            UI::KeyBind(Options.misc_general_grenadehelperexecutekey);
+            UI::KeyBind(Options.misc_general_grenadehelperexecutekey, Options.misc_general_grenadehelperexecutekeymode);
             UI::Checkbox("Visible when grenade equip", Options.misc_general_grenadehelpervwge);
             UI::Checkbox("Bunnyhop", Options.misc_general_bhop);
             UI::Slider("Hitchance", Options.misc_general_bhophitchance, 0, 100);
@@ -746,7 +733,7 @@ if (activetab == 5) {
             UI::Checkbox("Aircrouch", Options.misc_general_aircrouch);
             UI::Checkbox("Peek assist", Options.misc_general_peekassist);
             ImGui::SameLine();
-            UI::KeyBind(Options.misc_general_peekassistkey);
+            UI::KeyBind(Options.misc_general_peekassistkey, Options.misc_general_peekassistkeymode);
             UI::Header("Buybot");
             UI::Checkbox("Enable buybot", Options.misc_buybot_enable);
             UI::Dropdown("Primary", buybotprimary[], Options.misc_buybot_primary);
@@ -793,17 +780,18 @@ if (activetab == 5) {
 
             //options
             UI::Header("Options");
-            ImGui::Button("Steal name", ImVec2(276, 30), Options.misc_player_stealname);
-            ImGui::Button("Copy clantag", ImVec2(276, 30), Options.misc_player_copyclantag);
-            UI::Checkbox("Priority", Options.misc_player_priority);
-            UI::Checkbox("Whitelist", Options.misc_player_whitelist); //dont shoot
-            UI::Checkbox("Rage", Options.misc_player_set_rage);
-            UI::Checkbox("Legit", Options.misc_player_set_legit);
-            UI::Checkbox("Follow", Options.misc_player_follow);
-            UI::Dropdown("Force hitboxes", playerhitboxes[], Options.misc_player_forcehitboxes);
-            UI::Checkbox("Force head", Options.misc_player_forcehead);
-            UI::Checkbox("Force body", Options.misc_player_forcebody);
-            UI::Checkbox("Dont resolve", Options.misc_player_dontresolve);
+            ImGui::Button("Steal name", ImVec2(276, 30), PlayerOptions.stealname);
+            ImGui::Button("Copy clantag", ImVec2(276, 30), PlayerOptions.copyclantag);
+            UI::Checkbox("Priority", PlayerOptions.priority);
+            UI::Checkbox("Whitelist", PlayerOptions.whitelist); //dont shoot
+            UI::Checkbox("Rage", PlayerOptions.set_rage);
+            UI::Checkbox("Legit", PlayerOptions.set_legit);
+            UI::Checkbox("Follow", PlayerOptions.follow);
+            UI::Dropdown("Force hitboxes", playerhitboxes[], PlayerOptions.forcehitboxes);
+            UI::Checkbox("Force head", PlayerOptions.forcehead);
+            UI::Checkbox("Force body", PlayerOptions.forcebody);
+            UI::Checkbox("Dont resolve", PlayerOptions.dontresolve);
+            ImGui::Button("Reset options", ImVec2(276, 30), PlayerOptions.resetoptions);
         }
         ImGui::EndChild();
     }

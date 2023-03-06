@@ -6,23 +6,19 @@
 #include "eventlistener.h"
 #include "entitylistener.h"
 
-class CTimer
-{
+class CTimer {
 public:
-	CTimer(const bool bStart = false)
-	{
+	CTimer(const bool bStart = false) {
 		if (bStart)
 			Reset();
 	}
 
-	void Reset()
-	{
+	void Reset() {
 		timePoint = std::chrono::high_resolution_clock::now();
 	}
 
 	template <class C = std::chrono::milliseconds>
-	[[nodiscard]] auto Elapsed() const
-	{
+	[[nodiscard]] auto Elapsed() const {
 		return std::chrono::duration_cast<C>(std::chrono::high_resolution_clock::now() - timePoint).count();
 	}
 
@@ -30,35 +26,20 @@ private:
 	std::chrono::high_resolution_clock::time_point timePoint = {};
 };
 
-namespace U
-{
-
+namespace U {
 	std::uintptr_t *FindHudElement(const char *szName);
-
 	void ForceFullUpdate();
-
 	bool LineGoesThroughSmoke(const Vector &vecStart, const Vector &vecEnd, const bool bGrenadeBloat = true);
-
 	void SetLocalPlayerReady();
-
 	void SendName(const char *szName);
-
 	void SendClanTag(const char *szClanTag, const char *szIdentifier);
-
 	bool PrecacheModel(const char *szModelName);
-
 	IClientNetworkable *CreateDLLEntity(int iEntity, EClassIndex nClassID, int nSerial);
-
 	const char8_t *GetWeaponIcon(short nItemDefinitionIndex);
-
 	void FlashWindow(HWND pWindow);
-
 	std::string UnicodeToMultiByte(const std::wstring_view wszUnicode);
-
 	std::wstring MultiByteToUnicode(const std::string_view szAscii);
-
 	inline CEventListener EventListener;
-
 	inline CEntityListener EntityListener;
 
 	/*----------------------Extra Shit----------------------*/

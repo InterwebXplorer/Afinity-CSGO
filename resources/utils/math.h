@@ -23,37 +23,35 @@
 #define M_DEG2RAD( x )		DirectX::XMConvertToRadians( x )
 #pragma endregion
 
-extern "C" using RandomSeedFn = int(__cdecl*)(int iSeed);
-extern "C" using RandomFloatFn = float(__cdecl*)(float flMinVal, float flMaxVal);
-extern "C" using RandomFloatExpFn = float(__cdecl*)(float flMinVal, float flMaxVal, float flExponent);
-extern "C" using RandomIntFn = int(__cdecl*)(int iMinVal, int iMaxVal);
-extern "C" using RandomGaussianFloatFn = float(__cdecl*)(float flMean, float flStdDev);
+extern "C" using RandomSeedFn = int(__cdecl*)(int Seed);
+extern "C" using RandomFloatFn = float(__cdecl*)(float MinVal, float MaxVal);
+extern "C" using RandomFloatExpFn = float(__cdecl*)(float MinVal, float MaxVal, float Exponent);
+extern "C" using RandomIntFn = int(__cdecl*)(int MinVal, int MaxVal);
+extern "C" using RandomGaussianFloatFn = float(__cdecl*)(float Mean, float StdDev);
 
 
-namespace M
-{
+namespace Math {
 	bool	Setup();
 
-	void	VectorAngles(const Vector& vecForward, QAngle& angView);
+	void	VectorAngles(const Vector& Forward, QAngle& View);
 
-	void	AngleVectors(const QAngle& angView, Vector* pForward, Vector* pRight = nullptr, Vector* pUp = nullptr);
+	void	AngleVectors(const QAngle& View, Vector* Forward, Vector* Right = nullptr, Vector* Up = nullptr);
 
-	void	AngleMatrix(const QAngle& angView, matrix3x4_t& matOutput, const Vector& vecOrigin = Vector(0.0f, 0.0f, 0.0f));
-
+	void	AngleMatrix(const QAngle& View, matrix3x4_t& Output, const Vector& Origin = Vector(0.0f, 0.0f, 0.0f));
 	
-	Vector2D AnglePixels(const float flSensitivity, const float flPitch, const float flYaw, const QAngle& angBegin, const QAngle& angEnd);
+	Vector2D AnglePixels(const float Sensitivity, const float Pitch, const float Yaw, const QAngle& Begin, const QAngle& End);
 
-	QAngle	PixelsAngle(const float flSensitivity, const float flPitch, const float flYaw, const Vector2D& vecPixels);
+	QAngle	PixelsAngle(const float Sensitivity, const float Pitch, const float Yaw, const Vector2D& Pixels);
 
-	QAngle	CalcAngle(const Vector& vecStart, const Vector& vecEnd);
+	QAngle	CalcAngle(const Vector& Start, const Vector& End);
 
-	Vector	VectorTransform(const Vector& vecTransform, const matrix3x4_t& matrix);
+	Vector	VectorTransform(const Vector& Transform, const matrix3x4_t& matrix);
 
-	Vector	ExtrapolateTick(const Vector& p0, const Vector& v0);
+	Vector	ExtrapolateTick(const Vector& a0, const Vector& b0);
 
-	void	RotatePoint(const ImVec2& vecIn, const float flAngle, ImVec2* pOutPoint);
+	void	RotatePoint(const ImVec2& In, const float Angle, ImVec2* OutPoint);
 
-	void	RotateCenter(const ImVec2& vecCenter, const float flAngle, ImVec2* pOutPoint);
+	void	RotateCenter(const ImVec2& Center, const float Angle, ImVec2* OutPoint);
 
 	
 	inline RandomSeedFn				RandomSeed;
@@ -64,9 +62,10 @@ namespace M
 
 	/*--------------------Extra Math Shit--------------------*/
 	
-	T M::RandomIntSet(T first, Ts... rest);
-	void RandomIntRange(int min, int max);
-	void IntAddSubtractRange(int addstart, int addend, int subtractstart, int subtractend, int amount);
-	void IntAddRange(int addstart, int addend, int amount);
-	void IntSubtractRange(int subtractstart, int subtractend, int amount);
+	template <typename T, typename... Ts>
+	T RandomIntSet(T First, Ts... Rest);
+	void RandomIntRange(int Min, int Max);
+	void IntAddSubtractRange(int AddStart, int AddEnd, int SubtractStart, int SubtractEnd, int Amount);
+	void IntAddRange(int AddStart, int AddEnd, int Amount);
+	void IntSubtractRange(int SubtractStart, int SubtractEnd, int Amount);
 }

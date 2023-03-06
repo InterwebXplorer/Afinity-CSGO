@@ -8,17 +8,18 @@
 #include "resources/sdk/entity.h"
 
 namespace Global {
-    inline std::string logfilename = nullptr;
-    inline HMODULE hDll = nullptr;
-    inline CBaseEntity* pLocal = nullptr;
-    inline CBaseEntity* pTarget = nullptr;
-    inline CUserCmd* pCmd = nullptr;
-    inline bool bSendPacket = true;
-    inline QAngle angRealView = {};
-    inline Qangle angStep = {};
-    inline Vector vecCamera = {};
-    inline bool doubletap = false;
-    inline bool hideshots = false;
-    inline bool fakeduck = false;
-    inline bool teleport = false;
+    inline std::string LogFileName = nullptr;
+    inline HMODULE Dll = nullptr;
+    inline bool MenuOpen = false;
+    inline CBaseEntity* LocalPlayer = nullptr;
+    inline CBaseEntity* TargetPlayer = nullptr;
+    inline CUserCmd* Cmd = nullptr;
+    inline bool SendPacket = true;
+    inline QAngle RealView = {};
+    inline QAngle AimStep = {};
+    inline Vector CameraOrigin = {};
+    inline bool DoubleTap = false;
+    inline bool HideShots = false;
+    inline bool FakeDuck = false;
+    inline ImVec2 WindowSize = ImVec2(0, 0);
 }

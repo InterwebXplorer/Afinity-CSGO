@@ -1,96 +1,97 @@
 #pragma once
 #include <format>
 #include "../minhook/minhook.h"
+#include "filelogging.h"
 
-class DetourHook
-{
-public:
-	DetourHook() = default;
+class DetourHook {
+	public:
+		DetourHook() = default;
 
-	explicit DetourHook(void *pFunction, void *pDetour)
-		: pBaseFn(pFunction), pReplaceFn(pDetour) {}
+		explicit DetourHook(void* Function, void* Detour) : BaseFn(Function), ReplaceFn(Detour) {}
 
-	bool Create(void *pFunction, void *pDetour)
-	{
-		pBaseFn = pFunction;
+		bool Create(void* Function, void* Detour) {
+			BaseFn = Function;
 
-		if (pBaseFn == nullptr)
-			return false;
+			if (!BaseFn)
+				return false;
 
-		pReplaceFn = pDetour;
+			ReplaceFn = Detour;
 
-		if (pReplaceFn == nullptr)
-			return false;
+			if (!ReplaceFn)
+				return false;
 
-		const MH_STATUS status = MH_CreateHook(pBaseFn, pReplaceFn, &pOriginalFn);
+			const MH_STATUS Status = MH_CreateHook(BaseFn, ReplaceFn, &OriginalFn);
 
-		if (status != MH_OK)
-			throw std::runtime_error(std::format(XorStr("failed to create hook function, status: {}\nbase function -> {:#08X}"), MH_StatusToString(status), reinterpret_cast<std::uintptr_t>(pBaseFn)));
+			if (Status != MH_OK) {
+				WriteToLog(std::format("[Error] Failed to create hook function <Status -> {}, Base function -> {:#08X}>", MH_StatusToString(Status), reinterpret_cast<std::uintptr_t>(BaseFn)));
+				return false;
+			}
 
-		if (!this->Replace())
-			return false;
+			if (!this->Replace())
+				return false;
 
-		return true;
-	}
+			return true;
+		}
 
-	bool Replace()
-	{
-		if (pBaseFn == nullptr)
-			return false;
+		bool Replace() {
+			if (!BaseFn)
+				return false;
 
-		if (bIsHooked)
-			return false;
+			if (IsHooked)
+				return false;
 
-		const MH_STATUS status = MH_EnableHook(pBaseFn);
+			const MH_STATUS Status = MH_EnableHook(BaseFn);
 
-		if (status != MH_OK)
-			throw std::runtime_error(std::format(XorStr("failed to enable hook function, status: {}\nbase function -> {:#08X} address"), MH_StatusToString(status), reinterpret_cast<std::uintptr_t>(pBaseFn)));
+			if (Status != MH_OK) {
+				WriteToLog(std::format("[Error] Failed to enable hook function <Status -> {}, Base function -> {:#08X}>", MH_StatusToString(Status), reinterpret_cast<std::uintptr_t>(BaseFn)));
+				return false;
+			}
 
-		bIsHooked = true;
-		return true;
-	}
+			IsHooked = true;
+			return true;
+		}
 
-	bool Remove()
-	{
-		if (!this->Restore())
-			return false;
+		bool Remove() {
+			if (!this->Restore())
+				return false;
 
-		const MH_STATUS status = MH_RemoveHook(pBaseFn);
+			const MH_STATUS Status = MH_RemoveHook(BaseFn);
 
-		if (status != MH_OK)
-			throw std::runtime_error(std::format(XorStr("failed to remove hook, status: {}\n base function -> {:#08X} address"), MH_StatusToString(status), reinterpret_cast<std::uintptr_t>(pBaseFn)));
+			if (Status != MH_OK) {
+				WriteToLog(std::format("[Error] Failed to remove hook function <Status -> {}, Base function -> {:#08X}>", MH_StatusToString(Status), reinterpret_cast<std::uintptr_t>(BaseFn)));
+				return false;
+			}
 
-		return true;
-	}
+			return true;
+		}
 
-	bool Restore()
-	{
-		if (!bIsHooked)
-			return false;
+		bool Restore() {
+			if (!IsHooked)
+				return false;
 
-		const MH_STATUS status = MH_DisableHook(pBaseFn);
+			const MH_STATUS Status = MH_DisableHook(BaseFn);
 
-		if (status != MH_OK)
-			throw std::runtime_error(std::format(XorStr("failed to restore hook, status: {}\n base function -> {:#08X} address"), MH_StatusToString(status), reinterpret_cast<std::uintptr_t>(pBaseFn)));
+			if (Status != MH_OK) {
+				WriteToLog(std::format("[Error] Failed to restore hook function <Status -> {}, Base function -> {:#08X}>", MH_StatusToString(Status), reinterpret_cast<std::uintptr_t>(BaseFn)));
+				return false;
+			}
 
-		bIsHooked = false;
-		return true;
-	}
+			IsHooked = false;
+			return true;
+		}
 
-	template <typename Fn>
-	Fn GetOriginal()
-	{
-		return static_cast<Fn>(pOriginalFn);
-	}
+		template <typename Function>
+		Function GetOriginal() {
+			return static_cast<Function>(OriginalFn);
+		}
 
-	inline bool IsHooked() const
-	{
-		return bIsHooked;
-	}
+		inline bool IsHooked() const {
+			return IsHooked;
+		}
 
-private:
-	bool bIsHooked = false;
-	void *pBaseFn = nullptr;
-	void *pReplaceFn = nullptr;
-	void *pOriginalFn = nullptr;
+	private:
+		bool IsHooked = false;	
+		void* BaseFn = nullptr;
+		void* ReplaceFn = nullptr;
+		void* OriginalFn = nullptr;
 };

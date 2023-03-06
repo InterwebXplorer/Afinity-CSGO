@@ -8,36 +8,36 @@
 #include <Windows.h>
 #include <Shlobj.h>
 
-void config::setup() {
+void Config::Setup() {
     if (!getpathtoconfigs) {
-        writetolog("[Error] Failed to get config path")
+        WriteToLog("[Error] Failed to get config path")
         return;
     }
 
-    if (!create(default.afinity)) {
-        writetolog("[Error] Failed to create default config")
+    if (!Create("default.afinity")) {
+        WriteToLog("[Error] Failed to create default config")
         return;
     }
 
-    if (!save(default.afinity)) {
-        writetolog("[Error] Failed to save default config");
+    if (!Save("default.afinity")) {
+        WriteToLog("[Error] Failed to save default config");
         return;
     }
 
-    if (!load(default.afinity)) {
-        writetolog("[Error] Failed to load default config");
+    if (!load("default.afinity")) {
+        WriteToLog("[Error] Failed to load default config");
         return;
     }
 
     if (!refresh()) {
-        writetolog("[Error] Failed to refresh configs");
+        WriteToLog("[Error] Failed to refresh configs");
         return;
     }
 
-    writetolog("[Success] Config setup complete");
+    WriteToLog("[Success] Config setup complete");
 }
 
-bool config::create(std::string& name = "default.afinity") {
+bool Config::Create(std::string& name = "default.afinity") {
     if (!Options.config_create)
         return;
 
@@ -62,7 +62,7 @@ bool config::create(std::string& name = "default.afinity") {
     return true;
 }
 
-bool config::save(std::string& name) {
+bool Config::Save(std::string& name) {
     if (!Options.config_save)
         return;
 
@@ -80,7 +80,7 @@ bool config::save(std::string& name) {
     return true;
 }
 
-bool config::load(std::string& name) {
+bool Config::Load(std::string& name) {
     if (!Options.config_load)
         return;
 
@@ -98,7 +98,7 @@ bool config::load(std::string& name) {
     return true;
 }
 
-bool config::remove(std::string& name) {
+bool Config::Remove(std::string& name) {
     if (!Options.config_delete)
         return;
 
@@ -106,21 +106,21 @@ bool config::remove(std::string& name) {
     return std::remove(path);
 }
 
-bool config::reset(std::string& name) {
+bool Config::Reset(std::string& name) {
     if (!Options.config_reset)
         return;
 
-    return load(default.afinity)
+    return Load("default.afinity");
 }
 
-void config::refresh() {
+void Config::Refresh() {
     if (!Options.config_refresh)
         return;
 
     return getconfigfiles();
 }
 
-void config::getconfigfiles() {
+void Config::getconfigfiles() {
     std::string path = getpathtoconfigs();
     std::vector<std::string> configlist;
 
@@ -131,19 +131,10 @@ void config::getconfigfiles() {
     }
 }
 
-std::string config::getpathtoconfigs() {
+std::string Config::getpathtoconfigs() {
     char path[MAX_PATH];
 
     if (SHGetSpecialFolderPathA(NULL, path, CSIDL_APPDATA, FALSE))
         return path + std::string("\\Roaming\\Afinity\\CSGO\\Configs\\");  
     return "";
 }
-
-/*
-UI::Textbox("Name", Options.config_name);
-ImGui::Button("Create", ImVec2(276, 30), Options.config_create);
-ImGui::Button("Save", ImVec2(276, 30), Options.config_save);
-ImGui::Button("Load", ImVec2(276, 30), Options.config_load);
-ImGui::Button("Delete", ImVec2(276, 30), Options.config_delete);
-ImGui::Button("Reset", ImVec2(276, 30), Options.config_reset);
-*/

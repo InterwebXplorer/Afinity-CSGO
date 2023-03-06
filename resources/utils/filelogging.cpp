@@ -6,52 +6,52 @@
 #include <Windows.h>
 #include <Shlobj.h>
 
-std::string getlogfilename() { //Result will look like this "03.10.22'14.26.45'CSGO.log"
-    time_t now = time(nullptr);
-    tm* localtime = localtime(&now);
-    char filename[32];
-    strftime(filename, sizeof(filename), "%d.%m.%y''%H.%M.%S''CSGO.log", localtime);
-    return filename;
-}
+void CreateLogFile() {
+    Global::LogFileName = getlogfilename();
+    std::string Path = getpathtologs() + Global::LogFileName;
+    std::ofstream LogFile(Path);
 
-std::string getcurrenttime() {
-    time_t now = time(nullptr);
-    tm* localtime = localtime(&now);
-    char time[9];
-    std::strftime(time, sizeof(time), "%H:%M:%S", localtime);
-    return time;
-}
-
-std::string getpathtologs() {
-    char path[MAX_PATH];
-
-    if (SHGetSpecialFolderPathA(NULL, path, CSIDL_APPDATA, FALSE))
-        return path + std::string("\\Roaming\\Afinity\\CSGO\\Logs\\");  
-    return "";
-}
-
-void createlogfile() {
-    Global::logfilename = getlogfilename();
-    std::string path = getpathtologs() + Global::logfilename;
-    std::ofstream log_file(path);
-
-    if (!log_file.is_open())
+    if (!LogFile.is_open())
         return;
 
-    log_file.close();
+    LogFile.close();
 }
 
-void writetolog(const std::string& text) {
-    std::string path = getpathtologs() + Global::logfilename;
-    std::ofstream log_file(path, std::ios_base::app);
+void WriteToLog(const std::string& Text) {
+    std::string Path = getpathtologs() + Global::LogFileName;
+    std::ofstream LogFile(Path, std::ios_base::app);
 
-    if (!log_file.is_open())
+    if (!LogFile.is_open())
         return;
 
-    if (log_file.is_open())
-        log_file << "[" << getcurrenttime() << "]: " << text << std::endl;
+    if (LogFile.is_open())
+        LogFile << "[" << getcurrenttime() << "]: " << Text << std::endl;
     else
         return;
         
-    log_file.close();
+    LogFile.close();
+}
+
+std::string getlogfilename() { //Result will look like this "03.10.22'14.26.45'CSGO.log"
+    time_t Now = time(nullptr);
+    tm* LocalTime = localtime(&Now);
+    char FileName[32];
+    strftime(FileName, sizeof(FileName), "%d.%m.%y''%H.%M.%S''CSGO.log", LocalTime);
+    return FileName;
+}
+
+std::string getcurrenttime() {
+    time_t Now = time(nullptr);
+    tm* LocalTime = localtime(&Now);
+    char Time[9];
+    strftime(Time, sizeof(Time), "%H:%M:%S", LocalTime);
+    return Time;
+}
+
+std::string getpathtologs() {
+    char Path[MAX_PATH];
+
+    if (SHGetSpecialFolderPathA(NULL, Path, CSIDL_APPDATA, FALSE))
+        return Path + std::string("\\Roaming\\Afinity\\CSGO\\Logs\\");  
+    return "";
 }

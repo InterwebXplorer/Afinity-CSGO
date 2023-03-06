@@ -1,109 +1,130 @@
-// used: std::this_thread
 #include <thread>
-
 #include "inputsystem.h"
-// used: wndproc hook, inputsystem interface
-#include "../core/hooks.h"
-// used: menu open/panic keys
-#include "../core/variables.h"
-// used: get variable
-#include "../core/config.h"
-// used: menu open state
-#include "../core/menu.h"
+#include "../../hooks.h"
+#include "../../options.h"
+#include "../../global.h"
 
-bool IPT::Setup()
-{
-	D3DDEVICE_CREATION_PARAMETERS creationParameters = { };
-	while (FAILED(I::DirectDevice->GetCreationParameters(&creationParameters)))
+bool InputSystem::Setup() {
+	D3DDEVICE_CREATION_PARAMETERS CreationParameters = { };
+	while (FAILED(I::DirectDevice->GetCreationParameters(&CreationParameters)))
 		std::this_thread::sleep_for(200ms);
 
-	hWindow = creationParameters.hFocusWindow;
+	Window = creationParameters.hFocusWindow;
 
-	if (hWindow == nullptr)
+	if (Window == nullptr)
 		return false;
 
-	pOldWndProc = reinterpret_cast<WNDPROC>(SetWindowLongPtrW(hWindow, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(H::hkWndProc)));
+	OldWndProc = reinterpret_cast<WNDPROC>(SetWindowLongPtrW(Window, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(Hooks::WndProc)));
 
-	if (pOldWndProc == nullptr)
+	if (OldWndProc == nullptr)
 		return false;
 
 	return true;
 }
 
-void IPT::Restore()
-{
-	if (pOldWndProc != nullptr)
-	{
-		SetWindowLongPtrW(hWindow, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(pOldWndProc));
-		pOldWndProc = nullptr;
+void InputSystem::Restore() {
+	if (OldWndProc != nullptr) {
+		SetWindowLongPtrW(Window, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(OldWndProc));
+		OldWndProc = nullptr;
 	}
 
-	// reset input state
 	I::InputSystem->EnableInput(true);
 }
 
-bool IPT::Process(UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	// prevent process when e.g. binding something in-menu
-	if (W::bMainOpened && wParam != C::Get<int>(Vars.iMenuKey) && wParam != C::Get<int>(Vars.iPanicKey))
+bool InputSystem::Process(UINT Msg, WPARAM WideParam, LPARAM LongParam) {
+	if (Global::MenuOpen || Options.misc_general_unload)
 		return false;
 
-	// current active key
-	int nKey = 0;
-	// current active key state
-	EKeyState state = EKeyState::NONE;
+	int ActiveKey = 0;
+	KeyState ActiveKeyState = KeyState::NONE;
 
-	switch (uMsg)
-	{
+	switch (Msg) {
 	case WM_KEYDOWN:
 	case WM_SYSKEYDOWN:
-		if (wParam < 256U)
-		{
-			nKey = wParam;
-			state = EKeyState::DOWN;
+		if (WideParam < 256U) {
+			ActiveKey = WideParam;
+			ActiveKeyState = KeyState::DOWN;
 		}
 		break;
 	case WM_KEYUP:
 	case WM_SYSKEYUP:
-		if (wParam < 256U)
-		{
-			nKey = wParam;
-			state = EKeyState::UP;
+		if (WideParam < 256U) {
+			ActiveKey = WideParam;
+			ActiveKeyState = KeyState::UP;
 		}
 		break;
 	case WM_LBUTTONDOWN:
 	case WM_LBUTTONUP:
 	case WM_LBUTTONDBLCLK:
-		nKey = VK_LBUTTON;
-		state = uMsg == WM_LBUTTONUP ? EKeyState::UP : EKeyState::DOWN;
+		ActiveKey = VK_LBUTTON;
+		ActiveKeyState = Msg == WM_LBUTTONUP ? KeyState::UP : KeyState::DOWN;
 		break;
 	case WM_RBUTTONDOWN:
 	case WM_RBUTTONUP:
 	case WM_RBUTTONDBLCLK:
-		nKey = VK_RBUTTON;
-		state = uMsg == WM_RBUTTONUP ? EKeyState::UP : EKeyState::DOWN;
+		ActiveKey = VK_RBUTTON;
+		ActiveKeyState = Msg == WM_RBUTTONUP ? KeyState::UP : KeyState::DOWN;
 		break;
 	case WM_MBUTTONDOWN:
 	case WM_MBUTTONUP:
 	case WM_MBUTTONDBLCLK:
-		nKey = VK_MBUTTON;
-		state = uMsg == WM_MBUTTONUP ? EKeyState::UP : EKeyState::DOWN;
+		ActiveKey = VK_MBUTTON;
+		ActiveKeyState = Msg == WM_MBUTTONUP ? KeyState::UP : KeyState::DOWN;
 		break;
 	case WM_XBUTTONDOWN:
 	case WM_XBUTTONUP:
 	case WM_XBUTTONDBLCLK:
-		nKey = (GET_XBUTTON_WPARAM(wParam) == XBUTTON1 ? VK_XBUTTON1 : VK_XBUTTON2);
-		state = uMsg == WM_XBUTTONUP ? EKeyState::UP : EKeyState::DOWN;
+		ActiveKey = (GET_XBUTTON_WPARAM(WideParam) == XBUTTON1 ? VK_XBUTTON1 : VK_XBUTTON2);
+		ActiveKeyState = Msg == WM_XBUTTONUP ? KeyState::UP : KeyState::DOWN;
 		break;
 	default:
 		return false;
 	}
 
-	// save key states
-	if (state == EKeyState::UP && arrKeyState.at(nKey) == EKeyState::DOWN) // if swap states it will be pressed state
-		arrKeyState.at(nKey) = EKeyState::RELEASED;
+	if (ActiveKeyState == KeyState::UP && KeyState.at(ActiveKey) == KeyState::DOWN)
+		LastKeyState.at(ActiveKey) = KeyState::RELEASED;
 	else
-		arrKeyState.at(nKey) = state;
+		LastKeyState.at(ActiveKey) = ActiveKeyState;
 
 	return true;
+}
+
+/*--------------------Extra Input Shit--------------------*/
+
+bool InputSystem::UpdateTargetOptionState(Options& TargetOption, Options TargetOptionKey, Options TargetOptionMode) {
+	if (!TargetOption)
+		return false;
+	
+	if (!TargetOptionKey && TargetOptionMode != ALWAYS)
+		return false;
+
+	if (!TargetOptionMode)
+		return false;
+
+	Switch(TargetOptionMode) {
+		case ALWAYS:
+			TargetOption = true;
+			break;
+
+		case TOGGLE:
+			if (IPT::IsKeyDown(TargetOptionKey))
+				TargetOption = !TargetOption;
+			break;
+
+		case ONHOLD:
+			if (IPT::IsKeyDown(TargetOptionKey))
+				TargetOption = true;
+			else
+				TargetOption = false;
+			break;
+
+		case OFFHOLD:
+			if (IPT::IsKeyDown(TargetOptionKey))
+				TargetOption = false;
+			else 
+				TargetOption = true;
+			break;
+	}
+
+	return TargetOption;
 }

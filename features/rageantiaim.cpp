@@ -15,94 +15,112 @@
 #include "rageantiaim.h"
 #include "rageaim.h"
 
-void antiaim::execute(CUserCmd* pCmd, CBaseEntity* pLocal, bool& bSendPacket) {
-    if (!pLocal->IsAlive())
+void RageAntiAim::Execute(CUserCmd* Cmd, CBaseEntity* LocalPlayer, bool& SendPacket) {
+    if (!LocalPlayer->IsAlive())
         return;
 
-    if (pLocal->GetFlags() & FL_FROZEN) 
+    if (LocalPlayer->GetFlags() & FL_FROZEN) 
         return;
 
-    if (pLocal->GetMoveType() == MOVETYPE_LADDER)
+    if (LocalPlayer->GetMoveType() == MOVETYPE_LADDER)
         return;
 
-    if (pLocal->GetMoveType() == MOVETYPE_NOCLIP)
+    if (LocalPlayer->GetMoveType() == MOVETYPE_NOCLIP)
         return;
 
-    if (pCmd->iButtons & IN_USE)
+    if (Cmd->iButtons & IN_USE)
         return;
 
-    CBaseCombatWeapon* pWeapon = pLocal->GetWeapon();
+    CBaseCombatWeapon* ActiveWeapon = LocalPlayer->GetWeapon();
 
-    if (!pWeapon)
+    if (!ActiveWeapon)
         return;
 
-    int nDefinitionIndex = pWeapon->GetItemDefinitionIndex();
-    CCSWeaponData* pWeaponData = I::WeaponSystem->GetWeaponData(nDefinitionIndex);
+    const short WeaponDefinitionIndex = ActiveWeapon->GetItemDefinitionIndex();
+    CCSWeaponData* ActiveWeaponData = I::WeaponSystem->GetWeaponData(WeaponDefinitionIndex);
 
-    if (!pWeaponData)
+    if (!ActiveWeaponData)
 		return;
 
-    float flServerTime = ; //TODO (Prediction system)
+    float ServerTime = ; //TODO (Prediction system)
 
-    if (pWeaponData->IsGun() && pLocal->CanShoot(static_cast<CWeaponCSBase*>(pWeapon)) && pCmd->iButtons & IN_ATTACK)
+    if (ActiveWeaponData->IsGun() && LocalPlayer->CanShoot(static_cast<CWeaponCSBase*>(ActiveWeapon)) && Cmd->iButtons & IN_ATTACK)
         return;
 
-    else if (pWeaponData->nDefinitionIndex == WEAPON_REVOLVER) {
-        if (pCmd->iButtons & IN_ATTACK && pWeapon->GetNextPrimaryAttack() <= flServerTime)
+    else if (ActiveWeapon->GetItemDefinitionIndex() == WEAPON_REVOLVER) {
+        if (Cmd->iButtons & IN_ATTACK && ActiveWeapon->GetNextPrimaryAttack() <= ServerTime)
             return;
 
-        if (pCmd->iButtons & IN_SECOND_ATTACK)
-            return;
-    }
-
-    else if (pWeaponData->nWeaponType == WEAPONTYPE_KNIFE) {
-        if (pCmd->iButtons & IN_ATTACK && pWeapon->GetNextPrimaryAttack() <= flServerTime)
-            return;
-
-        if (pCmd->iButtons & IN_SECOND_ATTACK && pWeapon->GetNextSecondaryAttack() <= flServerTime)
+        if (Cmd->iButtons & IN_SECOND_ATTACK)
             return;
     }
 
-    else if (pWeaponData->nWeaponType == WEAPONTYPE_GRENADE) {
-        CBaseCSGrenade* pGrenade = static_cast<CBaseCSGrenade*>(pWeapon);
-
-        if (pGrenade == nullptr)
+    else if (ActiveWeaponData->nWeaponType == WEAPONTYPE_KNIFE) {
+        if (Cmd->iButtons & IN_ATTACK && ActiveWeapon->GetNextPrimaryAttack() <= ServerTime)
             return;
 
-        if (pGrenade->IsPinPulled() && pCmd->iButtons & (IN_ATTACK | IN_SECOND_ATTACK)) {
-            if (pGrenade->GetThrowTime() > 0.0f)
+        if (Cmd->iButtons & IN_SECOND_ATTACK && ActiveWeapon->GetNextSecondaryAttack() <= ServerTime)
+            return;
+    }
+
+    else if (ActiveWeaponData->nWeaponType == WEAPONTYPE_GRENADE) {
+        CBaseCSGrenade* Grenade = static_cast<CBaseCSGrenade*>(ActiveWeapon);
+
+        if (Grenade == nullptr)
+            return;
+
+        if (Grenade->IsPinPulled() && Cmd->iButtons & (IN_ATTACK | IN_SECOND_ATTACK)) {
+            if (Grenade->GetThrowTime() => 0.0f)
 				return;
-        }   
+        }
     }
 
-    angSentView = pCmd->angViewPoint;
+    QAngle OriginalViewAngles = Cmd->angViewPoint;
+    
+    struct ViewAngles {
+        int x;
+        int y;
+        int z;
+    };
 
-    targetdetection();
-    walldetection();
-    desync();
-    xaxis();
-    yaxis();
+    ViewAngles ViewAngleInts;
+        
+    ViewAngleInts.x = static_cast<int>(OriginalViewAngles.x);
+    ViewAngleInts.y = static_cast<int>(OriginalViewAngles.y);
+    ViewAngleInts.z = static_cast<int>(OriginalViewAngles.z);
+
+    TargetDetection();
+    WallDetection();
+    Desync();
+    XAxis();
+    YAxis();
+    FakeDuck();
+    
+    QAngle ModifiedViewAngles(static_cast<float>(ViewAngleInts.x), static_cast<float>(ViewAngleInts.y), static_cast<float>(ViewAngleInts.z));
 
     if (Options.misc_general_antiuntrusted) {
-        angSentView.Normalize();
-        angSentView.Clamp();
+        ModifiedViewAngles.Normalize();
+        ModifiedViewAngles.Clamp();
     }
 
-    pCmd->angViewPoint = angSentView;
+    Cmd->angViewPoint = ModifiedViewAngles;
 }
 
-int rageantiaim::xaxis(CUserCmd* pCmd, CBaseEntity* pLocal) {
+void RageAntiAim::XAxis() {
     if (!Options.antiaim_rage_xenable)
         return;
 
     switch (Options.antiaim_rage_xanglemode) {
-        case 1: angSentView.x = Options.antiaim_rage_xbaseangle; //static
+        case STATIC: 
+            ViewAngleInts.x = Options.antiaim_rage_xbaseangle;
             break;
     
-        case 2: angSentView.x = M::RandomIntSet(90, 0, -90); //UDZ random
+        case UDZRANDOM: 
+            ViewAngleInts.x = Math::RandomIntSet(90, 0, -90);
             break;
 
-        case 3: angSentView.x = M::IntAddSubtractRange(90, -90, -90, 90, 1); //fluctuate
+        case FLUCTUATE: 
+            ViewAngleInts.x = Math::IntAddSubtractRange(90, -90, -90, 90, 1);
             break;
     }
 
@@ -110,26 +128,33 @@ int rageantiaim::xaxis(CUserCmd* pCmd, CBaseEntity* pLocal) {
         return;
 
     switch (Options.antiaim_rage_xjittermode) {
-        case 1: angSentView.x = M::RandomIntSet(Options.antiaim_rage_xjitterrangemin, Options.antiaim_rage_xjitterrangemax) //offset
+        case OFFSET: 
+            static bool Flip = false;
+            ViewAngleInts.x = Flip ? Options.antiaim_rage_xjitterrangemin : Options.antiaim_rage_xjitterrangemax;
+            Flip = !Flip;
             break;
 
-        case 2: angSentView.x = M::RandomIntRange(Options.antiaim_rage_xjitterrangemin, Options.antiaim_rage_xjitterrangemax) //random
+        case RANDOM: 
+            ViewAngleInts.x = Math::RandomIntRange(Options.antiaim_rage_xjitterrangemin, Options.antiaim_rage_xjitterrangemax);
             break;
     }
 }
 
-int rageantiaim::yaxis(CUserCmd* pCmd, CBaseEntity* pLocal) {
+void RageAntiAim::YAxis() {
     if (!Options.antiaim_rage_yenable)
         return;
 
     switch (Options.antiaim_rage_yanglemode) {
-        case 1: angSentView.y = Options.antiaim_rage_ybaseangle; //static 
+        case STATIC: 
+            ViewAngleInts.y = Options.antiaim_rage_ybaseangle;
             break;
         
-        case 2: angSentView.y = M::IntAddRange(0, 360, 1); //spin
+        case SPIN: 
+            ViewAngleInts.y = Math::IntAddRange(0, 360, 1);
             break;
 
-        case 3: angSentView.y = M::RandomIntSet(0, -90, 180, 90); //WASD random
+        case WASDRANDOM: 
+            ViewAngleInts.y = Math::RandomIntSet(0, -90, 180, 90);
             break;
     }
 
@@ -137,136 +162,162 @@ int rageantiaim::yaxis(CUserCmd* pCmd, CBaseEntity* pLocal) {
         return;
 
     switch (Options.antiaim_rage_yjittermode) {
-        case 1: angSentView.y = M::RandomIntSet(Options.antiaim_rage_yjitterrangemin, Options.antiaim_rage_yjitterrangemax); //offset
+        case OFFSET: 
+            static bool Flip = false;
+            ViewAngleInts.y = Flip ? Options.antiaim_rage_yjitterrangemin : Options.antiaim_rage_yjitterrangemax;
+            Flip = !Flip;
             break;
 
-        case 2: angSentView.y = M::RandomIntRange(Options.antiaim_rage_yjitterrangemin, Options.antiaim_rage_yjitterrangemax); //random
+        case RANDOM: 
+            ViewAngleInts.y = Math::RandomIntRange(Options.antiaim_rage_yjitterrangemin, Options.antiaim_rage_yjitterrangemax);
             break;
     }
 }
 
-int rageantiaim::desync(CUserCmd* pCmd, CBaseEntity* pLocal, float flServerTime, bool& bSendPacket) { 
+void RageAntiAim::Desync(CBaseEntity* LocalPlayer, float ServerTime, bool& SendPacket) { //TODO
     if (!Options.antiaim_rage_desyncenable)
         return;
 
-    int y_desync_side = 0;
+    static int DesyncSide = 0;
 
     switch (Options.antiaim_rage_desyncside) {
-        case 1: y_desync_side = 0; //none
+        case OFF: 
+            DesyncSide = 0;
             break;
 
-        case 2: y_desync_side = Options.antiaim_rage_desyncrangeleft; //left
+        case LEFT: 
+            DesyncSide = Options.antiaim_rage_desyncrangeleft;
             break;
 
-        case 3: y_desync_side = Options.antiaim_rage_desyncrangeright; //right
+        case RIGHT: 
+            DesyncSide = Options.antiaim_rage_desyncrangeright;
             break;
 
-        case 4: y_desync_side = M::RandomIntSet(Options.antiaim_rage_desyncrangeleft, Options.antiaim_rage_desyncrangeright); //random
+        case RANDOM:
+            static bool Flip = false;
+            DesyncSide = Flip ? Options.antiaim_rage_desyncrangeleft : Options.antiaim_rage_desyncrangeright;
+            Flip = !Flip;
             break;
     }
 
 
-}
-
-int rageantiaim::freestand(CUserCmd* pCmd, CBaseEntity* pLocal) {
 
 }
 
-/*
-        switch (Options.antiaim_rage_desyncfreestand) {
-            case 1:
-                break;
+int RageAntiAim::freestand(CUserCmd* Cmd, CBaseEntity* LocalPlayer) { //TODO
+    switch (Options.antiaim_rage_desyncfreestand) {
+        case OFF:
+            break;
 
-            case 2: y_freestand = //freestand
-                break;
+        case FREESTAND:
 
-            case 3: y_freestand = //antifreestand
-                break;
-        }
+            break;
+
+        case ANTIFREESTAND:
+
+            break;
     }
-
 }
-*/
 
-void rageantiaim::fakelag(CUserCmd* pCmd, CBaseEntity* pLocal, bool& bSendPacket) {
+void RageAntiAim::fakelag(CUserCmd* Cmd, CBaseEntity* LocalPlayer) {
     if (!Options.antiaim_rage_fakelagenable)
         return;
 
     if (IGameEvent->FindListener("round_start"))
         return;
 
-    if (Global::doubletap)
+    if (Global::DoubleTap)
         return;
 
-    if (Global::hideshots)
+    if (Global::HideShots)
         return;
 
-    if (Global::fakeduck)
+    if (Global::FakeDuck)
         return;
 
-    if (Global::teleport)
-        return;
+    if (Options.antiaim_rage_fakelagdormant) { //todo
+        for (int i = 0; i < I::ClientEntityList->nMaxClients(); i++) {
+            CBaseEntity* Entity = I::ClientEntityList->Get<CBaseEntity>(i);
 
-    if (Options.antiaim_rage_fakelagdormant) {
-        for (int i = 0; i < I::ClientEntityList->GetMaxEntities(); i++) {
-            CBaseEntity* pEntity = static_cast<int>(IClientEntityList->GetClientEntity(i));
+            if (!Entity->IsPlayer())
+                continue;
 
-            if (!pEntity->IsEnemy())
-                return;
+            if (!Entity->IsEnemy())
+                continue;
+
+            if (!Entity->IsAlive())
+                continue;
+            else
+                break;
         }
     }
 
-    int maxchokedticks = Options.antiaim_rage_fakelagrangemin;
+    int MaxChokedTicks = Options.antiaim_rage_fakelagrangemin;
 
     switch (Options.antiaim_rage_maxfakelagtriggers) {
-        case ON_STANDING: 
-                if (pLocal->GetVelocity() < 0.1f)
-                    maxchokedticks = Options.antiaim_rage_fakelagrangemax;
+        case STANDING: 
+            if (LocalPlayer->GetVelocity() = 0.0f)
+                MaxChokedTicks = Options.antiaim_rage_fakelagrangemax;
             break;
 
-        case ON_MOVING: 
-                if (pLocal->GetVelocity() > 0.1f)
-                    maxchokedticks = Options.antiaim_rage_fakelagrangemax;
+        case MOVING: 
+            if (LocalPlayer->GetVelocity() > 0.0f)
+                MaxChokedTicks = Options.antiaim_rage_fakelagrangemax;
             break;
 
-        case ON_INAIR: 
-                if (!pLocal->GetFlags & FL_ONGROUND)
-                    maxchokedticks = Options.antiaim_rage_fakelagrangemax;
+        case INAIR: 
+                if (!LocalPlayer->GetFlags & FL_ONGROUND)
+                    MaxChokedTicks = Options.antiaim_rage_fakelagrangemax;
             break;
 
-        case ON_SHOT: 
-                if (pCmd->iButtons & IN_ATTACK || pCmd->iButtons & IN_SECOND_ATTACK)
-                    maxchokedticks = Options.antiaim_rage_fakelagrangemax;
+        case ONSHOT: 
+            if (Cmd->iButtons & IN_ATTACK || Cmd->iButtons & IN_SECOND_ATTACK)
+                MaxChokedTicks = Options.antiaim_rage_fakelagrangemax;
             break;
 
-        case ON_PEEK:
-                
+        case ONPEEK:
+            CBaseEntity* TargetEntity = nullptr;
+
+            for (int i = 0; i < I::Globals->nMaxClients()) {
+                CBaseEntity* Entity = I::ClientEntityList->Get<CBaseEntity>(i);
+
+                if (!Entity)
+                    continue;
+
+                if (!Entity->IsPlayer())
+                    continue;
+
+                if (!Entity->IsEnemy())
+                    continue;
+                else
+                    TargetEntity = Entity;
+                    break;
+            }
+
+            if (LocalPlayer->IsVisible(TargetEntity, TargetEntity->GetBonePosition(BONE_HEAD).value_or(TargetEntity->GetEyePosition(false)), false))
+                MaxChokedTicks = Options.antiaim_rage_fakelagrangemax;
             break;
         
-        case ON_DAMAGE: 
-                if (pLocal->GetTakeDamage())
-                    maxchokedticks = Options.antiaim_rage_fakelagrangemax;
+        case ONDAMAGE: 
+            if (LocalPlayer->GetTakeDamage())
+                MaxChokedTicks = Options.antiaim_rage_fakelagrangemax;
             break;
 
-        case ON_RELOAD: 
-                if (pCmd->iButtons & IN_RELOAD)
-                    maxchokedticks = Options.antiaim_rage_fakelagrangemax;
-            break;
-
-        default:
+        case ONRELOAD: 
+            if (Cmd->iButtons & IN_RELOAD)
+                MaxChokedTicks = Options.antiaim_rage_fakelagrangemax;
             break;
     }
 
-    if (I::ClientState->nChokedCommands > maxchokedticks)
-        bSendPacket = true;
+    if (I::ClientState->nChokedCommands >= MaxChokedTicks)
+        Global::SendPacket = true;
     else
-        bSendPacket = false;
+        Global::SendPacket = false;
 }
 
-void rageantiaim::targetdetection(CUserCmd* pCmd, CBaseEntity* pEntity) {
+void RageAntiAim::targetdetection(CUserCmd* Cmd, CBaseEntity* pEntity) {
     if (!Options.antiaim_rage_targetdetection)
         return;
-
 
 /*
     if (!Options.antiaim_rage_targetdetection)
@@ -279,7 +330,7 @@ void rageantiaim::targetdetection(CUserCmd* pCmd, CBaseEntity* pEntity) {
     if (pTarget == nullptr)
         return;
 
-    for (int i = 0; i < I::ClientEntityList->GetMaxEntities(); i++) {
+    for (int i = 0; i < I::ClientEntityList->nMaxClients(); i++) {
         int pTarget = static_cast<int>(IClientEntityList->GetClientEntity(i));
 
         if (!pTarget->IsAlive())
@@ -306,76 +357,52 @@ void rageantiaim::targetdetection(CUserCmd* pCmd, CBaseEntity* pEntity) {
 
         if (TargetDistance < IdealDistance) {
             TargetDistance = IdealDistance;
-            CalcAngle(LocalAngle, TargetAngle, pCmd->angViewPoint);
+            CalcAngle(LocalAngle, TargetAngle, Cmd->angViewPoint);
         }
     }
 */
+
 }
 
-void rageantiaim::walldetection(CBaseEntity* pLocal) {
+void RageAntiAim::walldetection(CBaseEntity* LocalPlayer) {
     if (!Options.antiaim_rage_walldetection)
         return;
+
+    //traceray 8 rays around player check if they hit a wall
 }
 
-void rageantiaim::slidewalk(CUserCmd* pCmd, CBaseEntity* pLocal) {
+void RageAntiAim::slidewalk(CUserCmd* Cmd, CBaseEntity* LocalPlayer) {
     if (!Options.antiaim_rage_slidewalk)
         return;
 
-    if (!pLocal->IsAlive())
+    if (!LocalPlayer->IsAlive())
         return;
 
-    if (pLocal->GetMoveType() == MOVETYPE_LADDER)
+    if (LocalPlayer->GetMoveType() == MOVETYPE_LADDER)
         return;
 
-    pCmd->iButtons ^= IN_FORWARD | IN_BACK | IN_MOVELEFT | IN_MOVERIGHT;
+    Cmd->iButtons ^= IN_FORWARD | IN_BACK | IN_MOVELEFT | IN_MOVERIGHT;
 }
 
-void rageantiaim::fakeduck(CUserCmd* pCmd, CBaseEntity* pLocal) {
+void RageAntiAim::FakeDuck(CUserCmd* Cmd, CBaseEntity* LocalPlayer) {
     if (!Options.antiaim_rage_fakeduck)
         return;
 
-    if (!pLocal->IsAlive())
+    Global::FakeDuck = true;
+
+    if (!LocalPlayer->IsAlive())
         return;
-        
-    if (IPT::IsKeyDown(Options.antiaim_rage_fakeduckkey)) {
-        pCmd->iButtons |= IN_BULLRUSH;
+    
+    if (!Options.misc_general_infiniteduck)
+        Cmd->iButtons |= IN_BULLRUSH;
 
-        if (INetChannel->iChokedPackets <= 7)
-            pCmd->iButtons &= ~IN_DUCK;
-        else 
-            pCmd->iButtons |= IN_DUCK;
-    }
-};
-
-void rageantiaim::teleport(CUserCmd* pCmd) {
-    if (!Options.antiaim_rage_teleport)
-        return;
-
-    if (IPT::IsKeyDown(Options.antiaim_rage_teleportkey)) {
-        ImDrawList::AddCircleFilled(ImVec2(0, 0), 10, ImColor(255, 255, 255, 255), 32);
-
-        if (I::ClientState->nChokedCommands == 0)
-            Global::bSendPacket == false;
-    }
-
-    if (IPT::IsKeyReleased(Options.antiaim_rage_teleportkey) || I::ClientState->nChokedCommands == 14) {
-        if (pCmd->iButtons & IN_FORWARD)
-            pCmd->iButtons |= IN_BACK;
-
-        if (pCmd->iButtons & IN_LEFT)
-            pCmd->iButtons |= IN_RIGHT;
-
-        if (pCmd->iButtons & IN_RIGHT)
-            pCmd->iButtons |= IN_LEFT;
-
-        if (pCmd->iButtons & IN_BACK)
-            pCmd->iButtons |= IN_FORWARD;
-
-        Global::bSendPacket == true;
-    }
+    if (I::ClientState->nChokedCommands <= 7)
+        Cmd->iButtons &= ~IN_DUCK;
+    else 
+        Cmd->iButtons |= IN_DUCK;
 }
 
-void rageantiaim::psuedocrimwalk() { //essentially dt on/off | charge and release
+void RageAntiAim::psuedocrimwalk() { //essentially dt on/off | charge and release
     if (!Options.antiaim_rage_crimwalk)
         return;
 }
@@ -406,7 +433,7 @@ void Movement::cripwalk() {
 }
 */
 
-void rageantiaim::antibackstab(CBaseEntity* pLocal) {
+void RageAntiAim::antibackstab(CBaseEntity* LocalPlayer) {
     if (!Options.antiaim_rage_antibackstab)
         return;
 }

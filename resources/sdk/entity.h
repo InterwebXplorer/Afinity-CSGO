@@ -355,13 +355,13 @@ public:
 
 	void SetAbsOrigin(const Vector &vecOrigin) {
 		using SetAbsOriginFn = void(__thiscall *)(void *, const Vector &);
-		static auto oSetAbsOrigin = reinterpret_cast<SetAbsOriginFn>(MEM::FindPattern(CLIENT_DLL, "55 8B EC 83 E4 F8 51 53 56 57 8B F1 E8")));
+		static auto oSetAbsOrigin = reinterpret_cast<SetAbsOriginFn>(MEM::FindPattern(CLIENT_DLL, "55 8B EC 83 E4 F8 51 53 56 57 8B F1 E8"));
 		oSetAbsOrigin(this, vecOrigin);
 	}
 
 	void SetAbsAngles(const QAngle &angView) {
 		using SetAbsAngleFn = void(__thiscall *)(void *, const QAngle &);
-		static auto oSetAbsAngles = reinterpret_cast<SetAbsAngleFn>(MEM::FindPattern(CLIENT_DLL, "55 8B EC 83 E4 F8 83 EC 64 53 56 57 8B F1 E8")));
+		static auto oSetAbsAngles = reinterpret_cast<SetAbsAngleFn>(MEM::FindPattern(CLIENT_DLL, "55 8B EC 83 E4 F8 83 EC 64 53 56 57 8B F1 E8"));
 		oSetAbsAngles(this, angView);
 	}
 
@@ -414,12 +414,12 @@ public:
 	}
 
 	int &GetTakeDamage() {
-		static const std::uintptr_t uTakeDamageOffset = *reinterpret_cast<std::uintptr_t *>(MEM::FindPattern(CLIENT_DLL, "80 BE ? ? ? ? ? 75 46 8B 86")) + 0x2);
+		static const std::uintptr_t uTakeDamageOffset = *reinterpret_cast<std::uintptr_t *>(MEM::FindPattern(CLIENT_DLL, "80 BE ? ? ? ? ? 75 46 8B 86") + 0x2);
 		return *reinterpret_cast<int *>(reinterpret_cast<std::uintptr_t>(this) + uTakeDamageOffset);
 	}
 
 	CUserCmd &GetLastCommand() {
-		static const std::uintptr_t uLastCommandOffset = *reinterpret_cast<std::uintptr_t *>(MEM::FindPattern(CLIENT_DLL, "8D 8E ? ? ? ? 89 5C 24 3C")) + 0x2);
+		static const std::uintptr_t uLastCommandOffset = *reinterpret_cast<std::uintptr_t *>(MEM::FindPattern(CLIENT_DLL, "8D 8E ? ? ? ? 89 5C 24 3C") + 0x2);
 		return *reinterpret_cast<CUserCmd *>(reinterpret_cast<std::uintptr_t>(this) + uLastCommandOffset);
 	}
 #pragma endregion
@@ -429,7 +429,7 @@ public:
 	N_ADD_VARIABLE_OFFSET(float, GetSpawnTime, "CCSPlayer->m_iAddonBits", -0x4);
 	N_ADD_VARIABLE(int, GetMoney, "CCSPlayer->m_iAccount");
 	N_ADD_VARIABLE(int, GetTotalHits, "CCSPlayer->m_totalHitsOnServer");
-	N_ADD_VARIABLE(int, GetArmor, "CCSPlayer->m_ArmorValue");
+	N_ADD_VARIABLE(int, GetArmour, "CCSPlayer->m_ArmorValue");
 	N_ADD_VARIABLE(QAngle, GetEyeAngles, "CCSPlayer->m_angEyeAngles");
 	N_ADD_VARIABLE(bool, IsDefusing, "CCSPlayer->m_bIsDefusing");
 	N_ADD_VARIABLE(bool, IsScoped, "CCSPlayer->m_bIsScoped");
@@ -448,6 +448,9 @@ public:
 	N_ADD_VARIABLE(float, GetLowerBodyYaw, "CCSPlayer->m_flLowerBodyYawTarget");
 	N_ADD_VARIABLE(int, GetSurvivalTeam, "CCSPlayer->m_nSurvivalTeam");
 	N_ADD_VARIABLE_OFFSET(int, IsUsedNewAnimState, "CCSPlayer->m_flLastExoJumpTime", 0x8);
+	//------------------------------------ADDITIONAL SHIT------------------------------------//
+	N_ADD_VARIABLE(bool, HasBomb, "CCSPlayer->m_iPlayerC4");
+	//---------------------------------------------------------------------------------------//
 
 	inline bool IsArmored(const int iHitGroup) {
 		bool bIsArmored = false;
@@ -478,6 +481,13 @@ public:
 
 		return bIsArmored;
 	}
+#pragma endregion
+
+#pragma region DT_CSPlayerResource //ADDED THIS
+	N_ADD_VARIABLE(int, GetPing, "CCSPlayerResource->m_iPing");
+	N_ADD_VARIABLE(int, GetKills, "CCSPlayerResource->m_iKills");
+	N_ADD_VARIABLE(int, GetDeaths, "CCSPlayerResource->m_iDeaths");
+	N_ADD_VARIABLE(int, GetAssists, "CCSPlayerResource->m_iAssists");
 #pragma endregion
 
 #pragma region DT_BaseEntity
@@ -835,6 +845,7 @@ public:
 	N_ADD_VARIABLE(float, GetTimerLength, "CPlantedC4->m_flTimerLength");
 	N_ADD_VARIABLE(float, GetDefuseLength, "CPlantedC4->m_flDefuseLength");
 	N_ADD_VARIABLE(float, GetDefuseCountDown, "CPlantedC4->m_flDefuseCountDown");
+	N_ADD_VARIABLE(int, GetBombSite, "CPlantedC4->m_nBombSite"); //ADDED THIS
 	N_ADD_VARIABLE(bool, IsPlanted, "CPlantedC4->m_bBombTicking");
 	N_ADD_VARIABLE(CBaseHandle, GetDefuserHandle, "CPlantedC4->m_hBombDefuser");
 	N_ADD_VARIABLE(bool, IsDefused, "CPlantedC4->m_bBombDefused");

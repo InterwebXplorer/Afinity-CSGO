@@ -1,53 +1,36 @@
 #pragma once
-// used: std::array
 #include <array>
 #include <Windows.h>
 
-enum class EKeyState : int
-{
+enum class KeyState : int {
 	NONE,
 	DOWN,
 	UP,
 	RELEASED
-};
+}
 
-/*
- * INPUT SYSTEM
- * listen and handle key states
- */
-namespace IPT
-{
-	// Values
-	/* current window */
-	inline HWND	hWindow = nullptr;
-	/* saved window messages handler */
-	inline WNDPROC pOldWndProc = nullptr;
-	/* last processed key states */
-	inline std::array<EKeyState, 256U> arrKeyState = { };
+namespace InputSystem {
+	inline HWND	Window = nullptr;
+	inline WNDPROC OldWndProc = nullptr;
+	inline std::array<KeyState, 256U> LastKeyState = { };
 
-	// Get
-	/* set our window messages proccesor */
 	bool Setup();
-	/* restore window messages processor and clear saved pointer */
 	void Restore();
-	/* process input window message and save keys states in array */
-	bool Process(UINT uMsg, WPARAM wParam, LPARAM lParam);
+	bool Process(UINT Msg, WPARAM WideParam, LPARAM LongParam);
 
-	/* is given key being held */
-	inline bool IsKeyDown(const std::uint32_t uButtonCode)
-	{
-		return arrKeyState.at(uButtonCode) == EKeyState::DOWN;
+	inline bool IsKeyDown(const std::uint32_t ButtonCode) {
+		return LastKeyState.at(ButtonCode) == KeyState::DOWN;
 	}
 
-	/* was given key released */
-	inline bool IsKeyReleased(const std::uint32_t uButtonCode)
-	{
-		if (arrKeyState.at(uButtonCode) == EKeyState::RELEASED)
-		{
-			arrKeyState.at(uButtonCode) = EKeyState::UP;
+	inline bool IsKeyReleased(const std::uint32_t ButtonCode) {
+		if (LastKeyState.at(ButtonCode) == KeyState::RELEASED) {
+			LastKeyState.at(ButtonCode) = KeyState::UP;
 			return true;
 		}
-
 		return false;
 	}
+
+	/*--------------------Extra Input Shit--------------------*/
+
+	bool UpdateTargetOptionState(Options& TargetOption, Options TargetOptionKey, Options TargetOptionMode);
 }

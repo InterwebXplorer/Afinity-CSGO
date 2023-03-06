@@ -1,5 +1,5 @@
 #include "rageaim.h"
-#include "rageresolver.h"
+#include "resolver.h"
 #include "esp.h"
 #include "rageantiaim.h"
 #include "misc.h"
