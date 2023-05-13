@@ -409,7 +409,6 @@ public:
 	N_ADD_DATAFIELD(float, GetSurfaceFriction, this->GetPredictionDescMap(), "m_surfaceFriction");
 
 	inline bool IsAlive() {
-
 		return (this->GetLifeState() == LIFE_ALIVE);
 	}
 
@@ -483,12 +482,14 @@ public:
 	}
 #pragma endregion
 
-#pragma region DT_CSPlayerResource //ADDED THIS
+//------------------------------------ADDITIONAL SHIT------------------------------------//
+#pragma region DT_CSPlayerResource 
 	N_ADD_VARIABLE(int, GetPing, "CCSPlayerResource->m_iPing");
 	N_ADD_VARIABLE(int, GetKills, "CCSPlayerResource->m_iKills");
 	N_ADD_VARIABLE(int, GetDeaths, "CCSPlayerResource->m_iDeaths");
 	N_ADD_VARIABLE(int, GetAssists, "CCSPlayerResource->m_iAssists");
 #pragma endregion
+//---------------------------------------------------------------------------------------//
 
 #pragma region DT_BaseEntity
 	N_ADD_VARIABLE(float, GetAnimationTime, "CBaseEntity->m_flAnimTime");
@@ -723,9 +724,14 @@ public:
 	N_ADD_VARIABLE(int, GetViewModelIndex, "CBaseCombatWeapon->m_iViewModelIndex");
 	N_ADD_VARIABLE(int, GetWorldModelIndex, "CBaseCombatWeapon->m_iWorldModelIndex");
 	N_ADD_VARIABLE(CBaseHandle, GetWorldModelHandle, "CBaseCombatWeapon->m_hWeaponWorldModel");
-
 	N_ADD_DATAFIELD(bool, IsReloading, this->GetPredictionDescMap(), "m_bInReload");
 #pragma endregion
+
+//------------------------------------ADDITIONAL SHIT------------------------------------//
+#pragma region DT_Tablet
+	N_ADD_VARIABLE(bool, IsReceptionBlocked, "CTablet->m_bTabletReceptionIsBlocked");
+#pragma endregion
+//---------------------------------------------------------------------------------------//
 
 #pragma region DT_BaseAttributableItem
 	N_ADD_VARIABLE(short, GetItemDefinitionIndex, "CBaseAttributableItem->m_iItemDefinitionIndex");

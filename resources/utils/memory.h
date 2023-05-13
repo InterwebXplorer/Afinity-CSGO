@@ -84,6 +84,10 @@ namespace Memory {
 		return Temp;
 	}
 	
+	inline std::uintptr_t GetAbsoluteAddress(const std::uintptr_t RelativeAddress) {
+		return RelativeAddress + 0x4 + *reinterpret_cast<std::int32_t*>(RelativeAddress);
+	}
+
 	template <typename T = void*>
 	constexpr T GetVFunc(void* thisptr, std::size_t Index) {
 		return (*static_cast<T**>(thisptr))[Index];

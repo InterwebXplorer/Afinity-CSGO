@@ -26,24 +26,18 @@ private:
 	std::chrono::high_resolution_clock::time_point timePoint = {};
 };
 
-namespace U {
-	std::uintptr_t *FindHudElement(const char *szName);
+namespace Utils {
+	std::uintptr_t* FindHudElement(const char* Name);
 	void ForceFullUpdate();
-	bool LineGoesThroughSmoke(const Vector &vecStart, const Vector &vecEnd, const bool bGrenadeBloat = true);
+	bool LineGoesThroughSmoke(const Vector &Start, const Vector &End, const bool GrenadeBloat);
 	void SetLocalPlayerReady();
-	void SendName(const char *szName);
-	void SendClanTag(const char *szClanTag, const char *szIdentifier);
-	bool PrecacheModel(const char *szModelName);
-	IClientNetworkable *CreateDLLEntity(int iEntity, EClassIndex nClassID, int nSerial);
-	const char8_t *GetWeaponIcon(short nItemDefinitionIndex);
-	void FlashWindow(HWND pWindow);
-	std::string UnicodeToMultiByte(const std::wstring_view wszUnicode);
-	std::wstring MultiByteToUnicode(const std::string_view szAscii);
-	inline CEventListener EventListener;
-	inline CEntityListener EntityListener;
-
-	/*----------------------Extra Shit----------------------*/
-
-	void U::ColorConvertRGBAtoHSV(float r, float g, float b, float a, float& h, float& s, float& v);
-	void U::ColorConvertHSVtoRGBA(float h, float s, float v, float& r, float& g, float& b, float& a);
+	void SendName(const char* Name);
+	void SendClanTag(const char* ClanTag, const char* Identifier);
+	bool PrecacheModel(const char* ModelName);
+	IClientNetworkable* CreateDLLEntity(int Entity, EClassIndex ClassID, int Serial);
+	std::string UnicodeToMultiByte(const std::wstring_view Unicode);
+	std::wstring MultiByteToUnicode(const std::string_view Ascii);
+	void ColorConvertRGBAtoHSV(float r, float g, float b, float a, float& h, float& s, float& v);
+	void ColorConvertHSVtoRGBA(float h, float s, float v, float& r, float& g, float& b, float& a);
+	const char* GetChamsMaterialFromOption(Options TargetOption);
 }

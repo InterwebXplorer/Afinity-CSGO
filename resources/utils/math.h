@@ -68,4 +68,5 @@ namespace Math {
 	void IntAddSubtractRange(int AddStart, int AddEnd, int SubtractStart, int SubtractEnd, int Amount);
 	void IntAddRange(int AddStart, int AddEnd, int Amount);
 	void IntSubtractRange(int SubtractStart, int SubtractEnd, int Amount);
+	float Calculate3DDistance(const Vector& Point1, const Vector& Point2);
 }

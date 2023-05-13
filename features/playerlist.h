@@ -7,28 +7,31 @@
 #define MULTIOPTION(name, ...) enum name { __VA_ARGS__ }
 
 namespace PlayerList {
+    void InitializePlayerlist();
+    void UpdatePlayerlist();
+    void ResetPlayerlist();
+
     extern std::vector<PlayerOptions> PlayerProfiles;
 
-    void AddPlayer(CBaseEntity* Player);
-    void ResetPlayerOptions(CBaseEntity* Player);
+    OPTION(bool, ResetOptions, false);
 }
 
 class PlayerOptions {
     public:
-        OPTION(std::string, playername, "");
-        OPTION(bool, isbot, false);
-        OPTION(bool, isresolved, false);
+        OPTION(std::string, PlayerName, "");
+        OPTION(std::string, SteamID, "");
+        OPTION(bool, IsBot, false);
+        OPTION(bool, IsResolved, false); //update in resolver.cpp
+        OPTION(bool, IsTeamMember, false);
         //------------------------------------------//
-        OPTION(bool, stealname, false);
-        OPTION(bool, copyclantag, false);
-        OPTION(bool, ispriorityplayer, false);
-        OPTION(bool, whitelist, false);
-        OPTION(bool, set_rage, false);
-        OPTION(bool, set_legit, false);
-        OPTION(bool, follow, false);
-        MULTIOPTION(forcehitboxes, HEAD = false, CHEST = false, BODY = false, ARMS = false, LEGS = false);
-        OPTION(bool, forcehead, false);
-        OPTION(bool, forcebody, false);
-        OPTION(bool, dontresolve, false);
-        OPTION(bool, resetoptions, false);
+        OPTION(bool, StealName, false);
+        OPTION(bool, CopyClantag, false);
+        OPTION(bool, IsPriorityPlayer, false);
+        OPTION(bool, Whitelist, false);
+        OPTION(bool, SetRage, false);
+        OPTION(bool, SetLegit, false);
+        OPTION(bool, Follow, false);
+        OPTION(bool, ForceHead, false);
+        OPTION(bool, ForceBody, false);
+        OPTION(bool, DontResolve, false);
 }

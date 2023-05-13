@@ -6,30 +6,23 @@
 #include "../resources/utils/consolelogging.h"
 #include "../resources/utils/inputsystem.h"
 #include "../resources/utils/math.h"
+#include "../resources/utils/memory.h"
+#include "esp.h"
 #include "../options.h"
 #include "misc.h"
 #include <Windows.h>
+#include <Vector>
 
-void misc::autoaccept(const char* SoundEntry) {
-    if (!Options.misc_general_autoaccept)
-        return;
-
-    if (strcmp(SoundEntry, "UIPanorama.popup_accept_match_beep")) {
-        U::SetLocalPlayerReady();
-
-        FLASHWINFO.cbSize = sizeof(FLASHWINFO);
-        FLASHWINFO.dwFlags = FLASHW_ALL | FLASHW_TIMERNOFG;
-        FLASHWINFO.uCount = 0;
-        FLASHWINFO.dwTimeout = 0;
-        FlashWindowEx(FLASHWINFO);
-    }
-}
-
-void misc::autopistol(CUserCmd* Cmd, CBaseEntity* LocalPlayer) {
+void Misc::AutoPistol(CUserCmd* Cmd) {
     if (!Options.misc_general_autopistol)
         return;
 
-    if (!pLocal->IsAlive())
+    CBaseEntity* LocalPlayer = I::Engine->GetLocalPlayer();
+
+    if (!LocalPlayer)
+        return;
+
+    if (!LocalPlayer->IsAlive())
         return;
 
     CBaseCombatWeapon* ActiveWeapon = LocalPlayer->GetWeapon();
@@ -58,18 +51,44 @@ void misc::autopistol(CUserCmd* Cmd, CBaseEntity* LocalPlayer) {
 		Cmd->iButtons &= ~IN_ATTACK;
 }
 
-void misc::preservekillfeed() { //TODO
-    if (!Options.misc_general_preservekillfeed)
+void Misc::FixTabletSignal() {
+    if (!Options.misc_general_fixtabletsignal)
         return;
+
+    CBaseEntity* LocalPlayer = I::Engine->GetLocalPlayer();
+
+    if (!LocalPlayer)
+        return;
+
+    if (!LocalPlayer->IsAlive())
+        return;
+
+    CBaseCombatWeapon* ActiveWeapon = LocalPlayer->GetWeapon();
+
+    if (!ActiveWeapon)
+        return;
+
+    const short WeaponDefinitionIndex = ActiveWeapon->GetItemDefinitionIndex();
+    CCSWeaponData* ActiveWeaponData = I::WeaponSystem->GetWeaponData(WeaponDefinitionIndex);
+
+    if (!ActiveWeaponData)
+		return;
+
+	if (!ActiveWeaponData->nWeaponType = WEAPONTYPE_TABLET)
+		return;
     
-    if (!IGameEvent->FindListener("round_end")) //reset???
-        return;
+    ActiveWeapon->IsReceptionBlocked() = false;
 }
 
-void misc::autodefuse(CUserCmd* Cmd, CBaseEntity* LocalPlayer) {
+void Misc::AutoDefuse(CUserCmd* Cmd) {
     if (!Options.misc_general_autodefuse)
         return;
         
+    CBaseEntity* LocalPlayer = I::Engine->GetLocalPlayer();
+
+    if (!LocalPlayer)
+        return;
+
     if (!LocalPlayer->IsAlive())
         return;
 
@@ -111,8 +130,13 @@ void misc::autodefuse(CUserCmd* Cmd, CBaseEntity* LocalPlayer) {
         Cmd->iButtons |= IN_USE;
 }
 
-void misc::autoextinguishincendiarys(CUserCmd* Cmd, CBaseEntity* LocalPlayer) {
+void Misc::AutoExtinguishIncendiarys(CUserCmd* Cmd) {
     if (!Options.misc_general_autoextinguishincendiarys)
+        return;
+
+    CBaseEntity* LocalPlayer = I::Engine->GetLocalPlayer();
+
+    if (!LocalPlayer)
         return;
     
     if (!LocalPlayer->IsAlive())
@@ -174,138 +198,71 @@ void misc::autoextinguishincendiarys(CUserCmd* Cmd, CBaseEntity* LocalPlayer) {
 	}
 }
 
-void misc::fakeping() { //TODO
-    if (!Options.misc_general_fakeping)
-        return;
-
-    //Options.misc_general_fakepingamount
-}
-
-void misc::clantag() { //TODO
+void Misc::ClanTag() {
     if (!Options.misc_general_clantag)
         return;
+
+    const char* ClanTag[] = {"<>", "<A>", "<AF>", "<AFI>", "<AFIN>", "<AFINI>", "<AFINIT>", "<AFINITY>", "<------->", "<AFINITY>", "<------->", "<AFINITY>", "<AFINIT>", "<AFINI>", "<AFIN>", "<AFI>", "<AF>", "<A>", "<>"};
+
+    for (int i = 0; i < ClanTag[].size(); i++) {
+        SendClanTag(ClanTag[i], "Afinity");
+    }
 }
 
-void misc::blockbot(CBaseEntity* pLocal) { //TODO
+void Misc::BlockBot() { //TODO
     if (!Options.misc_general_blockbot)
         return;
-
-    if (!pLocal->IsAlive())
-        return;
-
-    CBaseEntity* pTarget = nullptr;
-
-    for (int i = 0; i <= I::ClientEntityList->nMaxClients(); i++) {
-        CBaseEntity* pEntity = I::ClientEntityList->GetClientEntity(i);
-
-        if (!pEntity)
-            continue;
-
-        if (!pEntity->IsPlayer())
-            continue;
-
-        if (!pEntity->IsAlive())
-            continue;
-
-        if (pEntity = pLocal)
-            continue;
-
-        if (pEntity->IsEnemy())
-            continue;
-
-        float DistancetoEntity = pLocal->GetAbsOrigin().DistTo(pEntity->GetAbsOrigin());
-
-        if (DistancetoEntity <= 250.0f) {
-            pTarget = pEntity;
-            break;
-        }
-    }
-
-    if (!pTarget)
-        return;
-
-    
-    
 }
 
-void misc::headstandbot(CBaseEntity* pLocal) { //TODO
+void Misc::HeadstandBot() { //TODO
     if (!Options.misc_general_headstandbot)
         return;
+}
 
-    if (!pLocal->IsAlive())
-        return;
+void Misc::ForceRegion() {
+    std::string ServerLocations[] = {"", "syd", "vie", "gru", "scl", "dxb", "par", "fra", "hkg", "maa", "bom", "tyo", "lux", "ams", "limc", "man", "waw", "sgp", "jnb", "mad", "sto", "lhr", "atl", "eat", "ord", "lax", "mwh", "okc", "sea", "iad"};
+    std::string** RelayCluster = reinterpret_cast<std::string**>(Memory::FindPattern("steamnetworkingsockets", "B8 ?? ?? B9 ?? ?? 0F 43") + 0x1);
 
-    
-};
+    *RelayCluster = ServerLocations[Options.misc_general_forceregion];
+}
 
-void misc::forceregion() { //TODO
-    switch (Options.misc_general_forceregion) { //switch?
-        case 1: 
-            break;
-    }
-
-    std::string ServerLocations[] = {"", "syd", "vie", "gru", "scl", "dxb", "par", "fra", "hkg", "maa", "bom", "tyo", "lux", "ams", "limc", "man", "waw", "sgp", "jnb", "mad", "sto", "lhr", "atl", "eat", "ord", "lax", "mwh", "okc", "sea", "iad"} 
-};
-
-void misc::revealoverwatch() { //TODO
-    if (!Options.misc_general_revealoverwatch)
-        return;
-};
-
-void misc::revealranks(CUserCmd* Cmd) { 
+void Misc::RevealRanks(CUserCmd* Cmd) { 
     if (!Options.misc_general_revealranks)
         return;
 
     if (Cmd->iButtons & IN_SCORE)
         I::Client->DispatchUserMessage(CS_UM_ServerRankRevealAll, 0U, 0, nullptr);
-};
+}
  
-void misc::slowwalk(CUserCmd* Cmd, CBaseEntity* LocalPlayer) { //
+void Misc::SlowWalk(CUserCmd* Cmd) { //TODO
     if (!Options.misc_general_slowwalk)
         return;
 
-    if (!pLocal->IsAlive())
+    CBaseEntity* LocalPlayer = I::Engine->GetLocalPlayer();
+
+    if (!LocalPlayer)
         return;
 
-    if (!pLocal->GetFlags() & FL_ONGROUND)
+    if (!LocalPlayer->IsAlive())
         return;
 
-    if (!pLocal->GetMoveType() == MOVETYPE_NOCLIP)
+    if (!LocalPlayer->GetFlags() & FL_ONGROUND)
         return;
 
-    if (!pLocal->GetMoveType() == MOVETYPE_LADDER)
+    if (!LocalPlayer->GetMoveType() == MOVETYPE_NOCLIP)
         return;
 
-    CBaseCombatWeapon* ActiveWeapon = LocalPlayer->GetWeapon();
-
-    if (!ActiveWeapon)
+    if (!LocalPlayer->GetMoveType() == MOVETYPE_LADDER)
         return;
 
-    int WeaponDefinitionIndex = ActiveWeapon->GetItemDefinitionIndex();
-    CCSWeaponData* ActiveWeaponData = I::WeaponSystem->GetWeaponData(WeaponDefinitionIndex);
-
-    if (!ActiveWeaponData)
-		return;
-
-    float MaxWeaponSpeed = ActiveWeaponData->flMaxSpeed();
-    float CalculateSpeed = MaxWeaponSpeed \ Options.misc_general_slowwalkspeed;
     
-    Vector Velocity = LocalPlayer->GetVelocity();
-    QAngle Direction;
-    
-    Math::VectorAngles(Velocity, Direction);
-    
-    float Speed = Velocity.Length2D();
+}
 
-    Direction.y = Cmd-> - Direction.y;
-
-    Cmd->flForwardMove = ;
-    Cmd->flSideMove = ;
-};
-
-void misc::infiniteduck(CUserCmd* Cmd, CBaseEntity* LocalPLayer) {
+void Misc::InfiniteDuck(CUserCmd* Cmd) {
     if (!Options.misc_general_infiniteduck)
         return;
+    
+    CBaseEntity* LocalPlayer = I::Engine->GetLocalPlayer();
 
     if (!LocalPLayer->IsAlive())
         return;
@@ -313,144 +270,246 @@ void misc::infiniteduck(CUserCmd* Cmd, CBaseEntity* LocalPLayer) {
     Cmd->iButtons & IN_BULLRUSH;
 }
 
-void misc::quickstop() { //TODO
+void Misc::QuickStop(CUserCmd* Cmd) { //TODO
     if (!Options.misc_general_quickstop)
         return;
 }
 
-void misc::unlockinventory() { //TODO
-    if (!Options.misc_general_unlockinventory)
-        return;
-}
+void Misc::NameChanger() {
+    CBaseEntity* LocalPlayer = I::Engine->GetLocalPlayer();
 
-void misc::namechanger() { //TODO
+    if (!LocalPlayer)
+        return;
+
+    std::vector<CBaseEntity*> Players; 
+
+    for (int i = 0; i < I::Engine->GetMaxClients(); i++) {
+        CBaseEntity Entity = I::ClientEntityList->Get<CBaseEntity>(i);
+
+        if (!Entity)
+            continue;
+
+        if (Entity == LocalPlayer)
+            continue;
+
+        Players.push_back(Entity);
+    }
+
     switch (Options.misc_general_namechanger) {
         case OFF: 
             break;
 
         case TEAMONLY:
+            for (int i = 0; i < Players.size(); i++) {
+                if (Players[i]->IsEnemy())
+                    continue;
+
+                PlayerInfo_t PlayerInfo;
+
+                if (!I::Engine->GetPlayerInfo(Players[i], PlayerInfo))
+                    continue;
+
+                if (PlayerInfo.bFakePlayer)
+                    continue;
+
+                SendName(PlayerInfo.szName.c_str());
+            }
             break;
 
         case ENEMYONLY:
+            for (int i = 0; i < Players.size(); i++) {
+                if (!Players[i]->IsEnemy())
+                    continue;
+
+                PlayerInfo_t PlayerInfo;
+
+                if (!I::Engine->GetPlayerInfo(Players[i], PlayerInfo))
+                    continue;
+
+                if (PlayerInfo.bFakePlayer)
+                    continue;
+
+                SendName(PlayerInfo.szName.c_str());
+            }
             break;
 
         case EVERYONE:
-            break;
+            for (int i = 0; i < Players.size(); i++) {
+                PlayerInfo_t PlayerInfo;
 
-        case CORRUPT:
+                if (!I::Engine->GetPlayerInfo(Players[i], PlayerInfo))
+                    continue;
+
+                if (PlayerInfo.bFakePlayer)
+                    continue;
+
+                SendName(PlayerInfo.szName.c_str());
+            }
             break;
     }
 }
 
-void misc::commandspammer() { //TODO
-   I::Engine->ExecuteClientCmd(Options.misc_general_commandspammer) 
+void Misc::CommandSpammer() {
+    if (Options.misc_general_commandspammer.empty())
+        return;
+
+    I::Engine->ExecuteClientCmd(Options.misc_general_commandspammer);
 }
 
-void misc::informationspammer() { //TODO
-    switch (Options.misc_general_informationspammer) {
-        case NAME:
-            break;
+void Misc::InformationSpammer() {
+    CBaseEntity* LocalPlayer = I::Engine->GetLocalPlayer();
+    CBaseEntity* TargetEntity = nullptr;
 
-        case RANK:
-            break;
-        
+    for (int i = 0; i < I::Engine->GetMaxClients(); i++) {
+        CBaseEntity* Entity = I::ClientEntityList->Get<CBaseEntity>(i);
+
+        if (!Entity)
+            continue;
+
+        if (!Entity->IsEnemy())
+            continue;
+
+        if (Entity == LocalPlayer)
+            continue;
+
+        TargetEntity = Entity;
+    }
+
+    PlayerInfo_t PlayerInfo;
+    I::Engine->GetPlayerInfo(TargetEntity, PlayerInfo);
+
+    switch (Options.misc_general_informationspammer) {
         case WEAPON:
+            const char* ChatString = PlayerInfo.szName + "is using" + ESP::GetWeaponName(TargetEntity->GetWeapon());
+            I::Engine->ExecuteClientCmd(ChatString, 0);
             break;
 
         case LOCATION:
+            const char* ChatString = PlayerInfo.szName + "is at" + TargetEntity->GetLastPlace();
+            I::Engine->ExecuteClientCmd(ChatString, 0);
             break;
 
         case HEALTH:
+            const char* ChatString = PlayerInfo.szName + "has" + TargetEntity->GetHealth() + "health";
+            I::Engine->ExecuteClientCmd(ChatString, 0);
             break;
     }
 }
 
-void misc::grenadehelper() { //TODO
+/*
+void Misc::GrenadeHelper() { //TODO
     if (!Options.misc_general_grenadehelper)
         return;
 
-    /*
-    OPTION(char, Options.misc_general_grenadehelpervisiblekey, NULL);
-    OPTION(char, Options.misc_general_grenadehelperexecutekey, NULL);
-    OPTION(bool, Options.misc_general_grenadehelpervwge, false);
-    */
+    //Options.misc_general_grenadehelpervisiblekey
+    //Options.misc_general_grenadehelperexecutekey
+    //Options.misc_general_grenadehelpervwge
 }
+*/
 
-void misc::bunnyhop(CUserCmd* pCmd, CBaseEntity* pLocal) { //TODO
+void Misc::BunnyHop(CUserCmd* Cmd) {
     if (!Options.misc_general_bhop)
+        return;
+
+    CBaseEntity* LocalPlayer = I::Engine->GetLocalPlayer();
+
+    if (!LocalPlayer)
+        return;
+
+    if (!LocalPlayer->IsAlive())
         return;
 
     if (I::ConVar->FindVar("sv_autobunnyhopping"))
         return;
 
-    if (!pLocal->IsAlive())
+    if (LocalPlayer->GetMoveType() == MOVETYPE_NOCLIP)
         return;
 
-    if (pLocal->GetMoveType() == MOVETYPE_NOCLIP)
+    if (LocalPlayer->GetMoveType() == MOVETYPE_LADDER)
         return;
 
-    if (pLocal->GetMoveType() == MOVETYPE_LADDER)
+    if (LocalPlayer->GetMoveType() == MOVETYPE_OBSERVER)
         return;
 
-    if (pLocal->GetMoveType() == MOVETYPE_OBSERVER)
+    int RandomNumber = rand() % 100 + 1;
+    int SuccessfulHits = 0;
+    static int HitChance = Options.misc_general_bhophitchance;
+
+    if (Options.misc_general_bhophitchancerandom)
+        HitChance = Math::RandomInt(0, Options.misc_general_bhophitchance);
+
+    if (RandomNumber > HitChance)
         return;
 
-    //Options.misc_general_bhophitchance;
-    //Options.misc_general_bhophitchancerandom;
+    if (SuccessfulHits > (HitChance / 10)) {
+        SuccessfulHits = 0;
+        return;
+    }
 
-    /*
-        if (pLocal->GetFlags() & FL_ONGROUND && pCmd->iButtons & IN_JUMP)
-            pCmd->iButtons &= ~IN_JUMP;
-    */
+    if (LocalPlayer->GetFlags() & FL_ONGROUND && Cmd->iButtons & IN_JUMP) {
+        Cmd->iButtons &= ~IN_JUMP;
+        SuccessfulHits += 1;
+    }
+
+    else if (!(LocalPlayer->GetFlags() & FL_ONGROUND) && (Cmd->iButtons & IN_JUMP))
+        Cmd->iButtons &= ~IN_JUMP;
+
+    else if ((Cmd->iButtons & IN_JUMP) && (LocalPlayer->GetFlags() & FL_ONGROUND)) {
+        Cmd->iButtons &= ~IN_JUMP;
+        SuccessfulHits += 1;
+    }
 }
 
-void misc::autostrafe() { //TODO
+void Misc::AutoStrafe(CUserCmd* Cmd) { //TODO
     if (!Options.misc_general_autostrafe)
         return;
 
-    if (!pLocal->IsAlive())
+    CBaseEntity* LocalPlayer = I::Engine->GetLocalPlayer();
+
+    if (!LocalPlayer->IsAlive())
         return;
 
-    if (pLocal->GetMoveType() == MOVETYPE_NOCLIP)
+    if (LocalPlayer->GetMoveType() == MOVETYPE_NOCLIP)
         return;
 
-    if (pLocal->GetMoveType() == MOVETYPE_LADDER)
+    if (LocalPlayer->GetMoveType() == MOVETYPE_LADDER)
         return;  
 
-    if (pLocal->GetFlags() & FL_ONGROUND)
+    if (LocalPlayer->GetFlags() & FL_ONGROUND)
 		return;
 
-    
+    if ()
 }
 
-void misc::aircrouch(CBaseEntity* pLocal, CUserCmd* pCmd) {
+void Misc::AirCrouch(CUserCmd* Cmd) {
     if (Options.misc_general_aircrouch)
         return;
+    
+    CBaseEntity* LocalPlayer = I::Engine->GetLocalPlayer();
 
-    if (!pLocal->IsAlive())
+    if (!LocalPlayer)
         return;
 
-    if (!pLocal->GetFlags() & FL_ONGROUND)
-        pCmd->iButtons |= IN_DUCK;
+    if (!LocalPlayer->IsAlive())
+        return;
+
+    if (!LocalPlayer->GetFlags() & FL_ONGROUND)
+        Cmd->iButtons |= IN_DUCK;
     else 
-        pCmd->iButtons &= ~IN_DUCK;
+        Cmd->iButtons &= ~IN_DUCK;
 }
 
-void misc::peekassist(CBaseEntity* pLocal, CUserCmd* pCmd) { //TODO
+void Misc::PeekAssist(CUserCmd* Cmd) { //TODO
     if (!Options.misc_general_peekassist)
         return;
 
-    if (IPT::IsKeyDown(Options.misc_general_peekassistkey)) {
-        ImDrawList::AddCircleFilled(ImVec2(0, 0), 10, ImColor(255, 255, 255, 255), 32);
+    CBaseEntity* LocalPlayer = I::Engine->GetLocalPlayer();
 
-    }
-
-    if (IPT::IsKeyReleased(Options.misc_general_peekassistkey) || pCmd->iButtons(IN_ATTACK || IN_SECOND_ATTACK)) {
-
-    }
+    if (!LocalPlayer)
+        return;
 }
 
-void misc::buybot() {
+void Misc::BuyBot() {
     if (!Options.misc_buybot_enable)
         return;
 
@@ -580,23 +639,38 @@ void misc::buybot() {
     }
 }
 
-void misc::triggerban(CUserCmd* pCmd) {
+void Misc::TriggerBan(CUserCmd* Cmd) {
     if (!Options.misc_general_triggerban)
         return;
     
     WriteToLog("[Warning] Triggering untrusted ban");
     WriteToConsole("[Warning] Triggering untrusted ban");
 
-    QAngle angSentView = {999.0f, 999.0f, 999.0f};
+    QAngle SentView = {999.0f, 999.0f, 999.0f};
 
-    pCmd->angViewPoint = angSentView;
+    Cmd->angViewPoint = SentView;
 }
 
-void misc::unlockachievements() {
+void Misc::UnlockAchievements() { //TODO
     if (!Options.misc_general_unlockachievements)
         return;
+
 }
 
-/*
-    OPTION(bool, Options.misc_general_unload, false);
-*/
+#pragma region UtilityFunctions
+void Misc::SendClanTag(const char* ClanTag, const char* Identifier) {
+    using SendClanTagFunction = void(__fastcall*)(const char*, const char*);
+    static auto OriginalSendClanTag = reinterpret_cast<SendClanTagFunction>(Memory::FindPattern(ENGINE_DLL, "53 56 57 8B DA 8B F9 FF 15"));
+    assert(OriginalSendClanTag != nullptr);
+
+    OriginalSendClanTag(ClanTag, Identifier);
+}
+
+void Misc::SendName(const char* Name) {
+    static CConVar* Name = I::ConVar->FindVar("name");
+    Name->fnChangeCallbacks.Size() = NULL;
+
+    if (Name != nullptr)
+        Name->SetValue(Name);
+}
+#pragma endregion

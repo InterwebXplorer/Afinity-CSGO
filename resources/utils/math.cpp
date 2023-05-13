@@ -9,23 +9,23 @@ bool Math::Setup() {
 	if (VstdLib == nullptr)
 		return false;
 
-	RandomSeed = reinterpret_cast<RandomSeedFn>(Memory::GetExportAddress(VstdLib, XorStr("RandomSeed")));
+	RandomSeed = reinterpret_cast<RandomSeedFn>(Memory::GetExportAddress(VstdLib, "RandomSeed"));
 	if (RandomSeed == nullptr)
 		return false;
 
-	RandomFloat = reinterpret_cast<RandomFloatFn>(Memory::GetExportAddress(VstdLib, XorStr("RandomFloat")));
+	RandomFloat = reinterpret_cast<RandomFloatFn>(Memory::GetExportAddress(VstdLib, "RandomFloat"));
 	if (RandomFloat == nullptr)
 		return false;
 
-	RandomFloatExp = reinterpret_cast<RandomFloatExpFn>(Memory::GetExportAddress(VstdLib, XorStr("RandomFloatExp")));
+	RandomFloatExp = reinterpret_cast<RandomFloatExpFn>(Memory::GetExportAddress(VstdLib, "RandomFloatExp"));
 	if (RandomFloatExp == nullptr)
 		return false;
 
-	RandomInt = reinterpret_cast<RandomIntFn>(Memory::GetExportAddress(VstdLib, XorStr("RandomInt")));
+	RandomInt = reinterpret_cast<RandomIntFn>(Memory::GetExportAddress(VstdLib, "RandomInt"));
 	if (RandomInt == nullptr)
 		return false;
 
-	RandomGaussianFloat = reinterpret_cast<RandomGaussianFloatFn>(Memory::GetExportAddress(VstdLib, XorStr("RandomGaussianFloat")));
+	RandomGaussianFloat = reinterpret_cast<RandomGaussianFloatFn>(Memory::GetExportAddress(VstdLib, "RandomGaussianFloat"));
 	if (RandomGaussianFloat == nullptr)
 		return false;
 
@@ -226,4 +226,12 @@ int Math::IntSubtractRange(int SubtractStart, int SubtractEnd, int Amount) {
 	}
 	
 	return Result;
+}
+
+float Math::Calculate3DDistance(const Vector& Point1, const Vector& Point2) {
+	float DX = Point1.x - Point2.x;
+	float DY = Point1.y - Point2.y;
+	float DZ = Point1.z - Point2.z;
+
+	return std::sqrt(DX * DX + DY * DY + DZ * DZ);
 }

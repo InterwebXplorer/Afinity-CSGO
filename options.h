@@ -131,26 +131,26 @@ class Options {
         OPTION(ImVec4, esp_enemy_chamsbacktrackcolor, ImVec4(0, 0, 0, 0));
         OPTION(bool, esp_enemy_chamsoccluded, false);
         OPTION(ImVec4, esp_enemy_chamsoccludedcolor, ImVec4(0, 0, 0, 0));
-        MULTIOPTION(esp_enemy_occludedchamsmaterial, MAT1 = true, MAT2 = false); // TODO: add materials
+        MULTIOPTION(esp_enemy_occludedchamsmaterial, FLAT = true, GLASS = false, CRYSTAL = false, PLATINUM = false, GOLD = false, GLOSS = false); 
         OPTION(bool, esp_enemy_chamsvisible, false);
         OPTION(ImVec4, esp_enemy_chamsvisiblecolor);
-        MULTIOPTION(esp_enemy_visiblechamsmaterial, MAT1 = true, MAT2 = false); // TODO: add materials
+        MULTIOPTION(esp_enemy_visiblechamsmaterial, FLAT = true, GLASS = false, CRYSTAL = false, PLATINUM = false, GOLD = false, GLOSS = false);
         OPTION(bool, esp_enemy_chamsglow, false);
         OPTION(ImVec4, esp_enemy_chamsglowcolor);
         OPTION(bool, esp_enemy_bullettracers, false);
         OPTION(ImVec4, esp_enemy_bullettracerscolor);
-        OPTION(bool, esp_enemy_shadeflat, false);
+        OPTION(bool, esp_enemy_disableoocclusion, false);
         OPTION(bool, esp_enemy_dormant, false);
         /*----------------local------------------*/
         OPTION(bool, esp_local_enabled, false);
         OPTION(char, esp_local_enabledkey, NULL);
         MULTIOPTION(esp_local_enabledkeymode, ALWAYS = false, TOGGLE = false, ONHOLD = false, OFFHOLD = false);
-        OPTION(bool, esp_local_flat, false);
         MULTIOPTION(esp_local_box, OFF = true, 2D = false, CORNERED2D = false, 3D = false);
         OPTION(ImVec4, esp_local_boxcolor, ImVec4(0, 0, 0, 0));
         OPTION(bool, esp_local_name, false);
         OPTION(bool, esp_local_namecolor, false);
         OPTION(bool, esp_local_health, false);
+        OPTION(ImVec4, esp_local_healthcolor, ImVec4(0, 0, 0, 0));
         OPTION(bool, esp_local_ammo, false);
         OPTION(ImVec4, esp_local_ammocolor, ImVec4(0, 0, 0, 0));
         OPTION(bool, esp_local_weapon, false);
@@ -166,22 +166,20 @@ class Options {
         OPTION(ImVec4, esp_local_chamsbacktrackcolor, ImVec4(0, 0, 0, 0));
         OPTION(bool, esp_local_chams, false);
         OPTION(esp_local_chamscolor, ImVec4(0, 0, 0, 0));
-        MULTIOPTION(esp_enemy_chamsmaterial MAT1 = true, MAT2 = false); // TODO: add materials
+        MULTIOPTION(esp_local_chamsmaterial, FLAT = true, GLASS = false, CRYSTAL = false, PLATINUM = false, GOLD = false, GLOSS = false);
         OPTION(bool, esp_local_desyncchams, false);
         OPTION(ImVec4, esp_local_desyncchamscolor, ImVec4(0, 0, 0, 0));
         OPTION(bool, esp_local_armchams, false);
         OPTION(ImVec4, esp_local_armchamscolor, ImVec4(0, 0, 0, 0));
-        MULTIOPTION(esp_enemy_armchamsmaterial MAT1 = true, MAT2 = false); // TODO: add materials
-        OPTION(bool esp_local_armchamsdraworiginal, false);
+        MULTIOPTION(esp_local_armchamsmaterial, FLAT = true, GLASS = false, CRYSTAL = false, PLATINUM = false, GOLD = false, GLOSS = false);
         OPTION(bool, esp_local_weaponchams, false);
         OPTION(ImVec4, esp_local_weaponchamscolor, ImVec4(0, 0, 0, 0));
-        MULTIOPTION(esp_enemy_weaponchamsmaterial MAT1 = true, MAT2 = false); // TODO: add materials
-        OPTION(bool, esp_local_weaponchamsdraworiginal, false);
+        MULTIOPTION(esp_local_weaponchamsmaterial, FLAT = true, GLASS = false, CRYSTAL = false, PLATINUM = false, GOLD = false, GLOSS = false);
         /*----------------other------------------*/
-        OPTION(bool, esp_other_bombtimer, false); // attach to radar curve
+        MULTIOPTION(esp_other_bombtimer, RADARCURVE = false, BAR = false);
         OPTION(bool, esp_other_bombchams, false);
         OPTION(ImVec4, esp_other_bombchamscolor, ImVec4(0, 0, 0, 0));
-        MULTIOPTION(esp_other_bombchamsmaterial, MAT1 = true, MAT2 = false); // TODO: add materials
+        MULTIOPTION(esp_other_bombchamsmaterial, FLAT = true, GLASS = false, CRYSTAL = false, PLATINUM = false, GOLD = false, GLOSS = false);
         OPTION(bool, esp_other_bombglow, false);
         OPTION(ImVec4, esp_other_bombglowcolor, ImVec4(0, 0, 0, 0));
         MULTIOPTION(esp_other_bombflags, STATE = false, TIMER = false, LOCATION = false);
@@ -224,7 +222,7 @@ class Options {
         MULTIOPTION(esp_other_droppedweaponflags, ICON = false, TEXT = false, DISTANCE = false, AMMO = false);
         OPTION(bool, esp_other_droppedweaponchams, false);
         OPTION(ImVec4, esp_other_droppedweaponchamscolor, ImVec4(0, 0, 0, 0));
-        MULTIOPTION(esp_other_droppedweaponchamsmaterial, MAT1 = false, MAT2 = false);
+        MULTIOPTION(esp_other_droppedweaponchamsmaterial, FLAT = false, GLASS = false);
         OPTION(bool, esp_other_droppedweaponglow, false);
         OPTION(ImVec4, esp_other_droppedweaponglowcolor, ImVec4(0, 0, 0, 0));
         /*----------------/////------------------*/
@@ -234,8 +232,8 @@ class Options {
         MULTIOPTION(esp_other_hitsound, OFF = false, AHHH = false, ANIMEMOAN = false, BELL = false, FLICK = false, METALIC = false, MINECRAFT = false, ROBLOX = false);
         MULTIOPTION(esp_other_hiteffect, OFF = false, EFFECT1 = false, EFFECT2 = false); // TODO: add effects
         MULTIOPTION(esp_other_killsound, OFF = false, OVERWATCHCSGO = false, OVERWATCHCSS = false, TECHNO = false);
-        MULTIOPTION(esp_other_killanouncer, OFF = false, QUAKEFEMALE = false, QUAKESTANDARD = false, VALORANT = false, ANIME = false);
-        MULTIOPTION(esp_other_deathsound, OFF = false, AHHH = false, ERROR = false, FAIL = false, WILHELM = false);
+        MULTIOPTION(esp_other_killanouncer, OFF = false, QUAKEFEMALE = false, QUAKESTANDARD = false, ANIME = false);
+        MULTIOPTION(esp_other_deathsound, OFF = false, AHHH = false, MISTAKE = false, FAIL = false, WILHELM = false);
         OPTION(bool, esp_other_grenadeprediction, false);
         OPTION(ImVec4, esp_other_grenadepredictiontrailcolor, ImVec4(0, 0, 0, 0));
         OPTION(ImVec4, esp_other_grenadepredictionbouncecolor, ImVec4(0, 0, 0, 0));
@@ -243,9 +241,9 @@ class Options {
         OPTION(ImVec4, esp_other_enemygrenadepredictiontrailcolor, ImVec4(0, 0, 0, 0));
         OPTION(ImVec4, esp_other_enemygrenadepredictionbouncecolor, ImVec4(0, 0, 0, 0));
         OPTION(bool, esp_other_watermark, false);
-        OPTION(bool, esp_other_visualiseoneway, false);
-        OPTION(char, esp_other_visualiseonewaykey, NULL);
-        MULTIOPTION(esp_other_visualiseonewaykeymode, ALWAYS = false, TOGGLE = false, ONHOLD = false, OFFHOLD = false);
+        OPTION(bool, esp_other_visualizeoneway, false);
+        OPTION(char, esp_other_visualizeonewaykey, NULL);
+        MULTIOPTION(esp_other_visualizeonewaykeymode, ALWAYS = false, TOGGLE = false, ONHOLD = false, OFFHOLD = false);
         OPTION(bool, esp_other_hitmarker, false);
         /*---------------ANTIAIM-----------------*/
         /*----------------rage-------------------*/
@@ -295,6 +293,7 @@ class Options {
         OPTION(bool, misc_general_autopisol, false);
         OPTION(int, misc_general_autopistoldelay, 0);
         OPTION(bool, misc_general_preservekillfeed, false);
+        OPTION(bool, misc_general_fixtabletsignal, false);
         OPTION(bool, misc_general_autodefuse, false);
         OPTION(bool, misc_general_autoextinguishincendiarys, false);
         OPTION(bool, misc_general_fakeping, false)
@@ -307,7 +306,7 @@ class Options {
         OPTION(char, misc_general_headstandbotkey, NULL);
         MULTIOPTION(misc_general_headstandbotkeymode, ALWAYS = false, TOGGLE = false, ONHOLD = false, OFFHOLD = false);
         MULTIOPTION(misc_general_forceregion, OFF = false, AUSTRALIA = false, AUSTRIA = false, BRAZIL = false, CHILE = false, DUBAI = false, FRANCE = false, GERMANY = false, HONGKONG = false, INDIACHENNAI = false, INDIAMUMBAI = false, JAPAN = false, LUXEMBOURG = false, THENETHER = false, PERU = false, PHILLIPINES = false, POLAND = false, SINGAPORE = false, NOWATER = false, SPAIN = false, SWEDEN = false, UNITEDKINGDOM = false, USAATLANTA = false, USACHICAGO = false, USALOSANGELES = false, USAMOSESLAKE = false, USASEATTLE = false, USAOKLAHOMA = false, USAWASHINGTONDC = false);
-        OPTION(bool, misc_general_revealoverwatch, false);
+        //OPTION(bool, misc_general_revealoverwatch, false);
         OPTION(bool, misc_general_revealranks, false);
         OPTION(bool, misc_general_slowwalk, false);
         OPTION(int, misc_general_slowwalkspeed, 100);
@@ -316,9 +315,9 @@ class Options {
         OPTION(bool, misc_general_infiniteduck, false);
         OPTION(bool, misc_general_quickstop, false);
         OPTION(bool, misc_general_unlockinventory, false);
-        MULTIOPTION(misc_general_namechanger, OFF = false, TEAMONLY = false, ENEMYONLY = false, EVERYONE = false, CORRUPT = false);
+        MULTIOPTION(misc_general_namechanger, OFF = false, TEAMONLY = false, ENEMYONLY = false, EVERYONE = false);
         OPTION(std::string, misc_general_commandspammer, "");
-        MULTIOPTION(misc_general_informationspammer, NAME = false, RANK = false, WEAPON = false, LOCATION = false, HEALTH = false);
+        MULTIOPTION(misc_general_informationspammer, WEAPON = false, LOCATION = false, HEALTH = false);
         OPTION(bool, misc_general_grenadehelper, false);
         OPTION(bool, misc_general_grenadehelpervisible, false);
         OPTION(char, misc_general_grenadehelpervisiblekey, NULL);
@@ -482,26 +481,26 @@ class DefaultOptions {
         OPTION(ImVec4, esp_enemy_chamsbacktrackcolor, ImVec4(0, 0, 0, 0));
         OPTION(bool, esp_enemy_chamsoccluded, false);
         OPTION(ImVec4, esp_enemy_chamsoccludedcolor, ImVec4(0, 0, 0, 0));
-        MULTIOPTION(esp_enemy_occludedchamsmaterial, MAT1 = true, MAT2 = false); // TODO: add materials
+        MULTIOPTION(esp_enemy_occludedchamsmaterial, FLAT = true, GLASS = false, CRYSTAL = false, PLATINUM = false, GOLD = false, GLOSS = false);
         OPTION(bool, esp_enemy_chamsvisible, false);
         OPTION(ImVec4, esp_enemy_chamsvisiblecolor);
-        MULTIOPTION(esp_enemy_visiblechamsmaterial, MAT1 = true, MAT2 = false); // TODO: add materials
+        MULTIOPTION(esp_enemy_visiblechamsmaterial, FLAT = true, GLASS = false, CRYSTAL = false, PLATINUM = false, GOLD = false, GLOSS = false);
         OPTION(bool, esp_enemy_chamsglow, false);
         OPTION(ImVec4, esp_enemy_chamsglowcolor);
         OPTION(bool, esp_enemy_bullettracers, false);
         OPTION(ImVec4, esp_enemy_bullettracerscolor);
-        OPTION(bool, esp_enemy_shadeflat, false);
+        OPTION(bool, esp_enemy_disableoocclusion, false);
         OPTION(bool, esp_enemy_dormant, false);
         /*----------------local------------------*/
         OPTION(bool, esp_local_enabled, false);
         OPTION(char, esp_local_enabledkey, NULL);
         MULTIOPTION(esp_local_enabledkeymode, ALWAYS = false, TOGGLE = false, ONHOLD = false, OFFHOLD = false);
-        OPTION(bool, esp_local_flat, false);
         MULTIOPTION(esp_local_box, OFF = true, 2D = false, CORNERED2D = false, 3D = false);
         OPTION(ImVec4, esp_local_boxcolor, ImVec4(0, 0, 0, 0));
         OPTION(bool, esp_local_name, false);
         OPTION(bool, esp_local_namecolor, false);
         OPTION(bool, esp_local_health, false);
+        OPTION(ImVec4, esp_local_healthcolor, ImVec4(0, 0, 0, 0));
         OPTION(bool, esp_local_ammo, false);
         OPTION(ImVec4, esp_local_ammocolor, ImVec4(0, 0, 0, 0));
         OPTION(bool, esp_local_weapon, false);
@@ -517,22 +516,20 @@ class DefaultOptions {
         OPTION(ImVec4, esp_local_chamsbacktrackcolor, ImVec4(0, 0, 0, 0));
         OPTION(bool, esp_local_chams, false);
         OPTION(esp_local_chamscolor, ImVec4(0, 0, 0, 0));
-        MULTIOPTION(esp_enemy_chamsmaterial MAT1 = true, MAT2 = false); // TODO: add materials
+        MULTIOPTION(esp_local_chamsmaterial, FLAT = true, GLASS = false, CRYSTAL = false, PLATINUM = false, GOLD = false, GLOSS = false);
         OPTION(bool, esp_local_desyncchams, false);
         OPTION(ImVec4, esp_local_desyncchamscolor, ImVec4(0, 0, 0, 0));
         OPTION(bool, esp_local_armchams, false);
         OPTION(ImVec4, esp_local_armchamscolor, ImVec4(0, 0, 0, 0));
-        MULTIOPTION(esp_enemy_armchamsmaterial MAT1 = true, MAT2 = false); // TODO: add materials
-        OPTION(bool esp_local_armchamsdraworiginal, false);
+        MULTIOPTION(esp_local_armchamsmaterial, FLAT = true, GLASS = false, CRYSTAL = false, PLATINUM = false, GOLD = false, GLOSS = false);
         OPTION(bool, esp_local_weaponchams, false);
         OPTION(ImVec4, esp_local_weaponchamscolor, ImVec4(0, 0, 0, 0));
-        MULTIOPTION(esp_enemy_weaponchamsmaterial MAT1 = true, MAT2 = false); // TODO: add materials
-        OPTION(bool, esp_local_weaponchamsdraworiginal, false);
+        MULTIOPTION(esp_local_weaponchamsmaterial, FLAT = true, GLASS = false, CRYSTAL = false, PLATINUM = false, GOLD = false, GLOSS = false);
         /*----------------other------------------*/
-        OPTION(bool, esp_other_bombtimer, false); // attach to radar curve
+        MULTIOPTION(esp_other_bombtimer, RADARCURVE = false, BAR = false);
         OPTION(bool, esp_other_bombchams, false);
         OPTION(ImVec4, esp_other_bombchamscolor, ImVec4(0, 0, 0, 0));
-        MULTIOPTION(esp_other_bombchamsmaterial, MAT1 = true, MAT2 = false); // TODO: add materials
+        MULTIOPTION(esp_other_bombchamsmaterial, FLAT = true, GLASS = false, CRYSTAL = false, PLATINUM = false, GOLD = false, GLOSS = false);
         OPTION(bool, esp_other_bombglow, false);
         OPTION(ImVec4, esp_other_bombglowcolor, ImVec4(0, 0, 0, 0));
         MULTIOPTION(esp_other_bombflags, STATE = false, TIMER = false, LOCATION = false);
@@ -575,7 +572,7 @@ class DefaultOptions {
         MULTIOPTION(esp_other_droppedweaponflags, ICON = false, TEXT = false, DISTANCE = false, AMMO = false);
         OPTION(bool, esp_other_droppedweaponchams, false);
         OPTION(ImVec4, esp_other_droppedweaponchamscolor, ImVec4(0, 0, 0, 0));
-        MULTIOPTION(esp_other_droppedweaponchamsmaterial, MAT1 = false, MAT2 = false);
+        MULTIOPTION(esp_other_droppedweaponchamsmaterial, FLAT = false, GLASS = false);
         OPTION(bool, esp_other_droppedweaponglow, false);
         OPTION(ImVec4, esp_other_droppedweaponglowcolor, ImVec4(0, 0, 0, 0));
         /*----------------/////------------------*/
@@ -585,8 +582,8 @@ class DefaultOptions {
         MULTIOPTION(esp_other_hitsound, OFF = false, AHHH = false, ANIMEMOAN = false, BELL = false, FLICK = false, METALIC = false, MINECRAFT = false, ROBLOX = false);
         MULTIOPTION(esp_other_hiteffect, OFF = false, EFFECT1 = false, EFFECT2 = false); // TODO: add effects
         MULTIOPTION(esp_other_killsound, OFF = false, OVERWATCHCSGO = false, OVERWATCHCSS = false, TECHNO = false);
-        MULTIOPTION(esp_other_killanouncer, OFF = false, QUAKEFEMALE = false, QUAKESTANDARD = false, VALORANT = false, ANIME = false);
-        MULTIOPTION(esp_other_deathsound, OFF = false, AHHH = false, ERROR = false, FAIL = false, WILHELM = false);
+        MULTIOPTION(esp_other_killanouncer, OFF = false, QUAKEFEMALE = false, QUAKESTANDARD = false, ANIME = false);
+        MULTIOPTION(esp_other_deathsound, OFF = false, AHHH = false, MISTAKE = false, FAIL = false, WILHELM = false);
         OPTION(bool, esp_other_localgrenadeprediction, false);
         OPTION(ImVec4, esp_other_localgrenadepredictiontrailcolor, ImVec4(0, 0, 0, 0));
         OPTION(ImVec4, esp_other_localgrenadepredictionbouncecolor, ImVec4(0, 0, 0, 0));
@@ -594,9 +591,9 @@ class DefaultOptions {
         OPTION(ImVec4, esp_other_enemygrenadepredictiontrailcolor, ImVec4(0, 0, 0, 0));
         OPTION(ImVec4, esp_other_enemygrenadepredictionbouncecolor, ImVec4(0, 0, 0, 0));
         OPTION(bool, esp_other_watermark, false);
-        OPTION(bool, esp_other_visualiseoneway, false);
-        OPTION(char, esp_other_visualiseonewaykey, NULL);
-        MULTIOPTION(esp_other_visualiseonewaykeymode, ALWAYS = false, TOGGLE = false, ONHOLD = false, OFFHOLD = false);
+        OPTION(bool, esp_other_visualizeoneway, false);
+        OPTION(char, esp_other_visualizeonewaykey, NULL);
+        MULTIOPTION(esp_other_visualizeonewaykeymode, ALWAYS = false, TOGGLE = false, ONHOLD = false, OFFHOLD = false);
         OPTION(bool, esp_other_hitmarker, false);
         /*---------------ANTIAIM-----------------*/
         /*----------------rage-------------------*/
@@ -646,6 +643,7 @@ class DefaultOptions {
         OPTION(bool, misc_general_autopisol, false);
         OPTION(int, misc_general_autopistoldelay, 0);
         OPTION(bool, misc_general_preservekillfeed, false);
+        OPTION(bool, misc_general_fixtabletsignal, false);
         OPTION(bool, misc_general_autodefuse, false);
         OPTION(bool, misc_general_autoextinguishincendiarys, false);
         OPTION(bool, misc_general_fakeping, false)
@@ -658,7 +656,7 @@ class DefaultOptions {
         OPTION(char, misc_general_headstandbotkey, NULL);
         MULTIOPTION(misc_general_headstandbotkeymode, ALWAYS = false, TOGGLE = false, ONHOLD = false, OFFHOLD = false);
         MULTIOPTION(misc_general_forceregion, OFF = false, AUSTRALIA = false, AUSTRIA = false, BRAZIL = false, CHILE = false, DUBAI = false, FRANCE = false, GERMANY = false, HONGKONG = false, INDIACHENNAI = false, INDIAMUMBAI = false, JAPAN = false, LUXEMBOURG = false, THENETHER = false, PERU = false, PHILLIPINES = false, POLAND = false, SINGAPORE = false, NOWATER = false, SPAIN = false, SWEDEN = false, UNITEDKINGDOM = false, USAATLANTA = false, USACHICAGO = false, USALOSANGELES = false, USAMOSESLAKE = false, USASEATTLE = false, USAOKLAHOMA = false, USAWASHINGTONDC = false);
-        OPTION(bool, misc_general_revealoverwatch, false);
+        //OPTION(bool, misc_general_revealoverwatch, false);
         OPTION(bool, misc_general_revealranks, false);
         OPTION(bool, misc_general_slowwalk, false);
         OPTION(int, misc_general_slowwalkspeed, 100);
@@ -667,9 +665,9 @@ class DefaultOptions {
         OPTION(bool, misc_general_infiniteduck, false);
         OPTION(bool, misc_general_quickstop, false);
         OPTION(bool, misc_general_unlockinventory, false);
-        MULTIOPTION(misc_general_namechanger, OFF = false, TEAMONLY = false, ENEMYONLY = false, EVERYONE = false, CORRUPT = false);
+        MULTIOPTION(misc_general_namechanger, OFF = false, TEAMONLY = false, ENEMYONLY = false, EVERYONE = false);
         OPTION(std::string, misc_general_commandspammer, "");
-        MULTIOPTION(misc_general_informationspammer, NAME = false, RANK = false, WEAPON = false, LOCATION = false, HEALTH = false);
+        MULTIOPTION(misc_general_informationspammer, WEAPON = false, LOCATION = false, HEALTH = false);
         OPTION(bool, misc_general_grenadehelper, false);
         OPTION(bool, misc_general_grenadehelpervisible, false);
         OPTION(char, misc_general_grenadehelpervisiblekey, NULL);

@@ -1,14 +1,12 @@
 ![COVER](https://github.com/InterwebXplorer/Afinity-CSGO/blob/main/resources/images/cover.png)
 
 <div align="center">
-
 ![ISSUES](https://img.shields.io/github/issues/InterwebXplorer/Afinity-CSGO?style=for-the-badge)
 ![FORKS](https://img.shields.io/github/forks/InterwebXplorer/Afinity-CSGO?style=for-the-badge)
 ![STARS](https://img.shields.io/github/stars/InterwebXplorer/Afinity-CSGO?style=for-the-badge)
 ![LICENCE](https://img.shields.io/github/license/InterwebXplorer/Afinity-CSGO?style=for-the-badge)
 
 [<img width="245" src="https://discordapp.com/api/guilds/847811268954030080/embed.png?style=banner3" alt="discord">](https://discord.gg/FwamstYEA6)
-
 </div>
 
 ### Features
@@ -134,11 +132,14 @@
   - Visual studio 2022
   - DirectX sdk 2010
 - To run
-  - NULL
+  - Windows 10 
+  - A copy of CSGO
 
 ### Credits
-TsudaKageyu for minhook [https://github.com/TsudaKageyu/minhook]
+https://github.com/TsudaKageyu/minhook
 <br>
-ocornut for imgui [https://github.com/ocornut/imgui]
+https://github.com/ocornut/imgui
 <br>
-qo0 for the sdk used [https://github.com/rollraw/qo0-base]
+https://github.com/rollraw/qo0-base
+<br>
+https://github.com/danielkrupinski/Osiris

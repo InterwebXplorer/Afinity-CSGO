@@ -2,6 +2,7 @@
 #include "rageantiaim.h"
 #include "../resources/sdk/entity.h"
 #include "../resources/sdk/datatypes/usercmd.h"
+#include "../resources/sdk/interfaces.h"
 #include "../options.h"
 
 void RageAim::Execute(CUserCmd* Cmd, CBaseEntity* Local) { 
@@ -111,16 +112,18 @@ void RageAim::Penetration() {
         return;
 }
 
-void RageAim::KnifeBot() {
+void RageAim::KnifeBot(CUserCmd* Cmd) {
     if (!Options.rage_knifebot)
         return;
+
+    
 }
 
 void RageAim::ZuesBot() {
     if (!Options.rage_zeusbot)
         return;
 }
-
+    
 void RageAim::BackTrack() {
     if (!Options.rage_backtrack)
         return;
@@ -165,11 +168,43 @@ void RageAim::NoSpread() {
         return;
 }
 
-void RageAim::RevolverPrep() {
+void RageAim::RevolverPrep(CUserCmd* Cmd) {
     if (!Options.rage_revolverprep)
         return;
 
-    if ()
+    //TIME_TO_TICKS()
+
+    CBaseCombatWeapon* ActiveWeapon = LocalPlayer->GetWeapon();
+
+    if (!ActiveWeapon)
+        return;
+
+    if (!ActiveWeapon->GetItemDefinitionIndex() == WEAPON_REVOLVER)
+        return;
+
+    if (Cmd->iButtons & IN_ATTACK) {
+
+    }
+
+    /*
+    void Misc::prepareRevolver(csgo::UserCmd* cmd) noexcept {
+    auto timeToTicks = [this](float time) {  return static_cast<int>(0.5f + time / memory.globalVars->intervalPerTick); };
+    constexpr float revolverPrepareTime{ 0.234375f };
+
+    static float readyTime;
+    if (miscConfig.prepareRevolver && localPlayer && (!miscConfig.prepareRevolverKey.isSet() || miscConfig.prepareRevolverKey.isDown())) {
+        const auto activeWeapon = csgo::Entity::from(retSpoofGadgets->client, localPlayer.get().getActiveWeapon());
+        if (activeWeapon.getPOD() != nullptr && activeWeapon.itemDefinitionIndex() == WeaponId::Revolver) {
+            if (!readyTime) readyTime = memory.globalVars->serverTime() + revolverPrepareTime;
+            auto ticksToReady = timeToTicks(readyTime - memory.globalVars->serverTime() - csgo::NetworkChannel::from(retSpoofGadgets->client, engineInterfaces.getEngine().getNetworkChannel()).getLatency(0));
+            if (ticksToReady > 0 && ticksToReady <= timeToTicks(revolverPrepareTime))
+                cmd->buttons |= csgo::UserCmd::IN_ATTACK;
+            else
+                readyTime = 0.0f;
+        }
+    }
+}
+    */
 }
 
 void RageAim::SpasmLock() {

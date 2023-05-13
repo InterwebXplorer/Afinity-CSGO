@@ -11,6 +11,7 @@
 #include "../resources/utils/inputsystem.h"
 #include "../resources/utils/math.h"
 #include "../resources/utils/draw.h"
+#include <vector>
 #include "../global.h"
 #include "../options.h"
 #include "esp.h"
@@ -22,7 +23,7 @@ void ESP::Enemy() {
 
     CBaseEntity* TargetEntity = nullptr;
 
-    for (int i = 0; i < I::ClientEntityList->nMaxClients(); i++) {
+    for (int i = 0; i < I::Engine->GetMaxClients(); i++) {
         CBaseEntity* Entity = I::ClientEntityList->Get<CBaseEntity>(i);
 
         if (!Entity->IsPlayer())
@@ -61,7 +62,7 @@ void ESP::Enemy() {
             break;
 
         case 3D:
-            BoundingBox(TargetEntity, Options.esp_enemy_boxcolor, 2, Left, Bottom, Right, Top);
+            BoundingBox(TargetEntity, Options.esp_enemy_boxcolor, 3, Left, Bottom, Right, Top);
             break;
     }
 
@@ -99,21 +100,8 @@ void ESP::Enemy() {
     if (Options.esp_enemy_ammo)
         AmmoBar(TargetEntity, Options.esp_enemy_ammocolor, Left, Bottom, Right, Top);
 
-    if (Options.esp_enemy_weapon) { //todo import font
-        CBaseCombatWeapon* ActiveWeapon = LocalPlayer->GetWeapon();
-
-        if (!ActiveWeapon)
-            return;
-
-        const short WeaponDefinitionIndex = ActiveWeapon->GetItemDefinitionIndex();
-        CCSWeaponData* ActiveWeaponData = I::WeaponSystem->GetWeaponData(WeaponDefinitionIndex);
-
-        if (!ActiveWeaponData)
-		    return;
-
-        const char* WeaponIcon = reinterpret_cast<const char*>(GetWeaponIcon(WeaponDefinitionIndex));
-        ImDrawList::AddText(ImVec2(Left - 1, Bottom + 7), Options.esp_enemy_weaponcolor, WeaponIcon);
-    }
+    if (Options.esp_enemy_weapon)
+        Weapon(TargetEntity, Left, Bottom);
 
     switch (Options.esp_enemy_flags) {
         case TARGET:
@@ -210,59 +198,84 @@ void ESP::Enemy() {
         //Options.esp_enemy_soundcolor
     }
 
-    if (Options.esp_enemy_lineofsight) {
-        TargetEntity->GetEyeAngles();
-
-
-        
-        ImDrawList::AddLine(ImVec2(), ImVec2(), Options.esp_enemy_lineofsightcolor);
-    }
+    if (Options.esp_enemy_lineofsight)
+        LineOfSight(TargetEntity, Options.esp_enemy_lineofsightcolor);
 
     if (Options.esp_enemy_skeleton)
         Skeleton(TargetEntity, Options.esp_enemy_skeletoncolor);
 
-    if (Options.esp_enemy_outline) {
-        //Options.esp_enemy_outlinecolor
-    }
-
-    //Options.esp_enemy_shadeflat <- apply to all chams
-
-    if (Options.esp_enemy_chamsbacktrack) {
-        //Options.esp_enemy_chamsbacktrackcolor
-    }
-
-    if (Options.esp_enemy_chamsoccluded) {
-        //Options.esp_enemy_chamsoccludedcolor
-        //Options.esp_enemy_occludedchamsmaterial //MAT1 = true, MAT2 = false
-    }
-
-    if (Options.esp_enemy_chamsvisible) {
-        //Options.esp_enemy_chamsvisiblecolor
-        //Options.esp_enemy_visiblechamsmaterial //MAT1 = true, MAT2 = false
-    }
-
-    if (Options.esp_enemy_chamsglow) { //bloom
-        //Options.esp_enemy_chamsglowcolor
-    }
-
-    if (Options.esp_enemy_bullettracers) {
-        //Options.esp_enemy_bullettracerscolor
-    }
+    if (Options.esp_enemy_bullettracers)
+        BulletTracer(TargetEntity, Options.esp_enemy_bullettracerscolor);
 }
 #pragma endregion
 
+//Team ESP
+
 #pragma region LocalESP
 void ESP::Local() {
+    if (!Options.esp_local_enabled)
+        return;
 
+    CBaseEntity* LocalPlayer = I::Engine->GetLocalPlayer();
+
+    if (!LocalPlayer)
+        return;
+
+    if (!LocalPlayer->IsAlive())
+        return;
+
+    PlayerInfo_t PlayerInfo;
+    float Left, Bottom, Right, Top;
+
+    I::Engine->GetPlayerInfo(LocalPlayer, PlayerInfo);
+
+    if (I::Input->bCameraInThirdPerson) {
+        switch (Options.esp_local_box) {
+            case OFF:
+                BoundingBox(LocalPlayer, nullptr, 0, Left, Bottom, Right, Top);
+                break;
+
+            case 2D:
+                BoundingBox(LocalPlayer, Options.esp_local_boxcolor, 1, Left, Bottom, Right, Top);
+                break;
+
+            case CORNERED2D:
+                BoundingBox(LocalPlayer, Options.esp_local_boxcolor, 2, Left, Bottom, Right, Top);
+                break;
+
+            case 3D:
+                BoundingBox(LocalPlayer, Options.esp_local_boxcolor, 3, Left, Bottom, Right, Top);
+                break;
+        }
+
+        if (Options.esp_local_name)
+            ImDrawList::AddText(ImVec2(Left + Right / 2, Top), Options.esp_local_namecolor, PlayerInfo.szName);
+
+        if (Options.esp_local_health)
+            HealthBar(LocalPlayer, Options.esp_local_healthcolor, Left, Bottom, Right, Top);
+
+        if (Options.esp_local_ammo)
+            AmmoBar(LocalPlayer, Options.esp_local_ammocolor, Left, Bottom, Right, Top);
+
+        if (Options.esp_local_weapon)
+            Weapon(LocalPlayer, Left, Bottom);
+
+        if (Options.esp_local_skeleton)
+            Skeleton(LocalPlayer, Options.esp_local_skeletoncolor);
+    }
+    
+    if (Options.esp_local_bullettracers)
+        BulletTracer(LocalPlayer, Options.esp_local_bullettracerscolor);
 }
 #pragma endregion
 
 #pragma region OtherESP
-void ESP::Bomb(CBaseEntity* LocalPlayer) {
+void ESP::Bomb() {
+    CBaseEntity* LocalPlayer = I::Engine->GetLocalPlayer();
     CPlantedC4* PlantedBombEntity = nullptr;
     CBaseEntity* DroppedBombEntity = nullptr;
 
-    for (int i = 0; i < I::ClientEntityList->GetHighestEntityIndex()) {
+    for (int i = 0; i < I::ClientEntityList->GetHighestEntityIndex(), i++) {
         CBaseEntity* Entity = I::ClientEntityList->GetClientEntity(i);
 
         if (!Entity)
@@ -289,23 +302,25 @@ void ESP::Bomb(CBaseEntity* LocalPlayer) {
     else if (BombEntityIsDropped)
         BoundingBox(DroppedBombEntity, nullptr, 0, Left, Bottom, Right, Top);
 
-    if (Options.esp_other_bombtimer) { //attach to radar curve
+    float RemainingTime = PlantedBombEntity->GetBlowTime() - (LocalPlayer->GetTickBase() * I::Globals->flIntervalPerTick);
+    CBaseEntity* Defuser = I::ClientEntityList->GetClientEntityFromHandle(PlantedBombEntity->GetDefuserHandle());
+    float MinDefuseTime = 10.5f;
 
-    }
+    if (Defuser->HasDefuser())
+        MinDefuseTime = 5.5f;
 
-    if (Options.esp_other_bombchams) {
-        //Options.esp_other_bombchamscolor
-        //Options.esp_other_bombchamsmaterial //MAT1 = true, MAT2 = false
-    }
+    switch (Options.esp_other_bombtimer) {
+        case RADARCURVE:
+            //todo
+            break;
 
-    if (Options.esp_other_bombglow) {
-        //Options.esp_other_bombglowcolor
+        case BAR:
+            //ImDrawList::AddRectFilled(ImVec2(0, 0), ImVec2(Global::WindowSize.x / RemainingTime, 5))
+            break;
     }
 
     switch (Options.esp_other_bombflags) {
         case STATE:
-            float RemainingTime = PlantedBombEntity->GetBlowTime() - (LocalPlayer->GetTickBase() * I::Globals->flIntervalPerTick);
-
             if (BombEntityIsDropped)
                 ImDrawList::AddText(ImVec2(Right, Top + Bottom / 2), ImColor(255, 255, 255, 255), "DROPPED");
             else if (BombEntityIsPlanted && RemainingTime > 0.0f)
@@ -317,28 +332,20 @@ void ESP::Bomb(CBaseEntity* LocalPlayer) {
             break;
 
         case TIMER:
-            float RemainingTime = PlantedBombEntity->GetBlowTime() - (LocalPlayer->GetTickBase() * I::Globals->flIntervalPerTick);
-            float MinDefuseTime = 10.5f;
-
-            CBaseEntity* Defuser = I::ClientEntityList->GetClientEntityFromHandle(PlantedBombEntity->GetDefuserHandle());
-
-            if (Defuser->HasDefuser())
-                MinDefuseTime = 5.5f;
-
             if (BombEntityIsDropped)
                 ImDrawList::AddText(ImVec2(Right, Top + Bottom / 2), ImColor(255, 255, 255, 255), "0.0 SECONDS");
             else if (BombEntityIsPlanted && RemainingTime >= MinDefuseTime)
-                ImDrawList::AddText(ImVec2(Right, Top + Bottom / 2), ImColor(255, 255, 255, 255), RemainingTime << "SECONDS");
+                ImDrawList::AddText(ImVec2(Right, Top + Bottom / 2), ImColor(255, 255, 255, 255), (RemainingTime + "SECONDS").c_str());
             else if (BombEntityIsPlanted && RemainingTime < MinDefuseTime)
-                ImDrawList::AddText(ImVec2(Right, Top + Bottom / 2), ImColor(255, 0, 0, 255), RemainingTime << "SECONDS");
+                ImDrawList::AddText(ImVec2(Right, Top + Bottom / 2), ImColor(255, 0, 0, 255), (RemainingTime + "SECONDS").c_str());
             else if (BombEntityIsPlanted && PlantedBombEntity->IsDefused())
-                ImDrawList::AddText(ImVec2(Right, Top + Bottom / 2), ImColor(0, 0, 255, 255), RemainingTime << "SECONDS");
+                ImDrawList::AddText(ImVec2(Right, Top + Bottom / 2), ImColor(0, 0, 255, 255), (RemainingTime + "SECONDS").c_str());
             break;
 
         case LOCATION:
             if (BombEntityIsDropped)
                 ImDrawList::AddText(ImVec2(Right, Top + Bottom / 2), ImColor(255, 255, 255, 255), "UNKNOWN");
-            else if (BombEntityIsPlanted)
+            else if (BombEntityIsPlanted) {
                 int BombSite = PlantedBombEntity->GetBombSite();
                 const char* BombSiteName = nullptr;
 
@@ -348,6 +355,7 @@ void ESP::Bomb(CBaseEntity* LocalPlayer) {
                     BombSiteName = "BOMBSITE B";
 
                 ImDrawList::AddText(ImVec2(Right, Top + Bottom / 2), ImColor(255, 255, 255, 255), BombSiteName);
+            }
             break;
     }
 }
@@ -388,116 +396,12 @@ void ESP::World() {
     */
 }
 
-void ESP::Removals(CBaseEntity* LocalPlayer) {
-    switch(Options.esp_other_removals) {
-        case SCOPEOVERLAY:
-            CBaseCombatWeapon* ActiveWeapon = LocalPlayer->GetWeapon;
-
-            if (!ActiveWeapon)
-                return;
-        
-	        const short WeaponDefinitionIndex = ActiveWeapon->GetItemDefinitionIndex();
-	        const CCSWeaponData* ActiveWeaponData = I::WeaponSystem->GetWeaponData(WeaponDefinitionIndex);
-
-            if (!ActiveWeaponData)
-                return;
-
-            if (!ActiveWeaponData->nWeaponType == WEAPONTYPE_SNIPER)
-                return;
-
-            if (LocalPlayer->IsScoped()) {
-                I::ConVar->FindVar("cl_drawhud")->SetValue(0);
-                ImDrawList::AddLine(ImVec2(0, Global::WindowSize.y / 2), ImVec2(Global::WindowSize.x, Global::WindowSize.y / 2), ImVec4(0, 0, 0, 255))
-                ImDrawList::AddLine(ImVec2(Global::WindowSize.x / 2, 0), ImVec2(Global::WindowSize.x / 2, Global::WindowSize.y), ImVec4(0, 0, 0, 255))
-            }
-            else
-                I::ConVar->FindVar("cl_drawhud")->SetValue(1);
-            break;
-
-        case SCOPEZOOM:
-
-            break;
-
-        case VIEWPUNCH:
-
-            break;
-
-        case AIMPUNCH:
-
-            break;
-
-        case SMOKEEFFECTS:
-
-            break;
-
-        case FLASHEFFECTS:
-            LocalPlayer->GetFlashAlpha() = 0.0f;
-            break;
-
-        case FOG:
-
-            break;
-
-        case POSTPROCESSING:
-
-            break;
-
-        case ARMS:
-
-            break;
-
-        case WEAPON:
-
-            break;
-    }
-}
-
-void ESP::ThirdPerson(CBaseEntity* LocalPlayer) { //TODO
-    if (Options.esp_other_thirdperson)
+void ESP::OOFArrows() {
+    if (!Options.esp_other_oofarrows)
         return;
 
-    bool ThirdPerson = true;
-
-    if (Options.esp_other_thirdpersonondeath) {
-        if (!LocalPlayer->IsAlive())
-            return;
-    }
-
-    if (Options.esp_other_thirdpersondisablenade) {
-        CBaseCombatWeapon* ActiveWeapon = LocalPlayer->GetWeapon();
-
-        if (!ActiveWeapon)
-            return;
-
-        const short WeaponDefinitionIndex = ActiveWeapon->GetItemDefinitionIndex();
-        CCSWeaponData* ActiveWeaponData = I::WeaponSystem->GetWeaponData(WeaponDefinitionIndex);
-
-        if (!ActiveWeaponData)
-		    return;
-
-        if (ActiveWeaponData->nWeaponType == WEAPONTYPE_GRENADE)
-            ThirdPerson = false;
-    }
-
-//
-    bool InTransition = false;
-    float ModelOpacity = 1.0f - (/*current dist*/ / Options.esp_other_thirdpersondistance)
-
-
-    I::RenderView->SetBlend() = ;
-    I::RenderView->GetBlend();
-
-
-    I::Input->bCameraInThirdPerson;
-
+    //OPTION(ImVec4, Options.esp_other_oofarrowscolor, ImVec4(0, 0, 0, 0));
 }
-
-/*
-OPTION(bool, Options.esp_other_radarhack, false);
-OPTION(bool, Options.esp_other_streamproof, false);
-OPTION(bool, Options.esp_other_oofarrows, false);
-OPTION(ImVec4, Options.esp_other_oofarrowscolor, ImVec4(0, 0, 0, 0));
-*/
 
 void ESP::Grenades() {
     if (Options.esp_other_incendiarytracer) {
@@ -533,71 +437,284 @@ void ESP::DroppedWeapons() {
     if (Options.esp_other_droppedweapons)
         return;
 
+    CBaseEntity* LocalPlayer = I::Engine->GetLocalPlayer();
+
+    if (!LocalPlayer)
+        return;
+
+    CWeaponCSBase* DroppedWeaponEntity = nullptr;
+    CBaseCSGrenade* DroppedGrenadeEntity = nullptr;
+
+    for (int i = 0; i < I::ClientEntityList->GetHighestEntityIndex(), i++) {
+        CBaseEntity* Entity = I::ClientEntityList->GetClientEntity(i);
+
+        if (!Entity)
+            continue;
+
+        if (strcmp(Entity->GetClassname(), "CWeaponCSBase"))
+            DroppedWeaponEntity = static_cast<CWeaponCSBase*>(Entity);
+        else if (strcmp(Entity->GetClassname(), "CBaseCSGrenade"))
+            DroppedGrenadeEntity = static_cast<CBaseCSGrenade*>(Entity);
+    }
+
+    float Left, Bottom, Right, Top;
+
+    BoundingBox(DroppedWeaponEntity, nullptr, 0, Left, Bottom, Right, Top);
+
     switch (Options.esp_other_droppedweaponflags) {
-    case ICON:
+        case ICON:
+            const char* WeaponIcon = nullptr;
 
-        break;
+            if (!DroppedWeaponEntity && DroppedGrenadeEntity)
+                WeaponIcon = reinterpret_cast<const char*>(GetWeaponIcon(DroppedWeaponEntity->GetItemDefinitionIndex()));
+            else if (DroppedWeaponEntity && !DroppedGrenadeEntity)
+                WeaponIcon = reinterpret_cast<const char*>(GetWeaponIcon(DroppedGrenadeEntity->GetItemDefinitionIndex()));
+
+            ImDrawList::AddText(ImVec2(Left + Right / 2, Bottom), ImColor(255, 255, 255, 255), WeaponIcon);
+            break;
     
-    case TEXT:
+        case TEXT:
+           const char* WeaponName = nullptr;
 
-        break;
+            if (!DroppedWeaponEntity && DroppedGrenadeEntity)
+                WeaponIcon = reinterpret_cast<const char*>(GetWeaponName(DroppedWeaponEntity->GetItemDefinitionIndex()));
+            else if (DroppedWeaponEntity && !DroppedGrenadeEntity)
+                WeaponIcon = reinterpret_cast<const char*>(GetWeaponName(DroppedGrenadeEntity->GetItemDefinitionIndex()));
 
-    case DISTANCE:
+            ImDrawList::AddText(ImVec2(Left + Right / 2, Bottom), ImColor(255, 255, 255, 255), WeaponName);
+            break;
 
-        break;
+        case DISTANCE:
+            Vector LocalPlayerPosition = LocalPlayer->GetAbsOrigin();
+            Vector DroppedItemPosition = nullptr;
 
-    case AMMO:
+            if (!DroppedWeaponEntity && DroppedGrenadeEntity)
+                DroppedItemPosition = DroppedWeaponEntity->GetAbsOrigin();
+            else if (DroppedWeaponEntity && !DroppedGrenadeEntity)
+                DroppedItemPosition = DroppedGrenadeEntity->GetAbsOrigin();
 
-        break;
-    }
+            float Distance = Math::Calculate3DDistance(LocalPlayerPosition, DroppedItemPosition);
 
-    if (Options.esp_other_droppedweaponchams) {
-        //Options.esp_other_droppedweaponchamscolor
-    
-        switch (Options.esp_other_droppedweaponchamsmateria) {
-            case MAT1:
+            ImDrawList::AddText(ImVec2(Right, Top), ImColor(255, 255, 255, 255), Distance.c_str())
+            break;
 
-                break;
+        case AMMO:
+            if (!DroppedWeaponEntity && DroppedGrenadeEntity)
+                return;
 
-            case MAT2:
+            const short WeaponDefinitionIndex = DroppedWeaponEntity->GetItemDefinitionIndex();
+            CCSWeaponData* ActiveWeaponData = I::WeaponSystem->GetWeaponData(WeaponDefinitionIndex);
 
-                break;
-        }
-    }
+            if (!ActiveWeaponData)
+		        return;
 
-    if (Options.esp_other_droppedweaponglow) {
-        //Options.esp_other_droppedweaponglowcolor
+            float Ammo = static_cast<float>(DroppedWeaponEntity->GetAmmo());
+            float MaxAmmo = static_cast<float>(ActiveWeaponData->iMaxClip1);
+            float CalculatedAmmo = Left - Right * (MaxAmmo / Ammo);
+
+            ImDrawList::AddRect(ImVec2(Left - 1, Bottom + 1), ImVec2(Right + 1, Top - 1), ImVec4(0, 0, 0, 255));
+            ImDrawList::AddRectFilled(ImVec2(Left, Bottom), ImVec2(Left + CalculatedAmmo, Top));
+            break;
     }
 }
 
-/*
+/* 
+//TODO: add crates for dangerzone
+void ESP::Dangerzone() {
 
-----------------/////------------------
-// TODO: add crates for dangerzone
-// TODO: fov crap
-----------------/////------------------
+}
 
-MULTIOPTION(Options.esp_other_hitsound, OFF = false, AHHH = false, ANIMEMOAN = false, BELL = false, FLICK = false, METALIC = false, MINECRAFT = false, ROBLOX = false);
-MULTIOPTION(Options.esp_other_hiteffect, OFF = false, EFFECT1 = false, EFFECT2 = false); // TODO: add effects
-MULTIOPTION(Options.esp_other_killsound, OFF = false, OVERWATCHCSGO = false, OVERWATCHCSS = false, TECHNO = false);
-MULTIOPTION(Options.esp_other_killanouncer, OFF = false, QUAKEFEMALE = false, QUAKESTANDARD = false, VALORANT = false, ANIME = false);
-MULTIOPTION(Options.esp_other_deathsound, OFF = false, AHHH = false, ERROR = false, FAIL = false, WILHELM = false);
+//TODO: fov crap
+void ESP::FOV() {
 
-OPTION(bool, Options.esp_other_localgrenadeprediction, false);
-OPTION(ImVec4, Options.esp_other_localgrenadepredictiontrailcolor, ImVec4(0, 0, 0, 0));
-OPTION(ImVec4, Options.esp_other_localgrenadepredictionbouncecolor, ImVec4(0, 0, 0, 0));
-OPTION(bool, Options.esp_other_enemygrenadeprediction, false);
-OPTION(ImVec4, Options.esp_other_enemygrenadepredictiontrailcolor, ImVec4(0, 0, 0, 0));
-OPTION(ImVec4, Options.esp_other_enemygrenadepredictionbouncecolor, ImVec4(0, 0, 0, 0));
-
-OPTION(bool, Options.esp_other_watermark, false);
-
-OPTION(bool, Options.esp_other_visualiseoneway, false);
-OPTION(char, Options.esp_other_visualiseonewaykey, NULL);
-MULTIOPTION(Options.esp_other_visualiseonewaykeymode, ALWAYS = false, TOGGLE = false, ONHOLD = false, OFFHOLD = false);
-
-OPTION(bool, Options.esp_other_hitmarker, false);
+}
 */
+
+void ESP::Sounds() {
+    CBaseEntity* LocalPlayer = I::Engine->GetLocalPlayer();
+
+    if (!LocalPlayer)
+        return;
+
+    if (strstr(IGameEvent->GetName(), "player_hurt")) {
+        int AttackerPlayerID = IGameEvent->GetInt("attacker");
+        int AttackerPlayer = I::Engine->GetPlayerForUserID(AttackerPlayerID);
+
+        if (AttackerPlayer == LocalPlayer) {
+            switch (Options.esp_other_hitsound) {
+                case OFF:
+                    break;
+
+                case AHH:
+
+                    break;
+
+                case ANIMEMOAN:
+
+                    break;
+
+                case BELL:
+
+                    break;
+
+                case FLICK:
+
+                    break;
+
+                case METALIC:
+
+                    break;
+
+                case MINECRAFT:
+
+                    break;
+
+                case ROBLOX:
+
+                    break;
+            }
+        }
+    }
+
+    if (strstr(IGameEvent->GetName(), "player_death")) {
+        int AttackerPlayerID = IGameEvent->GetInt("attacker");
+        int AttackerPlayer = I::Engine->GetPlayerForUserID(AttackerPlayerID);
+
+        if (AttackerPlayer == LocalPlayer) {
+            switch (Options.esp_other_killsound) {
+                case OFF:
+                    break;
+
+                case OVERWATCHCSGO:
+
+                    break;
+
+                case OVERWATCHCSS:
+
+                    break;
+
+                case TECHNO:
+
+                    break;
+            }
+        }
+    }
+
+/* TODO
+    switch (Options.esp_other_killanouncer) {
+        case OFF:
+            break;
+
+        case QUAKEFEMALE:
+
+            break;
+
+        case QUAKESTANDARD:
+
+            break;
+
+        case ANIME:
+
+            break;
+    }
+*/
+
+    if (strstr(IGameEvent->GetName(), "player_death")) {
+        int VictimPlayerID = IGameEvent->GetInt("userid");
+        int VictimPlayer = I::Engine->GetPlayerForUserID(VictimPlayerID);
+
+        if (VictimPlayer == LocalPlayer) {
+            switch (Options.esp_other_deathsound) {
+                case OFF:
+                    break;
+
+                case AHHH:
+
+                    break;
+
+                case MISTAKE:
+
+                    break;
+
+                case FAIL:
+
+                    break;
+
+                case WILHELM:
+
+                    break;
+            }
+        }
+    }
+}
+
+//MULTIOPTION(Options.esp_other_hiteffect, OFF = false, EFFECT1 = false, EFFECT2 = false); // TODO: add effects
+
+void ESP::GrenadePrediction() {
+    if (Options.esp_other_localgrenadeprediction) {
+        /*
+        OPTION(ImVec4, Options.esp_other_localgrenadepredictiontrailcolor, ImVec4(0, 0, 0, 0));
+        OPTION(ImVec4, Options.esp_other_localgrenadepredictionbouncecolor, ImVec4(0, 0, 0, 0));
+        */
+    }
+
+    if (Options.esp_other_enemygrenadeprediction) {
+        /*
+        OPTION(ImVec4, Options.esp_other_enemygrenadepredictiontrailcolor, ImVec4(0, 0, 0, 0));
+        OPTION(ImVec4, Options.esp_other_enemygrenadepredictionbouncecolor, ImVec4(0, 0, 0, 0));
+        */
+    }
+}
+
+void ESP::Watermark() {
+    if (!Options.esp_other_watermark)
+        return;
+}
+
+void ESP::OnewayVisualization() {
+    if (!Options.esp_other_visualizeoneway)
+        return;
+}
+
+void ESP::Hitmarker() {
+    if (!Options.esp_other_hitmarker)
+        return;
+
+    if (!I::Engine->IsInGame())
+        return;
+
+    CBaseEntity* LocalPlayer = I::Engine->GetLocalPlayer();
+
+    if (!LocalPlayer)
+        return;
+
+    ImVec4 HitmarkerColor = ImVec4(255, 255, 255, 255);
+
+    if (strstr(IGameEvent->GetName(), "player_hurt")) {
+        int AttackerPlayerID = IGameEvent->GetInt("attacker");
+        int AttackerPlayer = I::Engine->GetPlayerForUserID(AttackerPlayerID);
+
+        if (AttackerPlayer == LocalPlayer) {
+            ImDrawList::AddLine(ImVec2(Global::WindowSize.x / 2 - 5, Global::WindowSize.y / 2 - 5), ImVec2(Global::WindowSize.x / 2 - 10, Global::WindowSize.y / 2 - 10), HitmarkerColor);
+            ImDrawList::AddLine(ImVec2(Global::WindowSize.x / 2 - 5, Global::WindowSize.y / 2 + 5), ImVec2(Global::WindowSize.x / 2 - 10, Global::WindowSize.y / 2 + 10), HitmarkerColor);
+            ImDrawList::AddLine(ImVec2(Global::WindowSize.x / 2 + 5, Global::WindowSize.y / 2 - 5), ImVec2(Global::WindowSize.x / 2 + 10, Global::WindowSize.y / 2 - 10), HitmarkerColor);
+            ImDrawList::AddLine(ImVec2(Global::WindowSize.x / 2 + 5, Global::WindowSize.y / 2 + 5), ImVec2(Global::WindowSize.x / 2 + 10, Global::WindowSize.y / 2 + 10), HitmarkerColor);
+        }
+    }
+    else if (strstr(IGameEvent->GetName(), "player_death")) {
+        int AttackerPlayerID = IGameEvent->GetInt("attacker");
+        int AttackerPlayer = I::Engine->GetPlayerForUserID(AttackerPlayerID);
+
+        if (AttackerPlayer == LocalPlayer) {
+            HitmarkerColor = ImVec4(255, 0, 0, 255);
+
+            ImDrawList::AddLine(ImVec2(Global::WindowSize.x / 2 - 5, Global::WindowSize.y / 2 - 5), ImVec2(Global::WindowSize.x / 2 - 10, Global::WindowSize.y / 2 - 10), HitmarkerColor);
+            ImDrawList::AddLine(ImVec2(Global::WindowSize.x / 2 - 5, Global::WindowSize.y / 2 + 5), ImVec2(Global::WindowSize.x / 2 - 10, Global::WindowSize.y / 2 + 10), HitmarkerColor);
+            ImDrawList::AddLine(ImVec2(Global::WindowSize.x / 2 + 5, Global::WindowSize.y / 2 - 5), ImVec2(Global::WindowSize.x / 2 + 10, Global::WindowSize.y / 2 - 10), HitmarkerColor);
+            ImDrawList::AddLine(ImVec2(Global::WindowSize.x / 2 + 5, Global::WindowSize.y / 2 + 5), ImVec2(Global::WindowSize.x / 2 + 10, Global::WindowSize.y / 2 + 10), HitmarkerColor);
+        }
+    }
+}
 #pragma endregion
 
 #pragma region UtilityFunctions
@@ -835,8 +952,8 @@ void ESP::HealthBar(CBaseEntity* TargetEntity, ImVec4 Color, float& Left, float&
     if (!TargetEntity)
         return;
 
-    float Health = static_cast<float>TargetEntity->GetHealth();
-    float MaxHealth = static_cast<float>TargetEntity->GetMaxHealth();
+    float Health = static_cast<float>(TargetEntity->GetHealth());
+    float MaxHealth = static_cast<float>(TargetEntity->GetMaxHealth());
     float CalculatedHealth = Bottom - Top * (MaxHealth / Health);
 
     ImDrawList::AddRect(ImVec2(Left - 6, Top - 1), ImVec2(Left - 2, Bottom + 1), ImVec4(0, 0, 0, 255));
@@ -861,8 +978,8 @@ void ESP::AmmoBar(CBaseEntity* TargetEntity, ImVec4 Color, float& Left, float& B
     if (!ActiveWeaponData->IsGun())
         return;
 
-    float Ammo = static_cast<float>ActiveWeapon->GetAmmo();
-    float MaxAmmo = static_cast<float>ActiveWeaponData->iMaxClip1;
+    float Ammo = static_cast<float>(ActiveWeapon->GetAmmo());
+    float MaxAmmo = static_cast<float>(ActiveWeaponData->iMaxClip1);
     float CalculatedAmmo = Left - Right * (MaxAmmo / Ammo);
 
     CAnimationLayer* AnimationLayer = TargetEntity->GetAnimationLayer(1);
@@ -875,9 +992,9 @@ void ESP::AmmoBar(CBaseEntity* TargetEntity, ImVec4 Color, float& Left, float& B
 
     ImDrawList::AddRect(ImVec2(Left - 1, Bottom + 2), ImVec2(Right + 1, Bottom + 6), ImVec4(0, 0, 0, 255));
     ImDrawList::AddRectFilled(ImVec2(Left, Bottom + 1), ImVec2(Left + CalculatedAmmo, Bottom + 5), Color);
-};
+}
 
-std::string ESP::GetWeaponIcon(short WeaponDefinitionIndex) {
+const char8_t* ESP::GetWeaponIcon(short WeaponDefinitionIndex) {
     switch (WeaponDefinitionIndex) {
 	    case WEAPON_DEAGLE:
 		    return u8"\uE001";
@@ -1036,12 +1153,243 @@ std::string ESP::GetWeaponIcon(short WeaponDefinitionIndex) {
 	    default:
 		    return u8"\u003F";
 	}
+}
 
-void ESP::Chams(CBaseEntity* TargetEntity, ImVec4 Color) {
+void ESP::BulletTracer(CBaseEntity* TargetEntity, ImVec4 TracerColor) {
     if (!TargetEntity)
         return;
 
-    
+    if (strstr(IGameEvent->GetName(), "bullet_impact")) {
+        int AttackerPlayerID = IGameEvent->GetInt("userid");
+        int AttackerPlayer = I::Engine->GetPlayerForUserID(AttackerPlayerID);
+
+        if (!AttackerPlayerID || !AttackerPlayer)
+            return;
+
+        if (!AttackerPlayer == TargetEntity)
+            return;
+
+        Vector ImpactPosition = Vector(IGameEvent->GetFloat("x"), IGameEvent->GetFloat("y"), IGameEvent->GetFloat("z"));
+        Vector EyePosition = TargetEntity->GetEyePosition();
+
+        ImVec2 ScreenStartPosition;
+        ImVec2 ScreenEndPosition;
+
+        if (!Draw::WorldToScreen(EyePosition, ScreenStartPosition) && Draw::WorldToScreen(ImpactPosition, ScreenEndPosition))
+            return;
+
+        std::vector<Vector> BulletImpacts;
+        BulletImpacts.push_back(ScreenEndPosition);
+
+        auto StartTime = std::chrono::high_resolution_clock::now();
+
+        for (size_t i = 0; i < BulletImpacts.size(); i++) {
+            auto CurrentTime = std::chrono::high_resolution_clock::now();
+            auto ElapsledTime = CurrentTime - StartTime;
+
+            ImDrawList::AddLine(ScreenStartPosition, ScreenEndPosition, TracerColor);
+
+            if (ElapsledTime.count() > 5.0)
+                BulletImpacts.erase(BulletImpacts.begin() + i);
+        }
+    }
 }
+
+void ESP::Weapon(CBaseEntity* TargetEntity, float Left, float Bottom) { //todo import weapon icon font
+    CBaseCombatWeapon* ActiveWeapon = TargetEntity->GetWeapon();
+
+    if (!ActiveWeapon)
+        return;
+
+    const short WeaponDefinitionIndex = ActiveWeapon->GetItemDefinitionIndex();
+    CCSWeaponData* ActiveWeaponData = I::WeaponSystem->GetWeaponData(WeaponDefinitionIndex);
+
+    if (!ActiveWeaponData)
+		return;
+
+    const char* WeaponIcon = reinterpret_cast<const char*>(GetWeaponIcon(WeaponDefinitionIndex));
+    ImDrawList::AddText(ImVec2(Left - 1, Bottom + 7), Options.esp_local_weaponcolor, WeaponIcon);
+}
+
+void ESP::LineOfSight(CBaseEntity* TargetEntity, ImVec4 LOSColor) {
+    Vector StartPosition = TargetEntity->GetEyePosition();
+    Vector EyeAngles = TargetEntity->GetEyeAngles();
+    Vector Forward = Math::AngleVectors(EyeAngles);
+    Vector EndPosition = StartPosition + (Forward * 3000.0f);
+        
+    Trace_t Trace;
+    Ray_t Ray;
+    CTraceFilter* Filter;
+
+    I::EngineTrace->TraceRay(Ray, MASK_SOLID, &Filter, &Trace);
+
+    ImVec2 ScreenStartPostion;
+    ImVec2 ScreenEndPostion;
+
+    if (!Draw::WorldToScreen(StartPosition, ScreenStartPostion) && Draw::WorldToScreen(Trace.vecEnd, ScreenEndPostion))
+        return;
+
+    ImDrawList::AddLine(ScreenStartPostion, ScreenEndPostion, LOSColor);
+}
+
+const char* ESP::GetWeaponName(short WeaponDefinitionIndex) {
+    switch (WeaponDefinitionIndex) {
+	    case WEAPON_DEAGLE:
+		    return "DESERT EAGLE";
+	    case WEAPON_ELITE:
+		    return "DUEL BERETTAS";
+        case WEAPON_FIVESEVEN:
+		    return "FIVE SEVEN";
+	    case WEAPON_GLOCK:
+		    return "GLOCK";
+	    case WEAPON_AK47:
+		    return "AK47";
+	    case WEAPON_AUG:
+		    return "AUG";
+	    case WEAPON_AWP:
+		    return "AWP";
+	    case WEAPON_FAMAS:
+		    return "FAMAS";
+	    case WEAPON_G3SG1:
+		    return "G3SG1";
+    	case WEAPON_GALILAR:
+	    	return "GALIL AR";
+    	case WEAPON_M249:
+	    	return "M249";
+	    case WEAPON_M4A1:
+		    return "M4A1";
+	    case WEAPON_MAC10:
+		    return "MAC10";
+	    case WEAPON_P90:
+		    return "P90";
+	    case WEAPON_MP5SD:
+		    return "MP5SD";
+	    case WEAPON_UMP45:
+		    return "UMP45";
+	    case WEAPON_XM1014:
+		    return "XM1014";
+	    case WEAPON_BIZON:
+		    return "PP BIZON";
+	    case WEAPON_MAG7:
+	    	return "MAG7";
+	    case WEAPON_NEGEV:
+		    return "NEGEV";
+	    case WEAPON_SAWEDOFF:
+	    	return "SAWED OFF";
+	    case WEAPON_TEC9:
+	    	return "TEC9";
+	    case WEAPON_TASER:
+		    return "TASER";
+	    case WEAPON_HKP2000:
+		    return "P2000";
+	    case WEAPON_MP7:
+		    return "MP7";
+	    case WEAPON_MP9:
+		    return "MP9";
+	    case WEAPON_NOVA:
+		    return "NOVA";
+	    case WEAPON_P250:
+		    return "P250";
+        case WEAPON_SHIELD:
+            return "RIOT SHIELD";
+	    case WEAPON_SCAR20:
+		    return "SCAR20";
+	    case WEAPON_SG556:
+	    	return "SG556";
+	    case WEAPON_SSG08:
+	    	return "SSG08";
+	    case WEAPON_KNIFE:
+	    	return "KNIFE";
+	    case WEAPON_FLASHBANG:
+	    	return "FLASHBANG";
+	    case WEAPON_HEGRENADE:
+	    	return "HE GRENADE";
+	    case WEAPON_SMOKEGRENADE:
+	    	return "SMOKE";
+	    case WEAPON_MOLOTOV:
+	    	[[fallthrough]];
+	    case WEAPON_FIREBOMB:
+	    	return "MOLOTOV";
+	    case WEAPON_DECOY:
+	    	[[fallthrough]];
+	    case WEAPON_DIVERSION:
+	    	return "DECOY";
+	    case WEAPON_INCGRENADE:
+	    	return "INCENDIARY";
+	    case WEAPON_C4:
+	    	return "BOMB";
+	    case WEAPON_HEALTHSHOT:
+	    	return "HEALTHSHOT";
+        case WEAPON_BUMPMINE:
+            return "BUMP MINE";
+	    case WEAPON_KNIFE_GG:
+	    	[[fallthrough]];
+	    case WEAPON_KNIFE_T:
+	    	return "KNIFE";
+	    case WEAPON_M4A1_SILENCER:
+	    	return "M4A1-S";
+	    case WEAPON_USP_SILENCER:
+	    	return "USP-S";
+	    case WEAPON_CZ75A:
+	    	return "CZ75A";
+	    case WEAPON_REVOLVER:
+	    	return "REVOLVER";
+	    case WEAPON_TAGRENADE:
+	    	return "UNKNOWN";
+	    case WEAPON_FISTS:
+	    	return "FISTS";
+        case WEAPON_BREACHCHARGE:
+            return "BREACH CHARGE";
+	    case WEAPON_TABLET:
+	    	return "TABLET";
+	    case WEAPON_MELEE:
+	    	return "UNKNOWN"; 
+	    case WEAPON_AXE:
+	    	return "AXE";
+	    case WEAPON_HAMMER:
+	    	return "HAMMER";
+	    case WEAPON_SPANNER:
+	    	return "SPANNER";
+	    case WEAPON_KNIFE_BAYONET:
+	    	return "KNIFE";
+	    case WEAPON_KNIFE_CSS:
+	    	return "KNIFE";
+	    case WEAPON_KNIFE_FLIP:
+	    	return "KNIFE";
+	    case WEAPON_KNIFE_GUT:
+	    	return "KNIFE";
+	    case WEAPON_KNIFE_KARAMBIT:
+	    	return "KNIFE";
+	    case WEAPON_KNIFE_M9_BAYONET:
+	    	return "KNIFE";
+	    case WEAPON_KNIFE_TACTICAL:
+	    	return "KNIFE";
+	    case WEAPON_KNIFE_FALCHION:
+	    	return "KNIFE";
+	    case WEAPON_KNIFE_SURVIVAL_BOWIE:
+	    	return "KNIFE";
+	    case WEAPON_KNIFE_BUTTERFLY:
+	    	return "KNIFE";
+	    case WEAPON_KNIFE_PUSH:
+	    	return "KNIFE";
+	    case WEAPON_KNIFE_CORD:
+	    	return "KNIFE";
+	    case WEAPON_KNIFE_CANIS:
+	    	return "KNIFE";
+	    case WEAPON_KNIFE_URSUS:
+	    	return "KNIFE";
+	    case WEAPON_KNIFE_GYPSY_JACKKNIFE:
+	    	return "KNIFE";
+	    case WEAPON_KNIFE_OUTDOOR:
+	    	return "KNIFE";
+	    case WEAPON_KNIFE_STILETTO:
+	    	return "KNIFE";
+	    case WEAPON_KNIFE_WIDOWMAKER:
+	    	return "KNIFE";
+	    case WEAPON_KNIFE_SKELETON:
+	    	return "KNIFE";
+	    default:
+		    return "DEFAULT";
+	}
 }
 #pragma endregion

@@ -24,6 +24,7 @@
 #include "../sdk/interfaces/imatchframework.h"
 #include "../sdk/interfaces/igametypes.h"
 #include "../sdk/interfaces/imaterialsystem.h"
+#include "../sdk/interfaces/imaterial.h"
 #include "../sdk/interfaces/imdlcache.h"
 #include "../sdk/interfaces/imemalloc.h"
 #include "../sdk/interfaces/inetworkstring.h"

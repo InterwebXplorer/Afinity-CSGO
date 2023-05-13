@@ -4,6 +4,7 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <string>
+#include <Shlobj.h>
 #include "hooks.h"
 #include "config.h"
 #include "resources/sdk/interfaces.h"
@@ -12,10 +13,11 @@
 #include "resources/utils/eventlistener.h"
 #include "resources/utils/entitylistener.h"
 #include "resources/utils/filelogging.h"
+#include "resources/utils/memory.h"
 #include "global.h"
 
 DWORD WINAPI DllAttach(LPVOID Parameter){
-	while (MEM::GetModuleBaseHandle("serverbrowser.dll") == nullptr)
+	while (!Memory::GetModuleBaseHandle("serverbrowser.dll"))
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
 	try {
@@ -30,7 +32,7 @@ DWORD WINAPI DllAttach(LPVOID Parameter){
 		if (!CreateLogFile())
 			return;
 
-		WriteToLog("Initializing...");
+		WriteToLog("Initializing Afinity...");
 
 		if (!InitializeConcoleLogging()) {
 			WriteToLog("[Error] Failed to initialize console logging")
@@ -85,10 +87,12 @@ DWORD WINAPI DllAttach(LPVOID Parameter){
 			return;
 		}
 	}
+
 	catch (const std::exception& Exception) {
 		WriteToLog("[Error] {}", Exception.what());
 		FreeLibraryAndExitThread(static_cast<HMODULE>(Parameter), EXIT_FAILURE);
 	}
+
 	return 0UL;
 }
 
@@ -116,7 +120,7 @@ BOOL APIENTRY DllMain(HMODULE Module, DWORD Reason, LPVOID Reserved) {
 	if (Reason == DLL_PROCESS_ATTACH) {
 		DisableThreadLibraryCalls(Module);
 
-		if (!MEM::GetModuleBaseHandle("csgo.exe")) {
+		if (!Memory::GetModuleBaseHandle("csgo.exe")) {
 			WriteToLog("[Error] Process <csgo.exe> not found");
 			return;
 		}

@@ -6,6 +6,7 @@
 #include "vector.h"
 #include "draw.h"
 
+#pragma region W2S
 bool Draw::WorldToScreen(const Vector3& WorldPosition, ImVec2& ScreenPosition) {
     const ViewMatrix_t& WorldToScreen = I::Engine->WorldToScreenMatrix();
 	const float Width = WorldToScreen[3][0] * WorldPosition.x + WorldToScreen[3][1] * WorldPosition.y + WorldToScreen[3][2] * WorldPosition.z + WorldToScreen[3][3];
@@ -22,73 +23,89 @@ bool Draw::WorldToScreen(const Vector3& WorldPosition, ImVec2& ScreenPosition) {
 	ScreenPosition.y = (DisplaySize.y * 0.5f) - (ScreenPosition.y * DisplaySize.y) * 0.5f;
 	return true;
 }
+#pragma endregion
 
 #pragma region UI_Elements
-
 void UI::Header(const char* label) { // -------Group-------
     
 };
 
-bool UI::CheckBox(const char* label, bool value) {
-    ImGuiWindow* window = GetCurrentWindow();
-    if (window->SkipItems)
+bool UI::CheckBox(const char* Label, bool Value) {
+    ImGuiWindow* Window = ImGui::GetCurrentWindow();
+
+    if (Window->SkipItems)
         return false;
- 
-    ImGuiContext &g = *GImGui;
-    const ImGuiStyle &style = g.Style;
-    const ImGuiID id = window->GetID(label);
-    const ImVec2 label_size = CalcTextSize(label, NULL, true);
- 
-    const ImRect check_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(label_size.y / 2 + style.FramePadding.y * 2, label_size.y / 2 + style.FramePadding.y * 2));
-    ItemSize(check_bb, style.FramePadding.y);
- 
-    ImRect total_bb = check_bb;
 
-    if (label_size.x > 0)
-        SameLine(0, style.ItemInnerSpacing.x);
+    ImGuiContext& G = *GImGui;
+    const ImGuiStyle& Style = G.Style;
+    const ImGuiID ID = Window->GetID(Label);
 
-    const ImRect text_bb(window->DC.CursorPos + ImVec2(0, style.FramePadding.y), window->DC.CursorPos + ImVec2(0, style.FramePadding.y) + label_size);
+    const ImVec2 LabelSize = ImGui::CalcTextSize(Label, NULL, true);
+    const ImRect CheckboxBoundingBox = ImRect(Window->DC.CursorPos, Window->DC.CursorPos + ImVec2(LabelSize.y / 2 + Style.FramePadding.y * 2, LabelSize.y / 2 + Style.FramePadding.y * 2));
+    ImGui::ItemSize(CheckboxBoundingBox, Style.FramePadding.y);
 
-    if (label_size.x > 0) {
-        ItemSize(ImVec2(text_bb.GetWidth(), check_bb.GetHeight()), style.FramePadding.y);
-        total_bb = ImRect(ImMin(check_bb.Min, text_bb.Min), ImMax(check_bb.Max, text_bb.Max));
+    ImRect TotalBoundingBox = CheckboxBoundingBox;
+
+    if (LabelSize.x > 0)
+        ImGui::SameLine(0, Style.ItemInnerSpacing.x);
+
+    const ImRect TextBoundingBox = ImRect(Window->DC.CursorPos + ImVec2(0, Style.FramePadding.y), Window->DC.CursorPos + ImVec2(0, Style.FramePadding.y) + LabelSize);
+
+    if (LabelSize.x > 0) {
+        ImGui::ItemSize(ImVec2(TextBoundingBox.GetWidth(), CheckboxBoundingBox.GetHeight()), Style.FramePadding.y);
+        TotalBoundingBox = ImRect(ImMin(CheckboxBoundingBox.Min, TextBoundingBox.Min), ImMax(CheckboxBoundingBox.Max, TextBoundingBox.Max));
     }
- 
-    if (!ItemAdd(total_bb, &id))
+
+    if (!ImGui::ItemAdd(TotalBoundingBox, &ID))
         return false;
- 
-    bool hovered, held;
-    bool pressed = ButtonBehavior(total_bb, id, &hovered, &held);
 
-    if (pressed)
-        *value =! (*value);
- 
-    RenderFrame(check_bb.Min, check_bb.Max, GetColorU32((held && hovered)? ImGuiCol_FrameBgActive: hovered? ImGuiCol_FrameBgHovered: ImGuiCol_FrameBg), true, style.FrameRounding);
-    
-    if (*value) {
-        const float check_sz = ImMin(check_bb.GetWidth (), check_bb.GetHeight ());
-        const float pad = ImMax(1.0f, (float) (int) (check_sz / 6.0f));
-        window->DrawList->AddRectFilled(check_bb.Min + ImVec2(pad, pad), check_bb.Max - ImVec2(pad, pad), GetColorU32(ImGuiCol_CheckMark), style.FrameRounding);
+    bool Hovered = false;
+    bool Held = false;
+    bool Pressed = ImGui::ButtonBehavior(TotalBoundingBox, ID, &Hovered, &Held);
+
+    if (Pressed)
+        *Value =! (*Value);
+
+    ImGui::RenderFrame(CheckboxBoundingBox.Min, CheckboxBoundingBox.Max, ImGui::GetColorU32((Held && Hovered)? ImGuiCol_FrameBgActive: Hovered? ImGuiCol_FrameBgHovered: ImGuiCol_FrameBg), true, Style.FrameRounding);
+
+    if (*Value) {
+        const float CheckboxSize = ImMin(CheckboxBoundingBox.GetWidth(), CheckboxBoundingBox.GetHeight());
+        const float Padding = ImMax(1.0f, (float) (int) (CheckboxSize / 6.0f));
+        Window->DrawList->AddRectFilled(CheckboxBoundingBox.Min + ImVec2(Padding, Padding), CheckboxBoundingBox.Max - ImVec2(Padding, Padding), ImGui::GetColorU32(ImGuiCol_CheckMark), Style.FrameRounding);
     }
- 
-    if (g.LogEnabled)
-        LogRenderedText(text_bb.GetTL(), * value? "[X]": "[]");
 
-    if (label_size.x > 0.0f)
-        RenderText(text_bb.GetTL(), label);
- 
-    return pressed;
+    if (G.LogEnabled)
+        ImGui::LogRenderedText(TextBoundingBox.GetTL(), * Value? "[X]":"[]");
+
+    if (LabelSize.x > 0.0f)
+        ImGui::RenderText(TextBoundingBox.GetTL(), Label);
+
+    return Pressed;
 };
 
-bool UI::ColorPicker(bool& bShowColorPicker, bool& bShowColorPickerAlt, ImVec4& color = ImVec4(0.0f, 0.0f, 0.0f, 0.0f)) {
+void UI::ColorPicker(const char* Label, ImVec4 Color = ImVec4(0.0f, 0.0f, 0.0f, 0.0f)) {
+    ImGuiWindow* Window = ImGui::GetCurrentWindow();
+
+    if (Window->SkipItems)
+        return;
+
+    ImGuiContext& G = *GImGui;
+    const ImGuiStyle& Style = G.Style;
+    const ImGuiID ID = Window->GetID(Label);
+
+    //
+    static bool ShowColorPicker = false;
+    static bool ShowColorPickerAlt = false;
+
+
     if (ImGui::IsItemClicked(0)) {
-        ImGui::Begin("##Colorpicker", bShowColorPicker, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse); {
+        ImGui::Begin("##Colorpicker", ShowColorPicker, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse); {
 
         }
     }
 
     if (ImGui::IsItemClicked(1)) {
-        ImGui::Begin("##Colorpickeralt", bShowColorPickerAlt, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse); {
+        ImGui::Begin("##Colorpickeralt", ShowColorPickerAlt, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse); {
             
         }
 
@@ -147,5 +164,4 @@ void UI::KeyBind() { // [-]
 void UI::Console(std::string input) {
 
 }
-
 #pragma endregion
